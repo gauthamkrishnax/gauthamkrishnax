@@ -13,10 +13,10 @@
 	@import '../style/helpers/variables';
 	.loader {
 		background-color: $background-color;
-		position: absolute;
+		position: fixed;
 		width: 100%;
 		height: 100%;
-		z-index: 10;
+		z-index: 20;
 		top: 0;
 		span {
 			font-family: $primary-font;

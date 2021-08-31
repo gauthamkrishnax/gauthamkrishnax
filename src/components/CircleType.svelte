@@ -14,7 +14,7 @@
 		<div>
 			<span bind:this={circle}>{typeText}</span>
 		</div>
-		<Arrow />
+		<Arrow --left-margin="-10px" />
 	</div>
 </template>
 
@@ -22,6 +22,7 @@
 	@import '../style/helpers/variables';
 	.container {
 		position: fixed;
+		z-index: 10;
 		bottom: 30px;
 		right: 5vw;
 		display: flex;

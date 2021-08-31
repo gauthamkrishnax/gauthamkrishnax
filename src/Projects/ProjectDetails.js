@@ -1,4 +1,5 @@
-import kanakootPreview from './assets/kanakootPreview.png';
+import s1 from './assets/s1.png';
+import s2 from './assets/s2.png';
 
 export const projects = [
 	{
@@ -8,6 +9,6 @@ export const projects = [
 		role: ['Branding', 'UX design', 'Development'],
 		progress: 'Under development',
 		link: 'https://kanakoot.netlify.app',
-		previewImage: { kanakootPreview }
+		previewImage: [s1, s2]
 	}
 ];

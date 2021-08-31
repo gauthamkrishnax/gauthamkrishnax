@@ -10,6 +10,7 @@
 	@import '../style/helpers/variables';
 	nav {
 		position: fixed;
+		z-index: 10;
 		bottom: 30px;
 		left: 120px;
 		@include breakpoint(tablet) {
