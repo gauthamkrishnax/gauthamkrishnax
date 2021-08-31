@@ -1,5 +1,5 @@
 {
-  "name": "~TODO~",
+  "name": "gauthamkrishnax",
   "version": "0.0.1",
   "scripts": {
     "dev": "svelte-kit dev",
@@ -10,12 +10,18 @@
   },
   "devDependencies": {
     "@sveltejs/kit": "next",
+    "autoprefixer": "^10.3.3",
+    "circletype": "^2.3.0",
     "eslint": "^7.22.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-svelte3": "^3.2.0",
+    "postcss": "^8.3.6",
     "prettier": "~2.2.1",
     "prettier-plugin-svelte": "^2.2.0",
-    "svelte": "^3.34.0"
+    "sass": "^1.38.2",
+    "svelte": "^3.34.0",
+    "svelte-preprocess": "^4.8.0"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {}
 }

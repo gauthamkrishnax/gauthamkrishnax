@@ -1,0 +1,37 @@
+@import '../style/base/reset';
+
+* {
+    box-sizing: border-box;
+}
+
+/* Works on Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: $scroll $light1;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+    background: $light1;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: $scroll;
+    border-radius: 20px;
+    border: 3px solid $light1;
+}
+
+html,
+body {
+    min-height: 100vh;
+    background-color: $background-color;
+    font-family: $secondary-font;
+}
+
+.hide {
+    display: none;
+}

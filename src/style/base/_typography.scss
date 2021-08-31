@@ -1,0 +1,19 @@
+@import '../helpers/variables';
+
+@font-face {
+    font-family: 'harmony';
+    src: url('/fonts/harmony.woff2') format('woff2'),
+        url('/fonts/harmony.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: fallback;
+}
+
+@font-face {
+    font-family: 'tenorsans';
+    src: url('/fonts/tenorsans.woff2') format('woff2'),
+        url('/fonts/tenorsans.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: fallback;
+}
