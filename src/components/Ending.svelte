@@ -28,6 +28,7 @@
 		@include breakpoint(tablet) {
 			margin: 0 64px;
 			padding-right: 0;
+			margin-top: 30px;
 			padding-top: 220px;
 		}
 		@include breakpoint(phone) {

@@ -14,17 +14,20 @@
 	.loader {
 		background-color: $background-color;
 		position: fixed;
-		width: 100%;
-		height: 100%;
+		width: 100vw;
+		height: 100vh;
+		overflow: hidden;
 		z-index: 20;
 		top: 0;
 		span {
 			font-family: $primary-font;
 			letter-spacing: 0.15em;
 			position: absolute;
-			top: 45%;
-			left: 50%;
-			transform: translate(-50%, -50%);
+			width: 100%;
+			height: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
 	}
 </style>
