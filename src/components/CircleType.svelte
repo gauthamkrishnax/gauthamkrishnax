@@ -39,7 +39,7 @@
 			animation: rotation 15s linear infinite;
 			animation-delay: 1s;
 			@include breakpoint(tablet) {
-				font-size: $XS;
+				font-size: $XXS;
 			}
 		}
 	}
@@ -48,6 +48,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		@include breakpoint(tablet) {
+			margin-left: 64px;
+			justify-content: flex-start;
+		}
 		div {
 			animation: rotation 15s linear infinite;
 			font-size: $L;

@@ -1,24 +1,28 @@
 <script>
 	import Flower from '../svg/flower.svelte';
 	import Footer from '../components/Footer.svelte';
-	let mail = 'gautham';
+	let mail = '8.gautham@pm.me';
 	const copyMail = () => {
-		var r = document.createRange();
-		r.selectNode(document.getElementById('mail'));
-		window.getSelection().removeAllRanges();
-		window.getSelection().addRange(r);
-		document.execCommand('copy');
-		window.getSelection().removeAllRanges();
-		alert('Unable to Open Mail Client - Mail copied');
+		mail = 'Mail ID Copied !';
+		window.open('mailto:8.gautham@pm.me', '_top');
+		setTimeout(() => {
+			mail = '8.gautham@pm.me';
+			var r = document.createRange();
+			r.selectNode(document.getElementById('mail'));
+			window.getSelection().removeAllRanges();
+			window.getSelection().addRange(r);
+			document.execCommand('copy');
+			window.getSelection().removeAllRanges();
+		}, 2000);
 	};
 </script>
 
 <template>
 	<section>
-		<p>I would love to hear from you !</p>
-		<a on:click={() => copyMail} rel="external" href="mailto:8.gautham@pm.me" target="_top">
-			<h1 id="mail" on:click={() => copyMail()}>8.gautham@pm.me</h1>
-		</a>
+		<span>I would love to hear from you ! </span>
+		<h1 title="📧 Open Mail Client / Copy Text" on:click={() => copyMail()} id="mail">
+			{mail}
+		</h1>
 		<Footer typew="ending" />
 		<Flower type="back" />
 	</section>
@@ -34,13 +38,16 @@
 		width: max-content;
 		margin: 0 auto;
 		@include breakpoint(tablet) {
+			text-align: left;
+			margin: 0 64px;
 			padding-right: 0;
-			padding-top: 200px;
+			padding-top: 220px;
 			font-size: $S;
 		}
 		@include breakpoint(phone) {
+			margin: 0 40px;
 			padding-right: 0;
-			padding-top: 120px;
+			padding-top: 130px;
 		}
 	}
 	h1 {
@@ -50,6 +57,10 @@
 		font-family: $primary-font;
 		font-size: $XXL;
 		cursor: pointer;
+		transition: all 0.15s ease-in;
+		&:hover {
+			color: $scroll;
+		}
 		@include breakpoint(tablet) {
 			// max-width: 400px;
 			margin: 0 auto;

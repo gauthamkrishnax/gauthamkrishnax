@@ -53,6 +53,7 @@
 		justify-content: center;
 		margin-top: 3em;
 		@include breakpoint(tablet) {
+			justify-content: flex-start;
 			margin-top: 1em;
 		}
 	}

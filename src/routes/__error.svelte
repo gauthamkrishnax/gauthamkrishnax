@@ -20,11 +20,14 @@
 		font-size: $M;
 		padding-right: 5em;
 		@include breakpoint(tablet) {
+			margin: 0 64px;
+			text-align: left;
 			padding-right: 0;
 			padding-top: 200px;
 			font-size: $S;
 		}
 		@include breakpoint(phone) {
+			margin: 0 40px;
 			padding-right: 0;
 			padding-top: 120px;
 		}
@@ -37,13 +40,13 @@
 		font-size: $XXL;
 		@include breakpoint(tablet) {
 			max-width: 400px;
-			margin: 0 auto;
+			// margin: 0 auto;
 			margin-top: 1em;
 			font-size: $XL;
 		}
 		@include breakpoint(phone) {
 			max-width: 200px;
-			margin: 0 auto;
+			// margin: 0 auto;
 			margin-top: 0.5em;
 			font-size: $L;
 		}

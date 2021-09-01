@@ -26,12 +26,14 @@
 		padding-right: 5em;
 		padding-top: 25vh;
 		@include breakpoint(tablet) {
+			margin: 0 64px;
 			padding-right: 0;
-			padding-top: 200px;
+			padding-top: 220px;
 		}
 		@include breakpoint(phone) {
+			margin: 0 40px;
 			padding-right: 0;
-			padding-top: 120px;
+			padding-top: 130px;
 		}
 	}
 	p {
