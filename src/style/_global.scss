@@ -32,6 +32,14 @@ body {
     font-family: $secondary-font;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
+#svelte {
+    height: 100%;
+}
+
 .hide {
     display: none;
 }

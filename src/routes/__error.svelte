@@ -1,24 +1,12 @@
 <script>
 	import Flower from '../svg/flower.svelte';
-	import Footer from '../components/Footer.svelte';
-	let mail = 'gautham';
-	const copyMail = () => {
-		var r = document.createRange();
-		r.selectNode(document.getElementById('mail'));
-		window.getSelection().removeAllRanges();
-		window.getSelection().addRange(r);
-		document.execCommand('copy');
-		window.getSelection().removeAllRanges();
-		alert('Unable to Open Mail Client - Mail copied');
-	};
+	import Footer from '../components/footer.svelte';
 </script>
 
 <template>
 	<section>
-		<p>I would love to hear from you !</p>
-		<a on:click={() => copyMail} rel="external" href="mailto:8.gautham@pm.me" target="_top">
-			<h1 id="mail" on:click={() => copyMail()}>8.gautham@pm.me</h1>
-		</a>
+		<p>Please check your URL or try after some time</p>
+		<h1>I am sorry, I think you are lost !</h1>
 		<Footer typew="ending" />
 		<Flower type="back" />
 	</section>
@@ -31,8 +19,6 @@
 		text-align: center;
 		font-size: $M;
 		padding-right: 5em;
-		width: max-content;
-		margin: 0 auto;
 		@include breakpoint(tablet) {
 			padding-right: 0;
 			padding-top: 200px;
@@ -49,15 +35,14 @@
 		margin-top: 0.5em;
 		font-family: $primary-font;
 		font-size: $XXL;
-		cursor: pointer;
 		@include breakpoint(tablet) {
-			// max-width: 400px;
+			max-width: 400px;
 			margin: 0 auto;
 			margin-top: 1em;
 			font-size: $XL;
 		}
 		@include breakpoint(phone) {
-			// max-width: 200px;
+			max-width: 200px;
 			margin: 0 auto;
 			margin-top: 0.5em;
 			font-size: $L;

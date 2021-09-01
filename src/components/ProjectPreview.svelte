@@ -33,7 +33,7 @@
 						</h4>
 						<p>
 							<span
-								><a href="/">Visit Site</a><Arrow
+								><a href={project.link}>Visit Site</a><Arrow
 									direction="right"
 									--left-margin=".5em"
 									--width-size="15px"
@@ -61,14 +61,16 @@
 		position: relative;
 		// overflow: hidden;
 		height: 88vh;
-		padding: 10vh 120px;
+		padding: 5em 120px;
 		@include breakpoint(tablet) {
-			height: 90vh;
-			padding: 100px 64px;
+			min-height: 100vh;
+			height: 100%;
+			padding: 160px 64px;
 		}
 		@include breakpoint(phone) {
-			height: 97vh;
-			padding: 70px 40px;
+			// height: 97vh;
+			height: 100%;
+			padding: 115px 40px;
 		}
 		.container {
 			display: grid;
@@ -90,7 +92,7 @@
 					font-size: $XL;
 					letter-spacing: 0.15em;
 					@include breakpoint(tablet) {
-						top: 40px;
+						top: 90px;
 						left: -65px;
 						font-size: $L;
 					}
@@ -214,8 +216,8 @@
 		.previewContainer {
 			position: absolute;
 			overflow: hidden;
-			height: 100vh;
-			width: 500px;
+			// height: 100%;
+			width: 50vw;
 			right: 0;
 			bottom: 0;
 			top: 0;
@@ -231,18 +233,20 @@
 				}
 			}
 			.preview1 {
-				right: -150px;
+				right: -15%;
+				width: 70%;
 				@include breakpoint(tablet) {
 					width: 400px;
+					right: -150px;
 				}
 				@include breakpoint(phone) {
 					width: 250px;
 				}
 			}
 			.preview2 {
-				right: 100px;
+				right: 15%;
 				bottom: 160px;
-				width: 400px;
+				width: 45%;
 				@include breakpoint(tablet) {
 					width: 250px;
 					right: 0px;

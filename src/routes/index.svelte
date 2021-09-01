@@ -7,6 +7,7 @@
 	import { projects } from '../Projects/ProjectDetails';
 	import { onMount } from 'svelte';
 	import ProjectPreview from '../components/ProjectPreview.svelte';
+	import Ending from '../components/Ending.svelte';
 	let loader = '';
 	let content = 'hide';
 	onMount(() => {
@@ -48,6 +49,7 @@
 		<Flower />
 	</main>
 	<ProjectPreview project={projects[0]} no={1} />
+	<Ending />
 </template>
 
 <style lang="scss">
