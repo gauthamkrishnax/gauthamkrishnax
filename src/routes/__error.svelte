@@ -1,6 +1,6 @@
 <script>
 	import Flower from '../svg/flower.svelte';
-	import Footer from '../components/footer.svelte';
+	import Footer from '../components/Footer.svelte';
 </script>
 
 <template>
