@@ -17,6 +17,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Gautham Krishna - Contact</title>
+</svelte:head>
+
 <template>
 	<section>
 		<span>I would love to hear from you ! </span>
@@ -48,6 +52,9 @@
 			margin: 0 40px;
 			padding-right: 0;
 			padding-top: 130px;
+		}
+		span {
+			color: $gray2;
 		}
 	}
 	h1 {

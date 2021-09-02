@@ -28,7 +28,11 @@
 					</article>
 					<article class="links">
 						<h4>
-							<span><a href="/">Learn more</a><Arrow direction="right" --left-margin=".5em" /></span
+							<span
+								><a href={project.route}>Learn more</a><Arrow
+									direction="right"
+									--left-margin=".5em"
+								/></span
 							>
 						</h4>
 						<p>

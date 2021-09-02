@@ -34,6 +34,9 @@
 			padding-right: 0;
 			padding-top: 120px;
 		}
+		p {
+			color: $gray2;
+		}
 	}
 	h1 {
 		position: relative;

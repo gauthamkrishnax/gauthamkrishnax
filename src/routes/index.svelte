@@ -17,7 +17,7 @@
 </script>
 
 <svelte:head>
-	<title>Gautham Krishna - Portfolio - Home</title>
+	<title>Gautham Krishna - Home</title>
 </svelte:head>
 
 <template>
