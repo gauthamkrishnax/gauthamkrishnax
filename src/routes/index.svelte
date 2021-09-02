@@ -67,7 +67,7 @@
 			grid-template-rows: 1.5fr 1fr;
 		}
 		@include breakpoint(phone) {
-			margin-top: 20px;
+			margin-top: 30px;
 		}
 		.hero {
 			margin: 8vh 20px 0 120px;
