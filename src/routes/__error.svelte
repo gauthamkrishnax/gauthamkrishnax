@@ -19,7 +19,10 @@
 		text-align: center;
 		font-size: $M;
 		padding-right: 5em;
+		width: 80%;
+		margin: 0 auto;
 		@include breakpoint(tablet) {
+			width: 100%;
 			margin: 0 64px;
 			text-align: left;
 			padding-right: 0;
@@ -30,6 +33,9 @@
 			margin: 0 40px;
 			padding-right: 0;
 			padding-top: 120px;
+		}
+		p {
+			color: $gray2;
 		}
 	}
 	h1 {

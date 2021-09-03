@@ -5,7 +5,9 @@
 
 <template>
 	<header>
-		<a class="logo" href="/"> <h3>GAUTHAM KRISHNA</h3></a>
+		<!-- <a class="logo" href="/">  -->
+		<h3>GAUTHAM KRISHNA</h3>
+		<!-- </a> -->
 		<nav>
 			<ul class={`${$page.path}P`.slice(1)}>
 				<a href="/"><li>HOME</li></a>

@@ -34,7 +34,7 @@
 		@include breakpoint(phone) {
 			margin: 0 40px;
 			padding-right: 0;
-			padding-top: 150px;
+			padding-top: 200px;
 			padding-bottom: 100px;
 			margin-bottom: 10px;
 		}

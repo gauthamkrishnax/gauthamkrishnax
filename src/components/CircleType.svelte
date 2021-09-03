@@ -12,12 +12,14 @@
 </script>
 
 <template>
+	<!--googleoff: index-->
 	<div class="container {type}">
 		<div>
 			<span bind:this={circle}>{typeText}</span>
 		</div>
 		<Arrow --left-margin="-10px" {direction} />
 	</div>
+	<!--googleon: index-->
 </template>
 
 <style lang="scss">

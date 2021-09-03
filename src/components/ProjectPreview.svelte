@@ -28,7 +28,11 @@
 					</article>
 					<article class="links">
 						<h4>
-							<span><a href="/">Learn more</a><Arrow direction="right" --left-margin=".5em" /></span
+							<span
+								><a href={project.route}>Learn more</a><Arrow
+									direction="right"
+									--left-margin=".5em"
+								/></span
 							>
 						</h4>
 						<p>
@@ -159,7 +163,7 @@
 						color: $gray1;
 						margin-bottom: 0.2em;
 						@include breakpoint(phone) {
-							font-size: $N;
+							font-size: $M;
 						}
 					}
 					p {
@@ -220,7 +224,7 @@
 			width: 50vw;
 			right: 0;
 			bottom: 0;
-			top: 0;
+			top: -12vh;
 			z-index: 0;
 			img {
 				transform: rotate(30deg);
