@@ -7,11 +7,9 @@
 	import { onMount } from 'svelte';
 	import Ending from '../components/Ending.svelte';
 	import { devTools, designTools } from '../Projects/ToolsandTech';
-	let loader = '';
 	let content = 'hide';
 	onMount(() => {
-		loader = 'hide';
-		content = '';
+		content = 'show';
 	});
 </script>
 
@@ -20,12 +18,14 @@
 </svelte:head>
 
 <template>
-	<Loader {loader} />
+	{#if content === 'hide'}
+		<Loader />
+	{/if}
 	<Footer />
 	<CircleType
 		typeText="| &ensp; PORTFOLIO &ensp; || &ensp; SCROLL DOWN &ensp; || &ensp; MY WORKS &ensp; |"
 	/>
-	<main class={content}>
+	<main>
 		<div class="hero">
 			<h2>About</h2>
 			<div>

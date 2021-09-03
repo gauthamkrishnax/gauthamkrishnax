@@ -64,6 +64,8 @@
 		position: relative;
 		// overflow: hidden;
 		height: 88vh;
+		min-height: 100vh;
+		height: 100%;
 		padding: 5em 120px;
 		@include breakpoint(tablet) {
 			min-height: 100vh;
@@ -79,9 +81,11 @@
 			display: grid;
 			position: relative;
 			z-index: 5;
+			margin-top: 3em;
 			grid-template-columns: 1fr 1fr 1fr;
 			grid-template-rows: auto 1fr;
 			@include breakpoint(tablet) {
+				margin-top: 0;
 				grid-template-columns: 1fr 1fr;
 				grid-template-rows: auto 1fr;
 			}

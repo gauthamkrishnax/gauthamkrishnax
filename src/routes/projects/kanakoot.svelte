@@ -8,11 +8,9 @@
 	import Link from '../../svg/link.svelte';
 	import { onMount } from 'svelte';
 	let project = projects[0];
-	let loader = '';
 	let content = 'hide';
 	onMount(() => {
-		loader = 'hide';
-		content = '';
+		content = 'show';
 	});
 </script>
 
@@ -21,13 +19,15 @@
 </svelte:head>
 
 <template>
-	<Loader {loader} />
+	{#if content === 'hide'}
+		<Loader />
+	{/if}
 	<Footer />
 	<CircleType
 		typeText="| &ensp; PORTFOLIO &ensp; || &ensp; SCROLL DOWN &ensp; || &ensp; MY WORKS &ensp; |"
 	/>
 	<main>
-		<div class="{content} content">
+		<div class="content">
 			<h1>{project.name}</h1>
 			<span class="role">BRANDING | UX DESIGN | DEVELOPMENT</span>
 			<section class="hero">

@@ -30,10 +30,12 @@ body {
     min-height: 100vh;
     background-color: $background-color;
     font-family: $secondary-font;
+    overflow-x: hidden;
 }
 
 html {
     scroll-behavior: smooth;
+
 
 }
 
@@ -41,9 +43,7 @@ html {
     height: 100%;
 }
 
-.hide {
-    display: none;
-}
+
 
 a {
     &:hover {

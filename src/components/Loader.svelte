@@ -1,11 +1,12 @@
 <script>
-	export let pageName = 'GAUTHAM KRISHNA',
-		loader;
+	export let pageName = 'GAUTHAM KRISHNA';
 </script>
 
 <template>
-	<div class="{loader} loader">
-		<span>{pageName}</span>
+	<div class="loader">
+		<h3>
+			{pageName}
+		</h3>
 	</div>
 </template>
 
@@ -14,20 +15,19 @@
 	.loader {
 		background-color: $background-color;
 		position: fixed;
-		width: 100vw;
-		height: 100vh;
 		overflow: hidden;
-		z-index: 20;
+		z-index: 50;
 		top: 0;
-		span {
+		bottom: 0;
+		left: 0;
+		right: 0;
+		h3 {
 			font-family: $primary-font;
 			letter-spacing: 0.15em;
 			position: absolute;
 			width: 100%;
-			height: 100%;
-			display: flex;
-			justify-content: center;
-			align-items: center;
+			text-align: center;
+			top: 45%;
 		}
 	}
 </style>

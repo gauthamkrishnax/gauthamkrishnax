@@ -11,14 +11,11 @@
 	import ProjectPreview from '../components/ProjectPreview.svelte';
 	import Ending from '../components/Ending.svelte';
 
-	let loader = '';
 	let content = 'hide';
 	let gridContainer;
 	onMount(() => {
-		const q = gsap.utils.selector(gridContainer);
-		loader = 'hide';
-		content = '';
-
+		content = 'show';
+		let q = gsap.utils.selector(gridContainer);
 		//ANIMATION
 
 		gsap.to(q('.noiseBG'), {
@@ -41,36 +38,40 @@
 </svelte:head>
 
 <template>
-	<Loader {loader} />
+	{#if content === 'hide'}
+		<Loader />
+	{/if}
 	<Footer />
 	<CircleType
 		typeText="| &ensp; PORTFOLIO &ensp; || &ensp; SCROLL DOWN &ensp; || &ensp; MY WORKS &ensp; |"
 	/>
-	<main class={content}>
-		<div class="hero">
-			<h1>Whatever the problem, being part of the solution.</h1>
-			<div>
-				<span>Designer</span>
-				<Star />
-				<span>Developer</span>
+	<div class={content}>
+		<main>
+			<div class="hero">
+				<h1>Whatever the problem, being part of the solution.</h1>
+				<div>
+					<span>Designer</span>
+					<Star />
+					<span>Developer</span>
+				</div>
 			</div>
-		</div>
-		<div bind:this={gridContainer} class="hero-illu">
-			<div />
-			<div />
-			<div />
-			<div />
-			<div />
-			<div class="noiseBG changePdivTwo" />
-			<div class="noiseBG changePdivOne" />
-			<div />
-			<div />
-		</div>
-		<Flower />
-	</main>
-	<ProjectPreview project={projects[0]} no={1} />
-	<ProjectPreview project={projects[0]} no={1} />
-	<Ending />
+			<div bind:this={gridContainer} class="hero-illu">
+				<div />
+				<div />
+				<div />
+				<div />
+				<div />
+				<div class="noiseBG changePdivTwo" />
+				<div class="noiseBG changePdivOne" />
+				<div />
+				<div />
+			</div>
+			<Flower />
+		</main>
+		<ProjectPreview project={projects[0]} no={1} />
+		<ProjectPreview project={projects[0]} no={1} />
+		<Ending />
+	</div>
 </template>
 
 <style lang="scss">
