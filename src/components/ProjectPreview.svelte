@@ -28,20 +28,19 @@
 					</article>
 					<article class="links">
 						<h4>
-							<span
-								><a href={project.route}>Learn more</a><Arrow
-									direction="right"
-									--left-margin=".5em"
-								/></span
+							<a href={project.route}
+								><span>Learn more<Arrow direction="right" --left-margin=".5em" /></span></a
 							>
 						</h4>
 						<p>
-							<span
-								><a href={project.link}>Visit Site</a><Arrow
-									direction="right"
-									--left-margin=".5em"
-									--width-size="15px"
-								/></span
+							<a href={project.link}
+								><span
+									>Visit Site<Arrow
+										direction="right"
+										--left-margin=".5em"
+										--width-size="15px"
+									/></span
+								></a
 							>
 						</p>
 					</article>
@@ -193,9 +192,15 @@
 					span {
 						display: flex;
 						align-items: center;
+						&:hover {
+							transform: translateX(0.1em);
+						}
 					}
 					a {
 						color: $gray1;
+						&:hover {
+							color: $scroll;
+						}
 					}
 					grid-column: 1 / 2;
 					p {

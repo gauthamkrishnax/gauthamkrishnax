@@ -44,3 +44,11 @@ html {
 .hide {
     display: none;
 }
+
+a {
+    &:hover {
+        opacity: .8;
+        transform: translateY(-.1em);
+        transition: all .1s ease-in;
+    }
+}

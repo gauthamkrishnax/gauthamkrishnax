@@ -1,18 +1,38 @@
 <script>
+	import { gsap, SteppedEase } from 'gsap';
+	import { onMount } from 'svelte';
+
 	import Star from '../svg/star.svelte';
 	import Flower from '../svg/flower.svelte';
 	import Loader from '../components/Loader.svelte';
 	import Footer from '../components/Footer.svelte';
 	import CircleType from '../components/CircleType.svelte';
 	import { projects } from '../Projects/ProjectDetails';
-	import { onMount } from 'svelte';
 	import ProjectPreview from '../components/ProjectPreview.svelte';
 	import Ending from '../components/Ending.svelte';
+
 	let loader = '';
 	let content = 'hide';
+	let gridContainer;
 	onMount(() => {
+		const q = gsap.utils.selector(gridContainer);
 		loader = 'hide';
 		content = '';
+
+		//ANIMATION
+
+		gsap.to(q('.noiseBG'), {
+			duration: 0.03,
+			repeat: -1,
+			onRepeat: repeatStatic,
+			ease: SteppedEase.config(1)
+		});
+		function repeatStatic() {
+			gsap.set(q('.noiseBG'), {
+				backgroundPosition:
+					Math.floor(Math.random() * 100) + 1 + '% ' + Math.floor(Math.random() * 10) + 1 + '%'
+			});
+		}
 	});
 </script>
 
@@ -35,19 +55,20 @@
 				<span>Developer</span>
 			</div>
 		</div>
-		<div class="hero-illu">
+		<div bind:this={gridContainer} class="hero-illu">
 			<div />
 			<div />
 			<div />
 			<div />
 			<div />
-			<div />
-			<div />
+			<div class="noiseBG changePdivTwo" />
+			<div class="noiseBG changePdivOne" />
 			<div />
 			<div />
 		</div>
 		<Flower />
 	</main>
+	<ProjectPreview project={projects[0]} no={1} />
 	<ProjectPreview project={projects[0]} no={1} />
 	<Ending />
 </template>
@@ -106,6 +127,18 @@
 			display: grid;
 			grid-template-columns: 1fr 1fr 1fr;
 			grid-template-rows: 1fr 2fr 2fr;
+			.changePdivOne {
+				@include breakpoint(tablet) {
+					grid-column: 2 / 3;
+					grid-row: 2 / 3;
+				}
+			}
+			.changePdivTwo {
+				@include breakpoint(tablet) {
+					grid-column: 3 / 4;
+					grid-row: 1 / 2;
+				}
+			}
 			@include breakpoint(tablet) {
 				opacity: 30%;
 				top: auto;
@@ -135,6 +168,16 @@
 		@include breakpoint(phone) {
 			font-size: $L;
 			line-height: 30px;
+		}
+	}
+	.noiseBG {
+		mix-blend-mode: multiply;
+		background-image: url('/noise.png');
+		opacity: 0.15;
+		height: 100%;
+		width: 100%;
+		@include breakpoint(tablet) {
+			opacity: 0.3;
 		}
 	}
 </style>
