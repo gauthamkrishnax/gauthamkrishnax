@@ -27,7 +27,13 @@
 		<h1 title="📧 Open Mail Client / Copy Text" on:click={() => copyMail()} id="mail">
 			{mail}
 		</h1>
-		<Footer typew="ending" />
+		<nav class="ending">
+			<ul>
+				<a rel="external" href="https://www.behance.net/gauthamkrishnax"><li>Behance</li></a>
+				<a rel="external" href="https://github.com/gauthamkrishnax"><li>Github</li></a>
+				<a rel="external" href="https://www.linkedin.com/in/gauthamkrishnas/"><li>LinkedIn</li></a>
+			</ul>
+		</nav>
 		<Flower type="back" />
 	</section>
 </template>
@@ -79,6 +85,35 @@
 			margin: 0 auto;
 			margin-top: 0.5em;
 			font-size: $L;
+		}
+	}
+	.ending {
+		ul {
+			display: flex;
+			z-index: 10;
+			a {
+				color: $gray1;
+				@include breakpoint(tablet) {
+					font-size: $N;
+				}
+				@include breakpoint(phone) {
+					font-size: $XS;
+				}
+			}
+			a:nth-child(2) {
+				margin: 0 40px;
+				@include breakpoint(tablet) {
+					margin: 0 20px;
+				}
+			}
+		}
+		position: static;
+		display: flex;
+		justify-content: center;
+		margin-top: 3em;
+		@include breakpoint(tablet) {
+			justify-content: flex-start;
+			margin-top: 2em;
 		}
 	}
 </style>

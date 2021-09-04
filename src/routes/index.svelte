@@ -12,12 +12,20 @@
 	import Ending from '../components/Ending.svelte';
 
 	let content = 'hide';
-	let gridContainer;
+	let gridContainer, hero;
 	onMount(() => {
 		content = 'show';
 		let q = gsap.utils.selector(gridContainer);
-		//ANIMATION
 
+		//ANIMATION
+		var staticAnime = gsap.timeline();
+		var mainAnime = gsap.timeline();
+		gsap.from(hero, {
+			opacity: 0,
+			x: -30,
+			duration: 1,
+			delay: 0.5
+		});
 		gsap.to(q('.noiseBG'), {
 			duration: 0.03,
 			repeat: -1,
@@ -30,6 +38,29 @@
 					Math.floor(Math.random() * 100) + 1 + '% ' + Math.floor(Math.random() * 10) + 1 + '%'
 			});
 		}
+		staticAnime
+			.from(q('.changePdivTwo'), {
+				opacity: 0.5,
+				width: 0,
+				duration: 1
+			})
+			.from(
+				q('.changePdivOne'),
+				{
+					opacity: 0.5,
+					height: 0,
+					duration: 1
+				},
+				'>-0.4'
+			);
+		mainAnime.to(gridContainer, {
+			scrollTrigger: {
+				trigger: gridContainer,
+				start: 'end top',
+				scrub: true
+			},
+			opacity: 0
+		});
 	});
 </script>
 
@@ -47,7 +78,7 @@
 	/>
 	<div class={content}>
 		<main>
-			<div class="hero">
+			<div bind:this={hero} class="hero">
 				<h1>Whatever the problem, being part of the solution.</h1>
 				<div>
 					<span>Designer</span>

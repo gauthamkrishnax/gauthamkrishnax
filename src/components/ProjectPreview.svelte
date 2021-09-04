@@ -3,22 +3,76 @@
 
 	export let project;
 	export let no;
+	let container;
+
+	import { gsap } from 'gsap';
+	import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
+	import { onMount } from 'svelte';
+
+	gsap.registerPlugin(ScrollTrigger);
+
+	onMount(() => {
+		let q = gsap.utils.selector(container);
+		var mainAnime = gsap.timeline();
+		var imageAnime = gsap.timeline();
+		gsap.from(q('.img'), {
+			scrollTrigger: {
+				trigger: container,
+				start: 'end top',
+				toggleActions: 'restart none none none'
+				// markers: true
+			},
+			y: -200,
+			rotate: 35,
+			opacity: 0,
+			stagger: 0.5,
+			ease: 'elastic.out(1.2, 1)',
+			duration: 1
+		});
+
+		mainAnime
+			.from(q('.projectTitle'), {
+				opacity: 0
+			})
+			.from(q('.projectNo'), {
+				y: 20,
+				opacity: 0
+			})
+			.from(q('.arti'), {
+				x: 10,
+				opacity: 0,
+				stagger: 0.5
+			})
+			.to(q('.img'), {
+				bottom: 300
+			}),
+			'>-2';
+
+		ScrollTrigger.create({
+			animation: mainAnime,
+			trigger: container,
+			start: 'top top',
+			end: '+=2500',
+			scrub: true,
+			pin: true
+		});
+	});
 </script>
 
 <template>
-	<section class="{project.name} top">
+	<section bind:this={container} class="{project.name} top">
 		<div class="container">
-			<h2>{project.name}</h2>
+			<h2 class="projectTitle">{project.name}</h2>
 			<div class="content">
 				<div class="projectNo">
 					<h3>PROJECT-{no}</h3>
 				</div>
 				<section>
-					<article>
+					<article class="arti">
 						<h5>About</h5>
 						<p>{project.about}</p>
 					</article>
-					<article>
+					<article class="arti">
 						<h5>Role</h5>
 						<ul>
 							{#each project.role as role}
@@ -26,7 +80,7 @@
 							{/each}
 						</ul>
 					</article>
-					<article class="links">
+					<article class="links arti">
 						<h4>
 							<a href={project.route}
 								><span>Learn more<Arrow direction="right" --left-margin=".5em" /></span></a
@@ -44,7 +98,7 @@
 							>
 						</p>
 					</article>
-					<article class="progress">
+					<article class="progress arti">
 						<h5>Progress</h5>
 						<p>{project.progress}</p>
 					</article>
@@ -52,8 +106,8 @@
 			</div>
 		</div>
 		<div class="previewContainer">
-			<img class="preview2" src={project.previewImage[1]} alt="Screenshot" />
-			<img class="preview1" src={project.previewImage[0]} alt="Screenshot" />
+			<img class="preview2 img" src={project.previewImage[1]} alt="Screenshot" />
+			<img class="preview1 img" src={project.previewImage[0]} alt="Screenshot" />
 		</div>
 	</section>
 </template>

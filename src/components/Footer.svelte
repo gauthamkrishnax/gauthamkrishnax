@@ -1,9 +1,34 @@
 <script>
-	export let typew = 'footer';
+	import { gsap } from 'gsap';
+	import { onMount } from 'svelte';
+	import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
+
+	import { ending } from './Ending.svelte';
+
+	gsap.registerPlugin(ScrollTrigger);
+
+	let footer;
+	onMount(() => {
+		gsap.to(footer, {
+			scrollTrigger: {
+				trigger: ending,
+				scrub: 1,
+				start: 'top bottom',
+				end: 'center'
+			},
+			opacity: 0,
+			y: 100,
+			duration: 1
+		});
+		gsap.from(footer, {
+			opacity: 0,
+			y: 100
+		});
+	});
 </script>
 
 <template>
-	<nav class={typew}>
+	<nav bind:this={footer} class="footer">
 		<ul>
 			<a rel="external" href="https://www.behance.net/gauthamkrishnax"><li>Behance</li></a>
 			<a rel="external" href="https://github.com/gauthamkrishnax"><li>Github</li></a>
@@ -45,16 +70,6 @@
 		@include breakpoint(phone) {
 			bottom: 20px;
 			left: 40px;
-		}
-	}
-	.ending {
-		position: static;
-		display: flex;
-		justify-content: center;
-		margin-top: 3em;
-		@include breakpoint(tablet) {
-			justify-content: flex-start;
-			margin-top: 2em;
 		}
 	}
 </style>

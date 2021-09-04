@@ -2,18 +2,45 @@
 	import CircleType from 'circletype';
 	import { onMount } from 'svelte';
 	import Arrow from '../svg/arrow.svelte';
+
+	import { gsap } from 'gsap';
+	import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
+
+	import { ending } from './Ending.svelte';
+
+	gsap.registerPlugin(ScrollTrigger);
+
 	export let typeText,
 		type = 'footer',
 		direction = '';
-	let circle;
+	let circle, container;
+
 	onMount(() => {
+		console.log(ending);
 		new CircleType(circle);
+		if (type == 'footer') {
+			gsap.to(container, {
+				scrollTrigger: {
+					trigger: ending,
+					scrub: 1,
+					start: 'top bottom',
+					end: 'center'
+				},
+				opacity: 0,
+				y: 200,
+				duration: 1
+			});
+		}
+		gsap.from(container, {
+			opacity: 0,
+			y: 100
+		});
 	});
 </script>
 
 <template>
 	<!--googleoff: index-->
-	<div class="container {type}">
+	<div bind:this={container} class="container {type}">
 		<div>
 			<span bind:this={circle}>{typeText}</span>
 		</div>
