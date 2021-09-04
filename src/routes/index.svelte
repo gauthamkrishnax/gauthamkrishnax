@@ -69,7 +69,6 @@
 			<Flower />
 		</main>
 		<ProjectPreview project={projects[0]} no={1} />
-		<ProjectPreview project={projects[0]} no={1} />
 		<Ending />
 	</div>
 </template>

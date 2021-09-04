@@ -44,7 +44,9 @@
 					<a href="#development">
 						<li><span>Development <Arrow --left-margin="10px" direction="right" /></span></li></a
 					>
-					<a href="#resume">
+					<a
+						href="https://drive.google.com/file/d/1axri1Y6nb8wD2g3ygU47SbE7LHjnnGqe/view?usp=sharing"
+					>
 						<li><span>Resume <Arrow --left-margin="10px" direction="right" /></span></li></a
 					>
 				</nav>
