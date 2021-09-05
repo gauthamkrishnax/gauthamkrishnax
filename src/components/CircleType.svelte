@@ -3,8 +3,8 @@
 	import { onMount } from 'svelte';
 	import Arrow from '../svg/arrow.svelte';
 
-	import { gsap } from 'gsap';
-	import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
+	import { gsap } from 'gsap/dist/gsap.js';
+	import { ScrollTrigger } from 'gsap/dist/ScrollTrigger.js';
 
 	import { ending } from './Ending.svelte';
 

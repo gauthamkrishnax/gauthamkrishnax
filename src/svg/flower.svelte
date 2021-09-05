@@ -1,7 +1,9 @@
 <script>
 	export let type = '';
-	import { gsap } from 'gsap';
-	import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
+
+	import { gsap } from 'gsap/dist/gsap.js';
+	import { ScrollTrigger } from 'gsap/dist/ScrollTrigger.js';
+
 	import { onMount } from 'svelte';
 	gsap.registerPlugin(ScrollTrigger);
 	let flower;

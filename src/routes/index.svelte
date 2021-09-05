@@ -1,5 +1,7 @@
 <script>
-	import { gsap, SteppedEase } from 'gsap';
+	import { gsap } from 'gsap/dist/gsap.js';
+	import { SteppedEase } from 'gsap/dist/gsap.js';
+	import { ScrollTrigger } from 'gsap/dist/ScrollTrigger.js';
 	import { onMount } from 'svelte';
 
 	import Star from '../svg/star.svelte';
@@ -13,6 +15,9 @@
 
 	let content = 'hide';
 	let gridContainer, hero;
+
+	gsap.registerPlugin(ScrollTrigger);
+
 	onMount(() => {
 		content = 'show';
 		let q = gsap.utils.selector(gridContainer);
