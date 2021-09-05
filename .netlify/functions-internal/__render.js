@@ -7613,7 +7613,24 @@ var user_hooks = /* @__PURE__ */ Object.freeze({
   __proto__: null,
   [Symbol.toStringTag]: "Module"
 });
-var template = ({ head, body }) => '<!DOCTYPE html>\r\n<html lang="en">\r\n\r\n<head>\r\n	<meta charset="utf-8" />\r\n	<link rel="icon" href="/favicon.png" />\r\n	<meta name="viewport" content="width=device-width, initial-scale=1" />\r\n	' + head + '\r\n</head>\r\n\r\n<body>\r\n	<div id="svelte">' + body + "</div>\r\n</body>\r\n\r\n</html>";
+var template = ({ head, body }) => `<!DOCTYPE html>\r
+<html lang="en">\r
+\r
+<head>\r
+	<!-- Google Tag Manager -->\r
+	<script>(function (w, d, s, l, i) {\r
+			w[l] = w[l] || []; w[l].push({\r
+				'gtm.start':\r
+					new Date().getTime(), event: 'gtm.js'\r
+			}); var f = d.getElementsByTagName(s)[0],\r
+				j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =\r
+					'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);\r
+		})(window, document, 'script', 'dataLayer', 'GTM-M24R49C');<\/script>\r
+	<!-- End Google Tag Manager -->\r
+	<meta charset="utf-8" />\r
+	<link rel="icon" href="/favicon.png" />\r
+	<meta name="viewport" content="width=device-width, initial-scale=1" />\r
+	` + head + '\r\n</head>\r\n\r\n<body>\r\n	<!-- Google Tag Manager (noscript) -->\r\n	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M24R49C" height="0" width="0"\r\n			style="display:none;visibility:hidden"></iframe></noscript>\r\n	<!-- End Google Tag Manager (noscript) -->\r\n	<div id="svelte">' + body + "</div>\r\n</body>\r\n\r\n</html>";
 var options = null;
 var default_settings = { paths: { "base": "", "assets": "" } };
 function init(settings = default_settings) {

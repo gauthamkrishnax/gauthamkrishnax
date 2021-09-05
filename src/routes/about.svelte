@@ -19,6 +19,10 @@
 
 <svelte:head>
 	<title>Gautham Krishna - About</title>
+	<meta
+		name="description"
+		content="Gautham Krishna (Portfolio - About) - developer and designer | Whatever the problem, being part of the solution | Kerala, India. "
+	/>
 </svelte:head>
 
 <template>

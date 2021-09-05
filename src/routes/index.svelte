@@ -80,6 +80,10 @@
 
 <svelte:head>
 	<title>Gautham Krishna - Home</title>
+	<meta
+		name="description"
+		content="Gautham Krishna (Portfolio) - developer and designer | Whatever the problem, being part of the solution | Kerala, India. "
+	/>
 </svelte:head>
 
 <template>
