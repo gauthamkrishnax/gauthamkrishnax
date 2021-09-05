@@ -1,3 +1,7 @@
+<script context="module">
+	export const prerender = true;
+</script>
+
 <script>
 	import Loader from '../components/Loader.svelte';
 	import Footer from '../components/Footer.svelte';

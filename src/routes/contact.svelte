@@ -1,3 +1,7 @@
+<script context="module">
+	export const prerender = true;
+</script>
+
 <script>
 	import Flower from '../svg/flower.svelte';
 	import Footer from '../components/Footer.svelte';

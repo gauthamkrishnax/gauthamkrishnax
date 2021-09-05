@@ -1,8 +1,14 @@
+<script context="module">
+	export const prerender = true;
+</script>
+
 <script>
 	import { gsap } from 'gsap/dist/gsap.js';
 	import { SteppedEase } from 'gsap/dist/gsap.js';
 	import { ScrollTrigger } from 'gsap/dist/ScrollTrigger.js';
 	import { onMount } from 'svelte';
+
+	import noise from '../assets/noise.png';
 
 	import Star from '../svg/star.svelte';
 	import Flower from '../svg/flower.svelte';
@@ -36,6 +42,9 @@
 			repeat: -1,
 			onRepeat: repeatStatic,
 			ease: SteppedEase.config(1)
+		});
+		gsap.set(q('.noiseBG'), {
+			backgroundImage: `url(${noise})`
 		});
 		function repeatStatic() {
 			gsap.set(q('.noiseBG'), {
@@ -208,7 +217,6 @@
 	}
 	.noiseBG {
 		mix-blend-mode: multiply;
-		background-image: url('/noise.png');
 		opacity: 0.15;
 		height: 100%;
 		width: 100%;
