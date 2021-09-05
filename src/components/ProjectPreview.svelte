@@ -19,7 +19,7 @@
 			scrollTrigger: {
 				trigger: container,
 				start: 'end top',
-				toggleActions: 'restart none none none'
+				toggleActions: 'play none none reset'
 				// markers: true
 			},
 			y: -200,
@@ -54,6 +54,7 @@
 			start: 'top top',
 			end: '+=2500',
 			scrub: true,
+			pinSpacing: 'margin',
 			pin: true
 		});
 	});
@@ -117,7 +118,7 @@
 		@import '../style/helpers/variables';
 		position: relative;
 		// overflow: hidden;
-		height: 88vh;
+		// height: 88vh;
 		min-height: 100vh;
 		height: 100%;
 		padding: 5em 120px;

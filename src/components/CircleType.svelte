@@ -16,18 +16,16 @@
 	let circle, container;
 
 	onMount(() => {
-		console.log(ending);
 		new CircleType(circle);
 		if (type == 'footer') {
 			gsap.to(container, {
 				scrollTrigger: {
 					trigger: ending,
 					scrub: 1,
-					start: 'top bottom',
-					end: 'center'
+					start: 'top bottom'
 				},
 				opacity: 0,
-				y: 200,
+				y: 250,
 				duration: 1
 			});
 		}

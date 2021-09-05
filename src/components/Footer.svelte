@@ -8,13 +8,13 @@
 	gsap.registerPlugin(ScrollTrigger);
 
 	let footer;
+
 	onMount(() => {
 		gsap.to(footer, {
 			scrollTrigger: {
 				trigger: ending,
 				scrub: 1,
-				start: 'top bottom',
-				end: 'center'
+				start: 'top bottom'
 			},
 			opacity: 0,
 			y: 100,
