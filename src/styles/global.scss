@@ -1,0 +1,26 @@
+@import './reset';
+@import './variables';
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scrollbar-width: none;
+}
+
+html,
+body {
+    color: $light-1;
+    font-family: $font-normal;
+    font-weight: normal;
+    background-color: $dark-1;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+
+@import './typography';
+@import './layouts';
