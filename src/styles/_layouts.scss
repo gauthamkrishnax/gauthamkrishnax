@@ -1,0 +1,14 @@
+main {
+    display: flex;
+    overflow-x: hidden;
+
+    @include breakpoint(tablet) {
+        display: block;
+        overflow-x: hidden;
+    }
+}
+
+section.main {
+    min-width: 100%;
+    min-height: 100vh;
+}

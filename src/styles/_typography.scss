@@ -1,0 +1,57 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: $font-bold;
+    font-weight: bolder;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    font-size: 3.5rem;
+}
+
+h2 {
+    font-size: 2.5rem;
+}
+
+h3 {
+    font-size: 2rem;
+
+}
+
+h4 {
+    font-size: 1.8rem;
+    letter-spacing: .02rem;
+}
+
+h5 {
+    font-size: 1.5rem;
+    letter-spacing: .02rem;
+}
+
+h6 {
+    font-size: 1.2rem;
+    letter-spacing: .02rem;
+
+}
+
+p,
+span {
+    font-family: $font-normal;
+    font-weight: normal;
+    font-size: 1rem;
+    letter-spacing: .025rem;
+    margin-bottom: .4em;
+}
+
+strong {
+    font-family: $font-bold;
+    font-weight: bolder;
+}
+
+em {
+    font-style: italic;
+}
