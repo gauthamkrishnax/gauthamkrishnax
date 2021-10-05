@@ -7,14 +7,21 @@
 
 html {
     scrollbar-width: none;
+    scroll-behavior: smooth;
 }
 
 html,
 body {
+    overflow-x: hidden;
     color: $light-1;
     font-family: $font-normal;
     font-weight: normal;
     background-color: $dark-1;
+}
+
+body {
+    max-width: 2000px;
+    margin: 0 auto;
 }
 
 body::-webkit-scrollbar {

@@ -11,14 +11,26 @@ h6 {
 
 h1 {
     font-size: 3.5rem;
+
+    @include breakpoint(tablet) {
+        font-size: 3rem;
+    }
 }
 
 h2 {
     font-size: 2.5rem;
+
+    @include breakpoint(tablet) {
+        font-size: 2rem;
+    }
 }
 
 h3 {
     font-size: 2rem;
+
+    @include breakpoint(tablet) {
+        font-size: 1.8rem;
+    }
 
 }
 
@@ -39,19 +51,34 @@ h6 {
 }
 
 p,
+a,
 span {
     font-family: $font-normal;
     font-weight: normal;
     font-size: 1rem;
-    letter-spacing: .025rem;
+    letter-spacing: .04rem;
     margin-bottom: .4em;
+    line-height: 130%;
+
+    @include breakpoint(tablet) {
+        line-height: 125%;
+    }
 }
 
 strong {
-    font-family: $font-bold;
-    font-weight: bolder;
+    font-weight: 600;
 }
 
 em {
     font-style: italic;
+}
+
+.main {
+    h2 {
+        font-size: 1.2rem;
+        font-family: $font-normal;
+        font-weight: normal;
+        letter-spacing: 0.62em;
+        text-align: center;
+    }
 }

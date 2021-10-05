@@ -5,22 +5,25 @@
 	import Home from '../components/main/Home.svelte';
 	import Works from '../components/main/Works.svelte';
 	import Contact from '../components/main/Contact.svelte';
-
-	import { index } from '../animations/mainAnimations';
-
-	let mainContainer, offsetWidth;
-	onMount(() => {
-		index(mainContainer, offsetWidth);
-	});
+	import Header from '../components/main/Header.svelte';
+	import LogoIcon from '../components/svg/LogoIcon.svelte';
 </script>
 
 <template>
-	<main bind:this={mainContainer} bind:offsetWidth>
+	<Header />
+	<main>
 		<Home />
 		<Works />
 		<About />
 		<Contact />
 	</main>
+	<footer class="footer">
+		<p>
+			Designed and Built by <strong>Gautham Krishna</strong>
+			<LogoIcon />,<br />
+			Inspired from <strong>brittanychiang.com</strong> & <strong>mylesnguyen.com.</strong>
+		</p>
+	</footer>
 </template>
 
 <style lang="scss">
@@ -29,4 +32,11 @@
 	}
 	@import '../styles/fonts';
 	// INDEX PAGE SCOPED STYLES
+	footer {
+		margin-left: 2em;
+		p {
+			font-size: 0.7rem;
+			color: $light-3;
+		}
+	}
 </style>

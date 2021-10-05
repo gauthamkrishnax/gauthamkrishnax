@@ -1,14 +1,26 @@
 main {
-    display: flex;
-    overflow-x: hidden;
+    min-height: 100vh;
+    border-right: 1px solid $dark-2;
 
-    @include breakpoint(tablet) {
-        display: block;
-        overflow-x: hidden;
-    }
 }
 
 section.main {
-    min-width: 100%;
+    width: 100%;
     min-height: 100vh;
+
+    .container {
+        min-height: 100vh;
+        padding: 8em 14em;
+
+        @include breakpoint(tablet) {
+            padding: 8em 8em;
+        }
+    }
+}
+
+.footer {
+    svg {
+        width: 1rem;
+        margin-bottom: -.4rem;
+    }
 }

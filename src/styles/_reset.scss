@@ -17,7 +17,8 @@ article,
 aside,
 header,
 section,
-nav {
+nav,
+ul {
     margin: 0;
     padding: 0;
     border: 0;
@@ -48,4 +49,15 @@ body {
 ol,
 ul {
     list-style: none;
+}
+
+button {
+    text-decoration: none;
+    border: none;
+    background: none;
+}
+
+a {
+    text-decoration: none;
+    color: $dark-2;
 }
