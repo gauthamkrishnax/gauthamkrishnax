@@ -10,10 +10,14 @@ section.main {
 
     .container {
         min-height: 100vh;
-        padding: 8em 14em;
+        padding: 8em 14em 0;
 
         @include breakpoint(tablet) {
-            padding: 8em 8em;
+            padding: 8em 8em 0;
+        }
+
+        @include breakpoint(phone) {
+            padding: 8em 4em 0;
         }
     }
 }

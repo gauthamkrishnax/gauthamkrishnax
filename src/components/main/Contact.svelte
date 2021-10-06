@@ -1,5 +1,23 @@
 <script>
 	import SocialMediaLinks from '../elements/SocialMediaLinks.svelte';
+
+	let mail = '8.gautham@pm.me';
+
+	const copyMail = () => {
+		mail = 'Mail ID Copied !';
+		window.open('mailto:8.gautham@pm.me', '_top');
+		setTimeout(() => {
+			mail = '8.gautham@pm.me';
+			navigator.clipboard
+				.writeText(mail)
+				.then(() => {
+					console.log('Mail Copied !');
+				})
+				.catch(() => {
+					console.error('Error Copying Mail !');
+				});
+		}, 2000);
+	};
 </script>
 
 <template>
@@ -12,7 +30,9 @@
 					One little click of a button away from your big stuff & my future. I promise I’ll get back
 					to you as soon as possible.
 				</p>
-				<button> 8.gautham@pm.me </button>
+				<button title="📧 Open Mail Client / Copy Text" on:click={() => copyMail()} id="mail">
+					{mail}
+				</button>
 				<SocialMediaLinks type="contact" />
 			</div>
 			<hr />
@@ -24,13 +44,20 @@
 						when one has a chance of coming to his assistance.”</em
 					> –Simone Weil
 				</p>
-				<button>Feed the hungry</button>
+				<a href="https://www.thaagam.org/" rel="external">
+					<button>Feed the hungry</button>
+				</a>
 			</div>
 		</div>
 	</section>
 </template>
 
 <style lang="scss">
+	.container {
+		background-color: $dark-1;
+		z-index: 4;
+		position: relative;
+	}
 	.talk {
 		margin-top: 4em;
 		p {
@@ -55,7 +82,7 @@
 		text-align: right;
 		h3 {
 			font-size: 3rem;
-			margin: -0.5em 3em 1em 0;
+			margin: -0.5em 3em 0.5em 0;
 		}
 		p {
 			max-width: 400px;
