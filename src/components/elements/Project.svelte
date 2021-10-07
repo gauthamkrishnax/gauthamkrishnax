@@ -18,13 +18,13 @@
 		<p>{@html project.desc}</p>
 		<div class="btncontainer">
 			<a href={project.repo}>
-				<button>
+				<button class="btn-anim" tabindex="-1">
 					<Githubv2Icon />
 					<span>Visit Repo</span>
 				</button>
 			</a>
 			<a href={project.site}>
-				<button>
+				<button class="btn-anim" tabindex="-1">
 					<VisitSiteIcon />
 					<span>Visit Site</span>
 				</button>
@@ -117,6 +117,7 @@
 			display: flex;
 			align-items: center;
 			span {
+				transition: $transition;
 				margin-top: 0.3em;
 				margin-left: 0.3em;
 				font-size: 1.2rem;

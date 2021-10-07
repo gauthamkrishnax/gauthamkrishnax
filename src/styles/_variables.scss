@@ -21,6 +21,11 @@ $font-bold: 'segoeui-bold',
 'Segoe UI',
 san-serif;
 
+//EXTENDS
+
+
+$transition: .2s ease-in;
+
 //MIXINS
 
 @mixin breakpoint($point) {

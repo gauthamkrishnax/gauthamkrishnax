@@ -11,21 +11,27 @@
 </script>
 
 <ul class={type}>
-	<li><a rel="external" href="https://github.com/gauthamkrishnax"><GithubIcon {type} /></a></li>
-	<li>
+	<li class="socialmedialinks-anim">
+		<a rel="external" href="https://github.com/gauthamkrishnax"><GithubIcon {type} /></a>
+	</li>
+	<li class="socialmedialinks-anim">
 		<a rel="external" href="https://www.behance.net/gauthamkrishnax"><BehanceIcon {type} /></a>
 	</li>
-	<li>
+	<li class="socialmedialinks-anim">
 		<a rel="external" href="https://www.linkedin.com/in/gauthamkrishnas/"><LinkedinIcon {type} /></a
 		>
 	</li>
-	<li><a rel="external" href="https://codepen.io/gauthamkrishnax"><CodepenIcon {type} /></a></li>
-	<li>
+	<li class="socialmedialinks-anim">
+		<a rel="external" href="https://codepen.io/gauthamkrishnax"><CodepenIcon {type} /></a>
+	</li>
+	<li class="socialmedialinks-anim">
 		<a rel="external" href="https://www.hackerrank.com/gauthamkrishnax"><HackerrankIcon {type} /></a
 		>
 	</li>
-	<li><a rel="external" href="https://twitter.com/8thumbi"><TwitterIcon {type} /></a></li>
-	<li>
+	<li class="socialmedialinks-anim">
+		<a rel="external" href="https://twitter.com/8thumbi"><TwitterIcon {type} /></a>
+	</li>
+	<li class="socialmedialinks-anim">
 		<a rel="external" href="https://www.instagram.com/aestheticvisu4ls/"><InstagramIcon {type} /></a
 		>
 	</li>

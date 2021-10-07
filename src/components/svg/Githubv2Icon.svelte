@@ -6,3 +6,11 @@
 		fill="white"
 	/>
 </svg>
+
+<style lang="scss">
+	svg {
+		path {
+			transition: $transition;
+		}
+	}
+</style>

@@ -29,7 +29,7 @@
 				<div class="carouselButtonContainer">
 					<ProjectCircles count={projectCount + 1} {current} />
 					<div class="nextProjectBtn">
-						<button on:click={() => handleNextProjectBtn()}>
+						<button class="btn-anim" on:click={() => handleNextProjectBtn()}>
 							<span>Next Project</span><ArrowIcon />
 						</button>
 					</div>
@@ -61,6 +61,7 @@
 			align-items: center;
 			span {
 				margin-bottom: -0.3px;
+				transition: $transition;
 			}
 			color: $light-2;
 		}

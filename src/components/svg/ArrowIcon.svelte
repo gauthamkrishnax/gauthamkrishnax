@@ -18,7 +18,7 @@
 	/>
 </svg>
 
-<style>
+<style lang="scss">
 	.left {
 		transform: rotate(180deg);
 	}
@@ -29,5 +29,11 @@
 
 	.down {
 		transform: rotate(90deg);
+	}
+	svg {
+		margin-top: 0.2em;
+		path {
+			transition: $transition;
+		}
 	}
 </style>

@@ -1,0 +1,42 @@
+@import './variables';
+
+
+
+.btn-anim {
+    transition: $transition;
+
+    &:hover {
+        color: $color-primary;
+
+        span {
+            color: $color-primary;
+        }
+
+        svg {
+            path {
+                fill: $color-primary;
+                stroke: $color-primary;
+            }
+        }
+    }
+
+}
+
+.socialmedialinks-anim {
+    &:hover {
+        svg {
+            path {
+                fill: $color-primary;
+                transition: $transition;
+            }
+        }
+
+        svg.contact {
+            path {
+                fill: $color-primary;
+
+            }
+        }
+    }
+
+}

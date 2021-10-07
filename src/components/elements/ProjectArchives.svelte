@@ -14,13 +14,13 @@
 				<p>{project.desc}</p>
 				<div class="btncontainer">
 					<a href={project.repo}>
-						<button>
+						<button class="btn-anim" tabindex="-1">
 							<Githubv2Icon />
 							<span>Visit Repo</span>
 						</button>
 					</a>
 					<a href={project.site}>
-						<button>
+						<button class="btn-anim" tabindex="-1">
 							<VisitSiteIcon />
 							<span>Visit Site</span>
 						</button>

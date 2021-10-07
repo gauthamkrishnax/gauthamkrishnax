@@ -17,7 +17,7 @@
 					building <strong>creative</strong>, <strong>user-centered designs</strong>.
 				</p>
 			</div>
-			<a href="#works">My Works<ArrowIcon direction="down" /></a>
+			<a href="#works" class="btn-anim">My Works<ArrowIcon direction="down" /></a>
 			<svg
 				width="470"
 				height="838"
@@ -85,9 +85,13 @@
 		display: flex;
 		align-items: center;
 		margin-bottom: 8em;
+		padding-left: 0.5em;
 		z-index: 1;
 		@include breakpoint(tablet) {
 			margin-bottom: 10em;
+		}
+		&:hover {
+			color: $color-primary;
 		}
 	}
 	svg {

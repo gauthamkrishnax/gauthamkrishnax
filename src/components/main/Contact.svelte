@@ -30,7 +30,12 @@
 					One little click of a button away from your big stuff & my future. I promise I’ll get back
 					to you as soon as possible.
 				</p>
-				<button title="📧 Open Mail Client / Copy Text" on:click={() => copyMail()} id="mail">
+				<button
+					class="btn-anim-2"
+					title="📧 Open Mail Client / Copy Text"
+					on:click={() => copyMail()}
+					id="mail"
+				>
 					{mail}
 				</button>
 				<SocialMediaLinks type="contact" />
@@ -44,8 +49,8 @@
 						when one has a chance of coming to his assistance.”</em
 					> –Simone Weil
 				</p>
-				<a href="https://www.thaagam.org/" rel="external">
-					<button>Feed the hungry</button>
+				<a href="https://www.thaagam.org/" rel="external" tabindex="-1">
+					<button class="btn-anim-2">Feed the hungry</button>
 				</a>
 			</div>
 		</div>
@@ -83,6 +88,15 @@
 			@include breakpoint(phone) {
 				font-size: 1.5rem;
 			}
+			&:hover {
+				color: $color-primary;
+				border-color: $color-primary;
+				transition: $transition;
+			}
+			&:focus {
+				outline-color: $color-primary;
+				outline-offset: 0.1em;
+			}
 		}
 	}
 	hr {
@@ -112,6 +126,15 @@
 			color: $light-1;
 			padding: 0.2em 0.5em;
 			margin: 1em 0;
+			&:hover {
+				color: $color-primary;
+				border-color: $color-primary;
+				transition: $transition;
+			}
+			&:focus {
+				outline-color: $color-primary;
+				outline-offset: 0.1em;
+			}
 		}
 	}
 </style>
