@@ -51,6 +51,9 @@
 		display: flex;
 		justify-content: center;
 		margin-top: 1.5em;
+		@include breakpoint(phone) {
+			margin-top: 1em;
+		}
 		button {
 			cursor: pointer;
 			margin-left: 1em;

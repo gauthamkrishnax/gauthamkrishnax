@@ -38,8 +38,14 @@
 		flex-direction: column;
 		align-items: center;
 		margin: 4em;
+		@include breakpoint(tablet) {
+			margin: 2em;
+		}
 		h4 {
 			letter-spacing: 0.05em;
+			@include breakpoint(tablet) {
+				text-align: center;
+			}
 		}
 		div.subContainer {
 			padding-right: 1em;
@@ -47,12 +53,24 @@
 			margin-top: 1em;
 			width: 100%;
 			max-width: 800px;
+			min-width: 230px;
 			// max-height: 350px;
 			height: 257px;
 			display: grid;
 			grid-template-columns: 1fr 1fr;
 			gap: 1em;
 			overflow-y: scroll;
+			@include breakpoint(tablet) {
+				grid-template-columns: 1fr;
+				height: 470px;
+			}
+			@include breakpoint(phone) {
+				height: 340px;
+			}
+			@media only screen and (min-width: 1600px) {
+				height: 350px;
+			}
+
 			.aProjectContainer {
 				background-color: $dark-2;
 				padding: 1.5em;
@@ -76,6 +94,9 @@
 			justify-content: flex-start;
 			gap: 2em;
 			margin-top: 2em;
+			@include breakpoint(tablet) {
+				gap: 1em;
+			}
 		}
 		button {
 			cursor: pointer;
@@ -86,6 +107,9 @@
 				margin-top: 0.3em;
 				margin-left: 0.3em;
 				font-size: 1rem;
+				@include breakpoint(phone) {
+					font-size: 0.8rem;
+				}
 			}
 		}
 	}

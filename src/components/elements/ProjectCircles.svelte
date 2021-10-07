@@ -29,6 +29,9 @@
 		justify-content: center;
 		margin-top: 2em;
 		gap: 2em;
+		@include breakpoint(phone) {
+			margin-top: 3em;
+		}
 		svg {
 			margin: 0;
 		}

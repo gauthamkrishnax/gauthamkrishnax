@@ -26,7 +26,7 @@
 						learn <strong>new technology</strong> and create
 						<strong>user-centered products</strong>.
 					</p>
-					<p>Here are a few technologies I’ve been working with recently :</p>
+					<p>Here are a few technologies I’ve been working with recently-</p>
 					<ul>
 						<li>Javascript</li>
 						<li>Sass</li>
@@ -53,7 +53,12 @@
 		position: relative;
 		z-index: 0;
 		// overflow: hidden;
+		@include breakpoint(tablet) {
+			display: block;
+			gap: 2em;
+		}
 	}
+
 	.imageContainer {
 		height: 17em;
 		width: 17em;
@@ -61,10 +66,27 @@
 		overflow: hidden;
 		position: relative;
 		z-index: 4;
+		@include breakpoint(tablet) {
+			width: 10em;
+			height: 10em;
+			float: right;
+			margin-left: 1em;
+			margin-bottom: 1em;
+		}
+		@include breakpoint(phone) {
+			width: 6em;
+			height: 6em;
+		}
 		img {
 			width: 17em;
 			// margin-left: -3em;
 			object-fit: contain;
+			@include breakpoint(tablet) {
+				width: 10em;
+			}
+			@include breakpoint(phone) {
+				width: 6em;
+			}
 		}
 	}
 	.content {
@@ -87,6 +109,14 @@
 			li {
 				letter-spacing: 0.05em;
 				list-style: circle;
+			}
+			@include breakpoint(phone) {
+				padding: 1em;
+				gap: 2em;
+				li {
+					font-size: 0.8em;
+					margin-left: 0;
+				}
 			}
 		}
 	}

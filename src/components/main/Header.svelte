@@ -41,7 +41,7 @@
 			padding: 5em 4em 0;
 		}
 		@include breakpoint(phone) {
-			padding: 5em 1.5em 0;
+			padding: 3em 1.5em 0;
 		}
 	}
 </style>

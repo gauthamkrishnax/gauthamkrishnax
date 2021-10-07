@@ -39,6 +39,17 @@
 		li {
 			margin: 1em;
 		}
+		@include breakpoint(tablet) {
+			margin-bottom: 4em;
+		}
+		@include breakpoint(phone) {
+			margin-bottom: 5em;
+			margin-left: -4em;
+			flex-wrap: wrap;
+			li {
+				margin: 1em;
+			}
+		}
 	}
 	.contact {
 		display: flex;
@@ -50,6 +61,17 @@
 		}
 		li:last-child {
 			margin-right: 0;
+		}
+		@include breakpoint(tablet) {
+			margin-bottom: 4em;
+		}
+		@include breakpoint(phone) {
+			margin-bottom: 2em;
+			flex-wrap: wrap;
+			margin-top: 1em;
+			li {
+				margin-right: 1.2em;
+			}
 		}
 	}
 </style>

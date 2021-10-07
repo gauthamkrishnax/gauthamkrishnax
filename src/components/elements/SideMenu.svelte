@@ -37,6 +37,13 @@
 		color: $dark-1;
 		background-color: $light-1;
 		padding: 8em 8em 2em 1em;
+		@include breakpoint(tablet) {
+			min-width: 100%;
+			padding: 8em 4em 2em 1em;
+		}
+		@include breakpoint(phone) {
+			padding: 5em 2em 2em 1em;
+		}
 		nav {
 			display: flex;
 			flex-direction: column;
@@ -47,6 +54,9 @@
 			font-weight: normal;
 			font-family: $font-normal;
 			text-align: right;
+			@include breakpoint(tablet) {
+				font-size: 2rem;
+			}
 		}
 		ul {
 			display: flex;
@@ -55,8 +65,14 @@
 			padding-top: 3em;
 			li {
 				margin-bottom: 2.5em;
+				@include breakpoint(phone) {
+					margin-bottom: 1rem;
+				}
 				a {
 					font-size: 1.5rem;
+					@include breakpoint(phone) {
+						font-size: 1rem;
+					}
 				}
 			}
 		}

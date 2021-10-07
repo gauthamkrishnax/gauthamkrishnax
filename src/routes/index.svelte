@@ -37,10 +37,18 @@
 		background-color: $dark-1;
 		z-index: 4;
 		position: relative;
+		bottom: 1;
 		margin-left: 0.2em;
 		p {
 			font-size: 0.7rem;
 			color: $light-3;
+		}
+		@include breakpoint(tablet) {
+			background: none;
+			margin-left: 1.2em;
+		}
+		@media only screen and (max-height: 650px) {
+			display: none;
 		}
 	}
 </style>

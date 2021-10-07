@@ -4,12 +4,25 @@
 	<line x1="209.5" y1="261" x2="209.5" y2="773" stroke="#747474" />
 </svg>
 
-<style>
+<style lang="scss">
 	svg {
 		position: absolute;
 		top: 4em;
 		bottom: 0;
 		left: 2em;
 		z-index: 1;
+		@include breakpoint(tablet) {
+			left: auto;
+			right: -1em;
+			top: -5em;
+			width: 10em;
+			line {
+				display: none;
+			}
+		}
+		@include breakpoint(phone) {
+			width: 6em;
+			top: -11em;
+		}
 	}
 </style>

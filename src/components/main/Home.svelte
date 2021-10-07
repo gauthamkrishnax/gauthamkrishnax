@@ -61,11 +61,21 @@
 			font-family: $font-bold;
 			font-weight: bolder;
 			font-size: 3.5rem;
+			@include breakpoint(tablet) {
+				font-size: 3rem;
+				line-height: 100%;
+			}
+			@include breakpoint(phone) {
+				font-size: 2rem;
+			}
 		}
 		p {
 			max-width: 500px;
 			color: $light-3;
 			margin-top: 1.5rem;
+			@include breakpoint(phone) {
+				margin-top: 1rem;
+			}
 		}
 	}
 	a {
@@ -75,10 +85,15 @@
 		display: flex;
 		align-items: center;
 		margin-bottom: 8em;
+		z-index: 1;
+		@include breakpoint(tablet) {
+			margin-bottom: 10em;
+		}
 	}
 	svg {
 		position: absolute;
 		bottom: -420px;
 		right: -300px;
+		z-index: 0;
 	}
 </style>

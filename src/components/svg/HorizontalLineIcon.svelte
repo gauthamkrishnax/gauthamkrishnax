@@ -2,10 +2,19 @@
 	<line x1="0.785645" y1="0.5" x2="556.214" y2="0.5" stroke="black" />
 </svg>
 
-<style>
+<style lang="scss">
 	svg {
 		margin-bottom: -2.8em;
 		margin-right: 2em;
 		transform: rotate(-15deg);
+		@include breakpoint(tablet) {
+			margin-bottom: -2em;
+			margin-left: -25em;
+			width: 60vw;
+		}
+		@include breakpoint(phone) {
+			margin-bottom: -1.5em;
+			margin-left: -15em;
+		}
 	}
 </style>

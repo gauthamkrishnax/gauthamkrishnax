@@ -57,12 +57,18 @@
 		background-color: $dark-1;
 		z-index: 4;
 		position: relative;
+		@include breakpoint(phone) {
+			margin-bottom: 2em;
+		}
 	}
 	.talk {
 		margin-top: 4em;
 		p {
 			color: $light-2;
 			max-width: 500px;
+			@include breakpoint(phone) {
+				font-size: 0.8rem;
+			}
 		}
 		button {
 			border: 1px solid $light-1;
@@ -71,6 +77,12 @@
 			padding: 0.2em 0.5em;
 			margin: 1em 0 0.5em;
 			cursor: pointer;
+			@include breakpoint(tablet) {
+				font-size: 2rem;
+			}
+			@include breakpoint(phone) {
+				font-size: 1.5rem;
+			}
 		}
 	}
 	hr {
@@ -80,12 +92,18 @@
 	.thaagam {
 		float: right;
 		text-align: right;
+		@include breakpoint(phone) {
+			margin-bottom: 1em;
+		}
 		h3 {
 			font-size: 3rem;
 			margin: -0.5em 3em 0.5em 0;
 		}
 		p {
 			max-width: 400px;
+			@include breakpoint(phone) {
+				font-size: 0.8rem;
+			}
 		}
 		button {
 			border: 1px solid $light-1;
