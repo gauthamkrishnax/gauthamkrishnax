@@ -7,20 +7,50 @@
 
 html {
     scrollbar-width: none;
+    scroll-behavior: smooth;
 }
 
 html,
 body {
+    overflow-x: hidden;
     color: $light-1;
     font-family: $font-normal;
     font-weight: normal;
     background-color: $dark-1;
 }
 
+body {
+    max-width: 2000px;
+    margin: 0 auto;
+}
+
 body::-webkit-scrollbar {
     display: none;
 }
 
+//SCROLL BAR
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: $light-2 $dark-2;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+    background: $dark-2;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: $light-2;
+    border-radius: 20px;
+    border: 3px solid $dark-2;
+}
 
 @import './typography';
 @import './layouts';
+
+@import './animations';

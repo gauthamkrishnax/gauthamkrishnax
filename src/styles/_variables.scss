@@ -21,6 +21,11 @@ $font-bold: 'segoeui-bold',
 'Segoe UI',
 san-serif;
 
+//EXTENDS
+
+
+$transition: .2s ease-in;
+
 //MIXINS
 
 @mixin breakpoint($point) {
@@ -28,18 +33,10 @@ san-serif;
         @media only screen and (max-width: 1280px) {
             @content;
         }
-
-        @media only screen and (max-height: 700px) {
-            @content;
-        }
     }
 
     @else if $point==phone {
         @media only screen and (max-width: 720px) {
-            @content;
-        }
-
-        @media only screen and (max-height: 480px) {
             @content;
         }
     }
