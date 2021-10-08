@@ -4,25 +4,32 @@
 	import LogoIcon from '../svg/LogoIcon.svelte';
 	import MenuIcon from '../svg/MenuIcon.svelte';
 
-	let toogleMenu = false;
+	import { sideBarAnimation } from '../../animations/main';
+	import { onMount } from 'svelte';
+
+	let container;
+
+	onMount(() => {
+		sideBarAnimation(container);
+	});
+
+	let toogleMenu = 'hideSidebar';
 	const hideMenu = () => {
-		toogleMenu = false;
+		toogleMenu = 'hideSidebar';
 	};
 </script>
 
 <template>
-	<header>
+	<header bind:this={container}>
 		<span><LogoIcon /></span>
 		<button
 			on:click={() => {
-				toogleMenu = !toogleMenu;
+				toogleMenu === 'hideSidebar' ? (toogleMenu = 'showSidebar') : (toogleMenu = 'hideSidebar');
 			}}
 			id="menu"><MenuIcon {toogleMenu} /></button
 		>
 	</header>
-	{#if toogleMenu}
-		<SideMenu {hideMenu} />
-	{/if}
+	<SideMenu {hideMenu} {toogleMenu} />
 	<LineIcon />
 </template>
 

@@ -1,30 +1,39 @@
+<!-- <script context="module">
+	export const prerender = true;
+</script> -->
 <script>
-	import { onMount, afterUpdate } from 'svelte';
-
 	import About from '../components/main/About.svelte';
 	import Home from '../components/main/Home.svelte';
 	import Works from '../components/main/Works.svelte';
 	import Contact from '../components/main/Contact.svelte';
 	import Header from '../components/main/Header.svelte';
 	import LogoIcon from '../components/svg/LogoIcon.svelte';
+
+	// import { makePageScrollSmooth } from '../animations/scroll';
+	import { onMount } from 'svelte';
+
+	let section;
+	onMount(() => {});
 </script>
 
 <template>
-	<Header />
-	<main>
-		<Home />
-		<Works />
-		<About />
-		<Contact />
-	</main>
-	<footer class="footer">
-		<p>
-			{@html `Designed and Built by <strong>Gautham Krishna</strong>`}
-			<LogoIcon />
-			{@html `&nbsp; , <br />
+	<div bind:this={section}>
+		<Header />
+		<main>
+			<Home />
+			<Works />
+			<About />
+			<Contact />
+		</main>
+		<footer class="footer">
+			<p>
+				{@html `Designed and Built by <strong>Gautham Krishna</strong>`}
+				<LogoIcon />
+				{@html `&nbsp; , <br />
 			Inspired from <strong>brittanychiang.com</strong> & <strong>mylesnguyen.com.</strong>`}
-		</p>
-	</footer>
+			</p>
+		</footer>
+	</div>
 </template>
 
 <style lang="scss">

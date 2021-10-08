@@ -1,7 +1,7 @@
 <script>
 </script>
 
-<div>
+<div class="animCircles">
 	<svg
 		width="449"
 		height="449"

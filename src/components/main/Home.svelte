@@ -1,23 +1,34 @@
 <script>
+	import { onMount } from 'svelte';
 	import AnimatedCircles from '../elements/AnimatedCircles.svelte';
-
 	import ArrowIcon from '../svg/ArrowIcon.svelte';
+	import { homeAnimation } from '../../animations/main';
+
+	import { gsap } from 'gsap/dist/gsap.js';
+	import { ScrollTrigger } from 'gsap/dist/ScrollTrigger.js';
+
+	gsap.registerPlugin(ScrollTrigger);
+	let container;
+
+	onMount(() => {
+		homeAnimation(gsap, container);
+	});
 </script>
 
 <template>
 	<section id="home" class="main">
-		<div class="container">
+		<div bind:this={container} class="container">
 			<div class="hero">
-				<h1>Gautham Krishna</h1>
-				<span>I create simply beautiful code.</span>
-				<p>
+				<h1 class="animComeTop">Gautham Krishna</h1>
+				<span class="animComeTop">I create simply beautiful code.</span>
+				<p class="animComeTop">
 					I’m a freelance <strong>developer</strong> and <strong>designer</strong> specializing in
 					building
 					<strong>artisan digital experiances</strong> and <strong>passionate</strong> about
 					building <strong>creative</strong>, <strong>user-centered designs</strong>.
 				</p>
 			</div>
-			<a href="#works" class="btn-anim">My Works<ArrowIcon direction="down" /></a>
+			<a href="#works" class="btn-anim animMyWorksBtn">My Works<ArrowIcon direction="down" /></a>
 			<svg
 				width="470"
 				height="838"
@@ -57,6 +68,7 @@
 		z-index: 5;
 		margin: auto 0;
 		span {
+			display: block;
 			color: $light-3;
 			font-family: $font-bold;
 			font-weight: bolder;

@@ -3,7 +3,7 @@
 </script>
 
 <svg
-	class={toogleMenu ? 'dark' : ''}
+	class={toogleMenu}
 	width="23"
 	height="23"
 	viewBox="0 0 23 23"
@@ -37,7 +37,7 @@
 <line x1="2.36816" y1="16.7175" x2="17.2174" y2="1.86829" stroke="#121212" stroke-width="2" stroke-linecap="round"/>
 </svg> -->
 <style lang="scss">
-	.dark {
+	.showSidebar {
 		line {
 			stroke: $dark-1;
 		}

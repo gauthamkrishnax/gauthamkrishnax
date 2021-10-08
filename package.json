@@ -11,6 +11,7 @@
   "devDependencies": {
     "@sveltejs/adapter-cloudflare-workers": "^1.0.0-next.23",
     "@sveltejs/kit": "^1.0.0-next.180",
+    "@types/gsap": "^3.0.0",
     "autoprefixer": "^10.3.7",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",

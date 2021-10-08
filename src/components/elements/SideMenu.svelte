@@ -1,12 +1,14 @@
 <script>
+	import { onMount } from 'svelte';
+
 	import HorizontalLineIcon from '../svg/HorizontalLineIcon.svelte';
 	import MenuFlagIcon from '../svg/MenuFlagIcon.svelte';
 	import SocialMediaLinks from './SocialMediaLinks.svelte';
 
-	export let hideMenu;
+	export let hideMenu, toogleMenu;
 </script>
 
-<aside>
+<aside class={toogleMenu}>
 	<div class="flagContainer">
 		<MenuFlagIcon />
 		<span>20<br />21</span>
@@ -84,5 +86,8 @@
 				margin-left: 0.5em;
 			}
 		}
+	}
+	.hideSidebar {
+		display: none;
 	}
 </style>
