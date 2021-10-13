@@ -2,7 +2,7 @@
 
 import sveltePreprocess from 'svelte-preprocess';
 import autoprefixer from 'autoprefixer';
-import adapter from '@sveltejs/adapter-netlify';
+import adapter from '@sveltejs/adapter-cloudflare-workers';
 
 const config = {
 	preprocess: sveltePreprocess({
@@ -15,8 +15,8 @@ const config = {
 	}),
 	kit: {
 		// hydrate the <div id="svelte"> element in src/app.html
-		adapter: adapter(), // currently the adapter does not take any options
-		target: '#svelte'
+		target: '#svelte',
+		adapter: adapter() // currently the adapter does not take any options
 	}
 };
 

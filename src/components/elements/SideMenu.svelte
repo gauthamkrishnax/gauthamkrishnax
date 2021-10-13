@@ -3,22 +3,30 @@
 	import MenuFlagIcon from '../svg/MenuFlagIcon.svelte';
 	import SocialMediaLinks from './SocialMediaLinks.svelte';
 
-	export let hideMenu;
+	export let hideMenu, toogleMenu;
 </script>
 
-<aside>
+<aside id="menuContainer" class={toogleMenu}>
 	<div class="flagContainer">
 		<MenuFlagIcon />
-		<span>20<br />21</span>
+		<span class="flagYear">20<br />21</span>
 	</div>
 	<nav>
 		<div>
-			<h3>portfolio</h3>
+			<h3 class="sidebarHeading">portfolio</h3>
 			<ul>
-				<li><a href="#home" on:click={hideMenu()}><HorizontalLineIcon />Home</a></li>
-				<li><a href="#works" on:click={hideMenu()}><HorizontalLineIcon />Works</a></li>
-				<li><a href="#about" on:click={hideMenu()}><HorizontalLineIcon />About</a></li>
-				<li><a href="#contact" on:click={hideMenu()}><HorizontalLineIcon />Contact</a></li>
+				<li class="sidebarLinks">
+					<a href="#home" on:click={hideMenu()}><HorizontalLineIcon />Home</a>
+				</li>
+				<li class="sidebarLinks">
+					<a href="#works" on:click={hideMenu()}><HorizontalLineIcon />Works</a>
+				</li>
+				<li class="sidebarLinks">
+					<a href="#about" on:click={hideMenu()}><HorizontalLineIcon />About</a>
+				</li>
+				<li class="sidebarLinks">
+					<a href="#contact" on:click={hideMenu()}><HorizontalLineIcon />Contact</a>
+				</li>
 			</ul>
 		</div>
 		<SocialMediaLinks />
@@ -30,6 +38,7 @@
 		position: fixed;
 		display: flex;
 		justify-content: space-between;
+		top: 0;
 		right: 0;
 		z-index: 49;
 		min-width: 50%;
@@ -69,6 +78,7 @@
 					margin-bottom: 1rem;
 				}
 				a {
+					transition: $transition;
 					font-size: 1.5rem;
 					@include breakpoint(phone) {
 						font-size: 1rem;
@@ -85,4 +95,7 @@
 			}
 		}
 	}
+	// .hideSidebar {
+	// 	display: none;
+	// }
 </style>

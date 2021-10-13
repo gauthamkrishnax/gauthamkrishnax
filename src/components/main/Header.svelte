@@ -4,25 +4,46 @@
 	import LogoIcon from '../svg/LogoIcon.svelte';
 	import MenuIcon from '../svg/MenuIcon.svelte';
 
-	let toogleMenu = false;
+	// import gsap from 'gsap/dist/gsap.js';
+	let gsap;
+
+	import { headerAnimation, SidebarAnimation } from '../../animations/main';
+	import { onMount } from 'svelte';
+
+	let container;
+
+	let sideBartl;
+	onMount(() => {
+		gsap = window.gsap;
+		headerAnimation(container);
+		sideBartl = gsap.timeline();
+		SidebarAnimation(container, sideBartl);
+	});
+
+	let toogleMenu = 'hideSidebar';
 	const hideMenu = () => {
-		toogleMenu = false;
+		sideBartl.reversed(!sideBartl.reversed());
+		toogleMenu = 'hideSidebar';
 	};
 </script>
 
 <template>
-	<header>
+	<header bind:this={container}>
 		<span><LogoIcon /></span>
 		<button
 			on:click={() => {
-				toogleMenu = !toogleMenu;
+				if (toogleMenu === 'hideSidebar') {
+					sideBartl.reversed(!sideBartl.reversed());
+					toogleMenu = 'showSidebar';
+				} else {
+					sideBartl.reversed(!sideBartl.reversed());
+					toogleMenu = 'hideSidebar';
+				}
 			}}
 			id="menu"><MenuIcon {toogleMenu} /></button
 		>
+		<SideMenu {hideMenu} {toogleMenu} />
 	</header>
-	{#if toogleMenu}
-		<SideMenu {hideMenu} />
-	{/if}
 	<LineIcon />
 </template>
 
@@ -34,6 +55,7 @@
 		padding: 4em 8em 0;
 		z-index: 50;
 		#menu {
+			z-index: 50;
 			float: right;
 			cursor: pointer;
 		}

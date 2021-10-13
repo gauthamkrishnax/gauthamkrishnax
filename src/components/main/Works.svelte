@@ -22,7 +22,9 @@
 			<h2>WORKS</h2>
 			<div class="workContent">
 				{#if current < projectCount}
-					<div class="projectCarousel"><Project {current} project={projects[current]} /></div>
+					<div class="projectCarousel">
+						<Project {current} project={projects[current]} />
+					</div>
 				{:else}
 					<div><ProjectArchives /></div>
 				{/if}

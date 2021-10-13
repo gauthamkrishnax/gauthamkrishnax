@@ -1,23 +1,36 @@
 <script>
+	import { onMount } from 'svelte';
 	import AnimatedCircles from '../elements/AnimatedCircles.svelte';
-
 	import ArrowIcon from '../svg/ArrowIcon.svelte';
+	import { circleAnimation, homeAnimation } from '../../animations/main';
+
+	let container, homeHeight, homeWidth;
+
+	onMount(() => {
+		homeAnimation(container);
+	});
 </script>
+
+<svelte:window bind:innerHeight={homeHeight} bind:innerWidth={homeWidth} />
 
 <template>
 	<section id="home" class="main">
-		<div class="container">
+		<div
+			bind:this={container}
+			class="container"
+			on:mousemove={(e) => circleAnimation(e, homeHeight, homeWidth, container)}
+		>
 			<div class="hero">
-				<h1>Gautham Krishna</h1>
-				<span>I create simply beautiful code.</span>
-				<p>
+				<h1 class="animComeTop">Gautham Krishna</h1>
+				<span class="animComeTop">I create simply beautiful code.</span>
+				<p class="animComeTop">
 					I’m a freelance <strong>developer</strong> and <strong>designer</strong> specializing in
 					building
 					<strong>artisan digital experiances</strong> and <strong>passionate</strong> about
 					building <strong>creative</strong>, <strong>user-centered designs</strong>.
 				</p>
 			</div>
-			<a href="#works" class="btn-anim">My Works<ArrowIcon direction="down" /></a>
+			<a href="#works" class="btn-anim animMyWorksBtn">My Works<ArrowIcon direction="down" /></a>
 			<svg
 				width="470"
 				height="838"
@@ -57,6 +70,7 @@
 		z-index: 5;
 		margin: auto 0;
 		span {
+			display: block;
 			color: $light-3;
 			font-family: $font-bold;
 			font-weight: bolder;
@@ -81,7 +95,7 @@
 	a {
 		width: max-content;
 		text-decoration: none;
-		color: $light-2;
+		color: $light-1;
 		display: flex;
 		align-items: center;
 		margin-bottom: 8em;

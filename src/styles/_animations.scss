@@ -40,3 +40,23 @@
     }
 
 }
+
+
+.sidebarLinks {
+    transition: $transition;
+
+    &:hover {
+        a {
+            color: $color-primary;
+            text-decoration: underline;
+        }
+
+        // svg {
+        //     // transform: rotate(0);
+        //     margin: 0;
+        //     // width: 4em;
+        //     // visibility: hidden;
+        //     opacity: 0;
+        // }
+    }
+}

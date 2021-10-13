@@ -2,19 +2,15 @@
 	import Githubv2Icon from '../svg/Githubv2Icon.svelte';
 	import VisitSiteIcon from '../svg/VisitSiteIcon.svelte';
 	export let project, current;
-
-	function handleOnLoad() {
-		console.log('Image loaded');
-	}
 </script>
 
 <div class="projectContainer">
 	<div class="preveiewImageContainer">
-		<img on:load={handleOnLoad()} src={project.img} alt="" />
+		<img src={project.img} alt={project.Name} />
 	</div>
 	<div class="details">
 		<span class="projectno">Project {current + 1}</span>
-		<h4>{project.Name}</h4>
+		<h3>{project.Name}</h3>
 		<p>{@html project.desc}</p>
 		<div class="btncontainer">
 			<a href={project.repo}>
@@ -37,12 +33,15 @@
 	.preveiewImageContainer {
 		width: 40%;
 		max-width: 460px;
+		position: relative;
+		z-index: 2;
 		@include breakpoint(tablet) {
 			width: 100%;
 		}
 		img {
+			position: relative;
 			width: 100%;
-			image-rendering: crisp-edges;
+			height: 100%;
 		}
 	}
 	.projectContainer {
@@ -69,6 +68,7 @@
 		}
 	}
 	.details {
+		z-index: 3;
 		margin-left: -8em;
 		margin-bottom: 2em;
 		@include breakpoint(tablet) {
@@ -83,7 +83,7 @@
 				margin-left: 0.5em;
 			}
 		}
-		h4 {
+		h3 {
 			margin: 0.2em 0 0.6em;
 			@include breakpoint(tablet) {
 				margin-left: 0.2em;
