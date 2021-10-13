@@ -1,38 +1,27 @@
-# Hi from Gautham !
+<h1 align="center">Hi 👋, I'm Gautham Krishna !</h1>
+<br>
+<p>
+I love creating things. I taught myself designing when I was 16 and started freelancing.
+ My Intrest in coding started when I wanted to make my mockup UI designs real. 
+ Now I love combining both of the skills to build creative softwares and designs.
+<br />
+<br />
+Currently I am a Computer Science middler in Vellore Instistute of Technology, Chennai while I reside in Kerala, India. My main focus these days is to learn new technology and create user-centered products.
+</p>
+<br />
+<br />
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte);
+- 📫 How to reach me: [8.gautham@pm.me](mailto:8.gautham@pm.me)
+- 🔗 My website: [https://gauthamkrishnax.me/](https://gauthamkrishnax.me/)
 
-## Creating a project
+<br />
+<hr />
+<p>
+  <img src = "https://github-readme-stats.vercel.app/api?username=gauthamkrishnax&show_icons=true&theme=bear" width = 400>
+  <img src = "https://github-readme-streak-stats.herokuapp.com?user=gauthamkrishnax&theme=dark&hide_border=true" width = 400>
+</p>
+<hr />
 
-If you're seeing this, you've probably already done this step. Congrats!
+### Show some ❤️ by starring some of the repositories!
 
-```bash
-# create a new project in the current directory
-npm init svelte@next
-
-# create a new project in my-app
-npm init svelte@next my-app
-```
-
-> Note: the `@next` is temporary
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-Before creating a production version of your app, install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment. Then:
-
-```bash
-npm run build
-```
-
-> You can preview the built app with `npm run preview`, regardless of whether you installed an adapter. This should _not_ be used to serve your app in production.
+<img alt="GIF" src="https://media.giphy.com/media/vzO0Vc8b2VBLi/giphy.gif" />
