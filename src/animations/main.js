@@ -1,6 +1,7 @@
+/* eslint-disable no-undef */
 //HOME SCREEN ANIMATION
 
-export function homeAnimation(gsap, container) {
+export function homeAnimation(container) {
 	const q = gsap.utils.selector(container);
 	const tl = gsap.timeline();
 
@@ -38,14 +39,68 @@ export function homeAnimation(gsap, container) {
 
 // SIDE BAR ANIMATION
 
-export function sideBarAnimation(container) {
-	// const q = gsap.utils.selector(container);
-	// const sidebarEntry = gsap.timeline();
-	// gsap.from(container, {
-	// 	y: -50,
-	// 	opacity: 0
-	// });
-	// sidebarEntry.from(q('.showSidebar'), {
-	// 	x: 400
-	// });
+export function headerAnimation(container) {
+	gsap.from(container, {
+		y: -50,
+		opacity: 0
+	});
+}
+
+export function SidebarAnimation(container, sideBartl) {
+	const q = gsap.utils.selector(container);
+
+	gsap.set(q('#menuContainer'), {
+		x: '100vw'
+	});
+
+	sideBartl
+		.to(q('#menuContainer'), {
+			x: 0,
+			duration: 0.5,
+			ease: 'power3.easeInOut'
+		})
+		.from(
+			q('.sidebarHeading'),
+			{
+				opacity: 0
+			},
+			'-=.1'
+		)
+		.from(
+			q('.sidebarLinks'),
+			{
+				y: 30,
+				opacity: 0,
+				stagger: 0.1,
+				duration: 0.2,
+				ease: 'power2.easeInOut'
+			},
+			'-=.3'
+		)
+		.from(
+			q('.socialmedialinks-anim'),
+			{
+				x: 20,
+				opacity: 0,
+				stagger: 0.1,
+				duration: 0.2,
+				ease: 'power2.easeInOut'
+			},
+			'-=.3'
+		)
+		.from(
+			q('.flagContainer'),
+			{
+				x: -50
+			},
+			'-=1'
+		)
+		.from(
+			q('.flagYear'),
+			{
+				opacity: 0
+			},
+			'-=1'
+		)
+		.reverse();
 }

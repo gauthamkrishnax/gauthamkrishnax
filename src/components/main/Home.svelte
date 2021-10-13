@@ -4,14 +4,10 @@
 	import ArrowIcon from '../svg/ArrowIcon.svelte';
 	import { homeAnimation } from '../../animations/main';
 
-	import { gsap } from 'gsap/dist/gsap.js';
-	import { ScrollTrigger } from 'gsap/dist/ScrollTrigger.js';
-
-	gsap.registerPlugin(ScrollTrigger);
 	let container;
 
 	onMount(() => {
-		homeAnimation(gsap, container);
+		homeAnimation(container);
 	});
 </script>
 

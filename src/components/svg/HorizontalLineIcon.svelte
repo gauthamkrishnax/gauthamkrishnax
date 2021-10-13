@@ -4,6 +4,7 @@
 
 <style lang="scss">
 	svg {
+		transition: $transition;
 		margin-bottom: -2.8em;
 		margin-right: 2em;
 		transform: rotate(-15deg);
