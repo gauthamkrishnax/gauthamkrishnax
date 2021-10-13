@@ -19,7 +19,7 @@ export function homeAnimation(container) {
 		.from(
 			q('.animCircles'),
 			{
-				left: '5em',
+				x: '-5em',
 				opacity: 0,
 				duration: 2,
 				ease: 'power2.out'
@@ -103,4 +103,27 @@ export function SidebarAnimation(container, sideBartl) {
 			'-=1'
 		)
 		.reverse();
+}
+
+//CIRCLES ANIMATION
+
+export function circleAnimation(e, h, w, container) {
+	const q = gsap.utils.selector(container);
+	let cx = Math.ceil(w * 0.5);
+	let cy = Math.ceil(h * 0.5);
+	let dx = e.pageX - cx;
+	let dy = e.pageY - cy;
+
+	let tiltx = dy / cy;
+	let tilty = -(dx / cx);
+	let radius = Math.sqrt(Math.pow(tiltx, 2) + Math.pow(tilty, 2));
+	let degree = radius * 20;
+	gsap.to(q('#bigCircle'), {
+		transform: 'rotate3d(' + tilty + ', ' + tiltx + ', 0, ' + degree + 'deg)',
+		ease: 'power2.easeInOut'
+	});
+	gsap.to(q('#smallCircle'), {
+		transform: 'rotate3d(' + tiltx + ', ' + tilty + ', 0, ' + (degree - 5) + 'deg)',
+		ease: 'power2.easeInOut'
+	});
 }

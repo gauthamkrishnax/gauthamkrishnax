@@ -12,27 +12,38 @@
 
 <ul class={type}>
 	<li class="socialmedialinks-anim">
-		<a rel="external" href="https://github.com/gauthamkrishnax"><GithubIcon {type} /></a>
-	</li>
-	<li class="socialmedialinks-anim">
-		<a rel="external" href="https://www.behance.net/gauthamkrishnax"><BehanceIcon {type} /></a>
-	</li>
-	<li class="socialmedialinks-anim">
-		<a rel="external" href="https://www.linkedin.com/in/gauthamkrishnas/"><LinkedinIcon {type} /></a
+		<a aria-label="Github" rel="external" href="https://github.com/gauthamkrishnax"
+			><GithubIcon {type} /></a
 		>
 	</li>
 	<li class="socialmedialinks-anim">
-		<a rel="external" href="https://codepen.io/gauthamkrishnax"><CodepenIcon {type} /></a>
-	</li>
-	<li class="socialmedialinks-anim">
-		<a rel="external" href="https://www.hackerrank.com/gauthamkrishnax"><HackerrankIcon {type} /></a
+		<a aria-label="Behance" rel="external" href="https://www.behance.net/gauthamkrishnax"
+			><BehanceIcon {type} /></a
 		>
 	</li>
 	<li class="socialmedialinks-anim">
-		<a rel="external" href="https://twitter.com/8thumbi"><TwitterIcon {type} /></a>
+		<a aria-label="LinkedIn" rel="external" href="https://www.linkedin.com/in/gauthamkrishnas/"
+			><LinkedinIcon {type} /></a
+		>
 	</li>
 	<li class="socialmedialinks-anim">
-		<a rel="external" href="https://www.instagram.com/aestheticvisu4ls/"><InstagramIcon {type} /></a
+		<a aria-label="Codepen" rel="external" href="https://codepen.io/gauthamkrishnax"
+			><CodepenIcon {type} /></a
+		>
+	</li>
+	<li class="socialmedialinks-anim">
+		<a aria-label="HackerRank" rel="external" href="https://www.hackerrank.com/gauthamkrishnax"
+			><HackerrankIcon {type} /></a
+		>
+	</li>
+	<li class="socialmedialinks-anim">
+		<a aria-label="Twitter" rel="external" href="https://twitter.com/8thumbi"
+			><TwitterIcon {type} /></a
+		>
+	</li>
+	<li class="socialmedialinks-anim">
+		<a aria-label="Instagram" rel="external" href="https://www.instagram.com/aestheticvisu4ls/"
+			><InstagramIcon {type} /></a
 		>
 	</li>
 </ul>

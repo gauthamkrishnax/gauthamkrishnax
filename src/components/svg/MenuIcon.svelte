@@ -38,7 +38,7 @@
 </svg> -->
 
 <div class={`menu-icon ${toogleMenu === 'showSidebar' ? 'active' : ''}`}>
-	<input class="menu-icon__cheeckbox" type="checkbox" />
+	<input class="menu-icon__cheeckbox" type="checkbox" aria-label="Menu Button" title="Menu" />
 	<div>
 		<span class={toogleMenu} />
 		<span class={toogleMenu} />

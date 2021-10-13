@@ -2,18 +2,24 @@
 	import { onMount } from 'svelte';
 	import AnimatedCircles from '../elements/AnimatedCircles.svelte';
 	import ArrowIcon from '../svg/ArrowIcon.svelte';
-	import { homeAnimation } from '../../animations/main';
+	import { circleAnimation, homeAnimation } from '../../animations/main';
 
-	let container;
+	let container, homeHeight, homeWidth;
 
 	onMount(() => {
 		homeAnimation(container);
 	});
 </script>
 
+<svelte:window bind:innerHeight={homeHeight} bind:innerWidth={homeWidth} />
+
 <template>
 	<section id="home" class="main">
-		<div bind:this={container} class="container">
+		<div
+			bind:this={container}
+			class="container"
+			on:mousemove={(e) => circleAnimation(e, homeHeight, homeWidth, container)}
+		>
 			<div class="hero">
 				<h1 class="animComeTop">Gautham Krishna</h1>
 				<span class="animComeTop">I create simply beautiful code.</span>
@@ -89,7 +95,7 @@
 	a {
 		width: max-content;
 		text-decoration: none;
-		color: $light-2;
+		color: $light-1;
 		display: flex;
 		align-items: center;
 		margin-bottom: 8em;

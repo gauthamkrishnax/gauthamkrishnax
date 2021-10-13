@@ -10,7 +10,7 @@
 				<div>
 					<PicSupportIcon />
 					<div class="imageContainer">
-						<img src="/images/me.jpg" alt="" />
+						<img src="/images/me.jpg" alt="My face" />
 					</div>
 				</div>
 				<div class="content">
@@ -79,6 +79,7 @@
 		}
 		img {
 			width: 17em;
+			height: 100%;
 			// margin-left: -3em;
 			object-fit: contain;
 			@include breakpoint(tablet) {
