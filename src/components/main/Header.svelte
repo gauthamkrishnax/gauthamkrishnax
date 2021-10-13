@@ -4,16 +4,19 @@
 	import LogoIcon from '../svg/LogoIcon.svelte';
 	import MenuIcon from '../svg/MenuIcon.svelte';
 
-	import gsap from 'gsap';
+	// import gsap from 'gsap/dist/gsap.js';
+	let gsap;
 
 	import { headerAnimation, SidebarAnimation } from '../../animations/main';
 	import { onMount } from 'svelte';
 
-	let container, animateSidebar;
+	let container;
 
-	const sideBartl = gsap.timeline();
+	let sideBartl;
 	onMount(() => {
+		gsap = window.gsap;
 		headerAnimation(container);
+		sideBartl = gsap.timeline();
 		SidebarAnimation(container, sideBartl);
 	});
 
