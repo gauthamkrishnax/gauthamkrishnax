@@ -25,7 +25,7 @@
 				<span class="animComeTop">I create simply beautiful code.</span>
 				<p class="animComeTop">
 					I’m a freelance <strong>developer</strong> and <strong>designer</strong> specializing in
-					building
+					creating
 					<strong>artisan digital experiances</strong> and <strong>passionate</strong> about
 					building <strong>creative</strong>, <strong>user-centered designs</strong>.
 				</p>

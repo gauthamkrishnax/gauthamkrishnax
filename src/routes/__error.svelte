@@ -7,7 +7,7 @@
 	<title>404 Error</title>
 	<meta
 		name="description"
-		content="Gautham Krishna (Portfolio) - I’m a freelance developer and designer specializing in building artisan digital experiances and passionate about building creative, user-centered designs."
+		content="I’m a freelance developer and designer specializing in building artisan digital experiances and passionate about building creative, user-centered designs."
 	/>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js"></script>
 </svelte:head>

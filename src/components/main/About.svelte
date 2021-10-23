@@ -16,7 +16,7 @@
 				<div class="content">
 					<p>
 						<strong>Hello!</strong> My name is <strong>Gautham</strong> and I love creating things.
-						I taught myself designing when I was 16 and started freelancing. My Intrest in coding
+						I taught myself designing when I was 16 and started freelancing. My Interest in coding
 						started when I wanted to make my mockup UI designs real. Now I love combining both of
 						the skills to build <strong>creative</strong> softwares and designs.
 					</p>
