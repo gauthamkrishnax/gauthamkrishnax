@@ -3,7 +3,7 @@
 	export let current;
 
 	let arr = [];
-	for (let i = 0; i < count; i++) {
+	for (let i = 1; i < count; i++) {
 		arr.push(i);
 	}
 </script>
@@ -40,6 +40,7 @@
 			circle {
 				stroke: $color-primary;
 			}
+			transition: all 0.2s ease-in;
 		}
 	}
 </style>

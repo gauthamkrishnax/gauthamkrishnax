@@ -32,12 +32,14 @@ $transition: .2s ease-in;
     @if $point==tablet {
         @media only screen and (max-width: 1280px) {
             @content;
+            transition: all .5s ease-in-out;
         }
     }
 
     @else if $point==phone {
         @media only screen and (max-width: 720px) {
             @content;
+            transition: all .5s ease-in-out;
         }
     }
 }

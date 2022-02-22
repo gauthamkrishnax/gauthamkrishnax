@@ -1,15 +1,15 @@
 <script>
 	import Githubv2Icon from '../svg/Githubv2Icon.svelte';
 	import VisitSiteIcon from '../svg/VisitSiteIcon.svelte';
-	export let project, current;
+	export let project, current, projectPosition;
 </script>
 
-<div class="projectContainer">
+<div class={`projectContainer ${projectPosition}`}>
 	<div class="preveiewImageContainer">
 		<img src={project.img} alt={project.Name} />
 	</div>
 	<div class="details">
-		<span class="projectno">Project {current + 1}</span>
+		<span class="projectno">Project {current}</span>
 		<h3>{project.Name}</h3>
 		<p>{@html project.desc}</p>
 		<div class="btncontainer">
@@ -44,6 +44,24 @@
 			height: 100%;
 		}
 	}
+	.center {
+		position: absolute;
+		right: auto;
+		left: auto;
+		opacity: 1;
+		transition: all 1s ease-in-out;
+	}
+	.right {
+		position: absolute;
+		right: -100vw;
+		opacity: 0;
+	}
+	.left {
+		position: absolute;
+		left: -100vw;
+		opacity: 0;
+	}
+
 	.projectContainer {
 		width: 100%;
 		height: 350px;
@@ -67,6 +85,7 @@
 			height: 440px;
 		}
 	}
+
 	.details {
 		z-index: 3;
 		margin-left: -8em;

@@ -35,6 +35,7 @@
 
 <style lang="scss">
 	aside {
+		opacity: 0;
 		position: fixed;
 		display: flex;
 		justify-content: space-between;

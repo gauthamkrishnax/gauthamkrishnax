@@ -2,9 +2,11 @@
 	import projectArchive from '../../data/projectArchive';
 	import Githubv2Icon from '../svg/Githubv2Icon.svelte';
 	import VisitSiteIcon from '../svg/VisitSiteIcon.svelte';
+
+	export let projectPosition;
 </script>
 
-<div class="archivesContainer">
+<div class={`archivesContainer ${projectPosition}`}>
 	<h4>Project Archives</h4>
 	<div class="subContainer">
 		{#each projectArchive as project}
@@ -32,6 +34,23 @@
 </div>
 
 <style lang="scss">
+	.center {
+		position: absolute;
+		right: auto;
+		left: auto;
+		opacity: 1;
+		transition: all 1s ease-in-out;
+	}
+	.right {
+		position: absolute;
+		right: -100vw;
+		opacity: 0;
+	}
+	.left {
+		position: absolute;
+		left: -100vw;
+		opacity: 0;
+	}
 	.archivesContainer {
 		position: relative;
 		display: flex;

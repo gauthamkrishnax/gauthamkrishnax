@@ -35,6 +35,11 @@ export function homeAnimation(container) {
 			},
 			'-=.5'
 		);
+
+	gsap.from(container, {
+		autoAlpha: 0,
+		delay: 1
+	});
 }
 
 // SIDE BAR ANIMATION
@@ -50,21 +55,23 @@ export function SidebarAnimation(container, sideBartl) {
 	const q = gsap.utils.selector(container);
 
 	gsap.set(q('#menuContainer'), {
+		opacity: 0,
 		x: '100vw'
 	});
 
 	sideBartl
 		.to(q('#menuContainer'), {
 			x: 0,
-			duration: 0.5,
-			ease: 'power3.easeInOut'
+			opacity: 1,
+			duration: 0.2,
+			ease: 'Power0.easeOut'
 		})
 		.from(
 			q('.sidebarHeading'),
 			{
 				opacity: 0
 			},
-			'-=.1'
+			'-=0.1'
 		)
 		.from(
 			q('.sidebarLinks'),
@@ -75,7 +82,7 @@ export function SidebarAnimation(container, sideBartl) {
 				duration: 0.2,
 				ease: 'power2.easeInOut'
 			},
-			'-=.3'
+			'-=0.3'
 		)
 		.from(
 			q('.socialmedialinks-anim'),
@@ -86,19 +93,21 @@ export function SidebarAnimation(container, sideBartl) {
 				duration: 0.2,
 				ease: 'power2.easeInOut'
 			},
-			'-=.3'
+			'-=0.3'
 		)
 		.from(
 			q('.flagContainer'),
 			{
-				x: -50
+				x: -50,
+				duration: 0.5
 			},
 			'-=1'
 		)
 		.from(
 			q('.flagYear'),
 			{
-				opacity: 0
+				opacity: 0,
+				duration: 0.5
 			},
 			'-=1'
 		)

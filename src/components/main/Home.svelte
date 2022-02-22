@@ -65,6 +65,7 @@
 		display: flex;
 		flex-direction: column;
 		position: relative;
+		visibility: hidden;
 	}
 	.hero {
 		z-index: 5;
@@ -78,9 +79,11 @@
 			@include breakpoint(tablet) {
 				font-size: 3rem;
 				line-height: 100%;
+				transition: all 1s ease-in-out;
 			}
 			@include breakpoint(phone) {
 				font-size: 2rem;
+				transition: all 1s ease-in-out;
 			}
 		}
 		p {
@@ -89,6 +92,7 @@
 			margin-top: 1.5rem;
 			@include breakpoint(phone) {
 				margin-top: 1rem;
+				transition: all 1s ease-in-out;
 			}
 		}
 	}
@@ -103,6 +107,7 @@
 		z-index: 1;
 		@include breakpoint(tablet) {
 			margin-bottom: 10em;
+			transition: all 1s ease-in-out;
 		}
 		&:hover {
 			color: $color-primary;

@@ -4,15 +4,23 @@
 	import ArrowIcon from '../svg/ArrowIcon.svelte';
 	import projects from '../../data/projects';
 	import ProjectArchives from '../elements/ProjectArchives.svelte';
+	import ArrowCircleIcon from '../svg/ArrowCircleIcon.svelte';
 
-	let current = 0,
+	let current = 1,
 		projectCount = projects.length;
 
 	function handleNextProjectBtn() {
 		current = current + 1;
-		if (current == projectCount + 1) {
-			current = 0;
+		if (current == projectCount + 2) {
+			current = 1;
 		}
+	}
+	function handlePrevProjectBtn() {
+		current = current - 1;
+		if (current == 0) {
+			current = projectCount + 1;
+		}
+		console.log(current);
 	}
 </script>
 
@@ -20,16 +28,37 @@
 	<section id="works" class="main">
 		<div class="container">
 			<h2>WORKS</h2>
+			<button on:click={() => handlePrevProjectBtn()}>
+				<ArrowCircleIcon type="left" />
+			</button>
+			<button on:click={() => handleNextProjectBtn()}>
+				<ArrowCircleIcon type="right" />
+			</button>
 			<div class="workContent">
-				{#if current < projectCount}
-					<div class="projectCarousel">
-						<Project {current} project={projects[current]} />
+				<div class="projectCarousel">
+					{#each projects as pitem}
+						<Project
+							{current}
+							project={pitem}
+							projectPosition={`${
+								current == pitem.no ? 'center' : current > pitem.no ? 'left' : 'right'
+							}`}
+						/>
+					{/each}
+					<div>
+						<ProjectArchives
+							projectPosition={`${
+								current == projectCount + 1
+									? 'center'
+									: current > projectCount + 1
+									? 'left'
+									: 'right'
+							}`}
+						/>
 					</div>
-				{:else}
-					<div><ProjectArchives /></div>
-				{/if}
+				</div>
 				<div class="carouselButtonContainer">
-					<ProjectCircles count={projectCount + 1} {current} />
+					<ProjectCircles count={projectCount + 2} {current} />
 					<div class="nextProjectBtn">
 						<button class="btn-anim" on:click={() => handleNextProjectBtn()}>
 							<span>Next Project</span><ArrowIcon />
@@ -48,6 +77,8 @@
 	.projectCarousel {
 		width: 100%;
 		height: 100%;
+		position: relative;
+		// overflow: hidden;
 	}
 	.nextProjectBtn {
 		display: flex;

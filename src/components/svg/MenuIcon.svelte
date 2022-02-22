@@ -102,9 +102,9 @@
 			width: 100%;
 			height: 2px;
 			// background-color: var(--bar-bg, #000);
+			border: none;
 			border-radius: 1px;
-			transition: all 0.2s cubic-bezier(0.1, 0.82, 0.76, 0.965);
-
+			transition: all 0.2s 0s cubic-bezier(0.1, 0.82, 0.76, 0.965);
 			&:first-of-type {
 				top: 0;
 			}
@@ -115,6 +115,7 @@
 		&.active,
 		+ div {
 			span {
+				border: 1px rgb(150, 150, 150) solid;
 				&:first-of-type {
 					transform: rotate(45deg);
 					top: 5px;
