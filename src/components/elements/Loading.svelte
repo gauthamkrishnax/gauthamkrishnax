@@ -3,9 +3,7 @@
 		<circle cx="10" cy="10" r="9.5" stroke="#CDCDCD" />
 		<circle cx="20" cy="10" r="9.5" stroke="#0094FF" />
 	</svg>
-	<span
-		>If you are reading this then thats means your internets slow because my site loads fast : \</span
-	>
+	<span>Hmm...This is strange, My Site usually Loads Fast.</span>
 </div>
 
 <style lang="scss">

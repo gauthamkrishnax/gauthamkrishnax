@@ -9,7 +9,7 @@
 	<div class="subContainer">
 		{#each projectArchive as project}
 			<div class="aProjectContainer">
-				<span>Project {1}</span>
+				<span>Project {project.no}</span>
 				<h5>{project.name}</h5>
 				<p>{project.desc}</p>
 				<div class="btncontainer">
