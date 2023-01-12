@@ -3,7 +3,7 @@
 </script>
 
 <main>
-	<Section name="Hero Section" />
+	<Section name="Artisan Digital Experiances" />
 	<Section name="Works Section" />
 </main>
 
