@@ -1,14 +1,13 @@
 <script>
-	import Section from "./components/Section.svelte";
+	import Home from "./components/Home.svelte";
 </script>
 
 <main>
-	<Section name="Artisan Digital Experiances" />
-	<Section name="Works Section" />
+	<Home />
 </main>
 
 <style>
 	main {
-		width: 100%;
+		position: relative;
 	}
 </style>

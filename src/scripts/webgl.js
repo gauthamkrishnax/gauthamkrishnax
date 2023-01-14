@@ -1,10 +1,23 @@
+import { gsap } from "gsap";
 import * as THREE from "three";
+
+// @ts-ignore
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+// @ts-ignore
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+// @ts-ignore
+import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
+// @ts-ignore
+import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 
 import vertexGradient from "../shaders/gradient/vertex.glsl?raw";
 import fragmentGradient from "../shaders/gradient/fragment.glsl?raw";
 
 import vertexChaos from "../shaders/chaos/vertex.glsl?raw";
 import fragmentChaos from "../shaders/chaos/fragment.glsl?raw";
+
+import vertexNoise from "../shaders/noise/vertex.glsl?raw";
+import fragmentNoise from "../shaders/noise/fragment.glsl?raw";
 
 export default class webglEngine {
 	constructor(options) {
@@ -24,7 +37,6 @@ export default class webglEngine {
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
 		this.renderer.setClearColor(0x000000, 1);
-		this.renderer.physicallyCorrectLights = true;
 		this.renderer.outputEncoding = THREE.sRGBEncoding;
 
 		this.container = options.dom;
@@ -32,10 +44,35 @@ export default class webglEngine {
 		this.height = this.container.offsetHeight;
 		this.container.appendChild(this.renderer.domElement);
 
-		this.setupEventListeners();
-		this.addLights();
+		this.composer = new EffectComposer(this.renderer);
+
+		this.renderPass = new RenderPass(this.scene, this.camera);
+		this.composer.addPass(this.renderPass);
+
+		this.noiseEffect = {
+			uniforms: {
+				tDiffuse: { value: null },
+				amount: { value: 0 },
+			},
+			vertexShader: vertexNoise,
+			fragmentShader: fragmentNoise,
+		};
+
+		this.noisePass = new ShaderPass(this.noiseEffect);
+		this.noisePass.renderToScreen = true;
+		this.composer.addPass(this.noisePass);
+
+		this.SMAAPass = new SMAAPass(
+			window.innerWidth * this.renderer.getPixelRatio(),
+			window.innerHeight * this.renderer.getPixelRatio()
+		);
+		this.composer.addPass(this.SMAAPass);
+
 		this.addObjects();
 		this.render();
+		this.setupEventListeners();
+
+		this.delta = 0;
 	}
 
 	setupEventListeners() {
@@ -43,25 +80,35 @@ export default class webglEngine {
 			this.camera.aspect = window.innerWidth / window.innerHeight;
 			this.camera.updateProjectionMatrix();
 			this.renderer.setSize(window.innerWidth, window.innerHeight);
+			this.composer.setSize(window.innerWidth, window.innerHeight);
+		});
+
+		const pointer = { x: 0, y: 0 };
+
+		document.addEventListener("pointermove", (event) => {
+			pointer.x = event.clientX / window.innerWidth - 0.5;
+			pointer.y = event.clientY / window.innerHeight - 0.5;
+
+			let tl = gsap.timeline();
+
+			tl.to(this.blob.position, {
+				x: -pointer.x * 0.7,
+				duration: 1,
+			}).to(this.plane.rotation, {
+				y: -pointer.x * 0.5 + 2,
+				delay: -1,
+			});
 		});
 	}
 
-	addLights() {
-		const light = new THREE.AmbientLight(0xffffff, 0.5);
-		this.scene.add(light);
-
-		const light2 = new THREE.DirectionalLight(0xffffff, 0.5);
-		light2.position.set(5, 3, 5);
-		this.scene.add(light2);
-	}
-
 	render() {
-		this.renderer.render(this.scene, this.camera);
 		requestAnimationFrame(this.render.bind(this));
-		// this.material.uniforms.utime.value += 0.0001;
-		this.material.uniforms.utime.value = this.clock.getElapsedTime();
+		this.delta = this.clock.getElapsedTime();
+		this.composer.render(this.delta);
+		this.noisePass.uniforms["amount"].value = this.delta;
+		this.material.uniforms.utime.value = this.delta;
 		if (this.blob) {
-			this.blob.material.uniforms.uTime.value = this.clock.getElapsedTime();
+			this.blob.material.uniforms.uTime.value = this.delta;
 		}
 	}
 
@@ -106,15 +153,18 @@ export default class webglEngine {
 				},
 				resolution: { value: new THREE.Vector4() },
 			},
+			// wireframe: true,
 			vertexShader: vertexGradient,
 			fragmentShader: fragmentGradient,
 		});
 
-		this.geometry = new THREE.PlaneGeometry(20, 10, 100, 100);
+		// this.geometry = new THREE.PlaneGeometry(30, 10, 100, 100);
+		this.geometry = new THREE.SphereGeometry(8, 100, 100);
 		this.plane = new THREE.Mesh(this.geometry, this.material);
+		this.plane.rotation.y += 1.5;
 		this.scene.add(this.plane);
 
-		this.blobGeometry = new THREE.IcosahedronGeometry(1, 64);
+		this.blobGeometry = new THREE.IcosahedronGeometry(1, 65);
 		this.blobMaterial = new THREE.ShaderMaterial({
 			vertexShader: vertexChaos,
 			fragmentShader: fragmentChaos,
@@ -135,8 +185,6 @@ export default class webglEngine {
 			defines: {
 				PI: Math.PI,
 			},
-			// wireframe: true,
-			// side: THREE.DoubleSide
 			transparent: true,
 		});
 

@@ -1,4 +1,4 @@
-uniform float utime;
+uniform float time;
 uniform float progress;
 uniform sampler2D texture1;
 uniform vec4 resolution;
