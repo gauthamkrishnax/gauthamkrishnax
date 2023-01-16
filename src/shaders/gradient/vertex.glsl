@@ -86,7 +86,7 @@ void main() {
 	float tilt = -0.8 * uv.y;
 	float incline = uv.x * 0.1;
 	float offset = incline * mix(-.25, .25, uv.y);
-	float noise = snoise(vec3(noiseCoord.x * utime*0.001, noiseCoord.y, utime * 0.001));
+	float noise = snoise(vec3(noiseCoord.x * utime*0.0001, noiseCoord.y, utime * 0.0001));
 
 	noise = max(0., noise);
 
@@ -105,8 +105,8 @@ void main() {
 		float noiseCeil = 0.6 * float(i) * 0.07;
 
 		// float noise = smoothstep(noiseFloor, noiseCeil, snoise(vec3(noiseCoord.x * noiseFreq.x * utime * noiseFlow, noiseCoord.y * noiseFreq.x, utime * noiseSpeed + noiseSeed)));
-		float ktime = utime + 25.0;
-		float noise = snoise(vec3(noiseCoord.x * noiseFreq.x * sin(ktime*0.01) * noiseFlow, noiseCoord.y * noiseFreq.x, cos(ktime*0.01) * noiseSpeed + noiseSeed));
+		float ktime = utime + 80.0;
+		float noise = snoise(vec3(noiseCoord.x * noiseFreq.x * sin(ktime*0.003) * noiseFlow, noiseCoord.y * noiseFreq.x, cos(ktime*0.003) * noiseSpeed + noiseSeed));
 		vColor = mix(vColor, uColor[i], noise);
 	}
 

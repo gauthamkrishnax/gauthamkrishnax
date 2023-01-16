@@ -6,14 +6,18 @@
 		<line x1="0.5" y1="0" x2="0.500031" y2="100%" stroke="#555" />
 	</svg>
 </span>
-<div class="container">
-	<div class="header">
+<div id="home" data-scroll-section class="container">
+	<div class="header  anime-home">
 		<span>GAUTHAM KRISHNA</span>
 	</div>
 	<div class="center">
-		<div class="hero">
-			<span class="hero-1">I make</span>
-			<h1>Artisan Digital Experiences</h1>
+		<div class="circle-1  anim-home-circle" />
+		<div class="circle-2 anim-home-circle" />
+		<div class="hero anime-home">
+			<span class="hero-1">I Create</span>
+			<h1 class="magic-hover magic-hover__square">
+				Artisan Digital Experiences
+			</h1>
 			<div class="hero-3">
 				<span>Developer</span>
 				<svg
@@ -32,7 +36,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="footer">
+	<div class="footer  anime-home">
 		<span>2023 <br /> Portfolio </span>
 		<span class="arrow">
 			<svg
@@ -52,7 +56,7 @@
 		</span>
 		<span>
 			<ul>
-				<li class="button k-hover1">
+				<li>
 					<a href="https://www.linkedin.com/in/gauthamkrishnas/">LinkedIn</a>
 				</li>
 				<li><a href="https://github.com/gauthamkrishnax">Github</a></li>
@@ -63,6 +67,9 @@
 </div>
 
 <style>
+	/* .anime-home {
+		opacity: 0 !important;
+	} */
 	.line {
 		display: block;
 		position: absolute;
@@ -101,6 +108,26 @@
 		justify-content: center;
 		position: relative;
 	}
+	.circle-1,
+	.circle-2 {
+		position: absolute;
+		/* border: 1px solid white; */
+		border-radius: 50%;
+	}
+
+	.circle-1 {
+		width: 45em;
+		height: 45em;
+		background: rgba(217, 217, 217, 0.05);
+		/* height: 300px; */
+	}
+
+	.circle-2 {
+		width: 30em;
+		height: 30em;
+		border: 1px solid #919191;
+	}
+
 	.hero {
 		display: flex;
 		flex-direction: column;
@@ -111,7 +138,7 @@
 	}
 	.hero-1 {
 		/* align-self: center; */
-		margin-left: 1em;
+		/* margin-left: 1em; */
 		color: #ccc;
 	}
 	.hero-3 {
@@ -196,6 +223,10 @@
 	}
 
 	@media only screen and (max-width: 720px) {
+		.container {
+			grid-template-rows: 0.05fr 1fr 0.11fr;
+			background-color: rgba(0.1, 0.1, 0.1, 0.5);
+		}
 		h1 {
 			font-size: 3rem;
 		}
@@ -227,6 +258,7 @@
 			display: flex;
 			justify-self: center;
 			font-size: 12px;
+			align-items: flex-start;
 		}
 
 		.center {

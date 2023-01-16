@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="prevent-bounce">
 
 <head>
   <meta charset="UTF-8" />
@@ -9,8 +9,21 @@
 </head>
 
 <body>
-  <div id="app" data-scroll-container></div>
-  <div id="webgl"></div>
+  <div id="wrapper">
+    <div id="webgl">
+    </div>
+    <div class="no-cursor" id="loader"
+      style="display:flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; height: 100%; width: 100%; background-color: black; z-index: 100;">
+      <span id="loadno" style="color: white; font-size: 3rem; padding: 1em;">10</span>
+    </div>
+    <div id="wrapper-2" class="smooth-scroll">
+      <div id="app">
+      </div>
+    </div>
+  </div>
+  <script>
+    let count = 0, done = !1; const load = document.querySelector("#loader"), web = document.querySelector("#webgl"), interval = setInterval(() => { 99 == count ? count = 99 : (count++, load.children[0].textContent = count), document.fonts.onloadingdone = (() => { done = !0 }), web.children.length > 0 && done && (count = 100, load.children[0].textContent = count, load.classList.add("get-rid"), clearInterval(interval)) }, 20);
+  </script>
   <script type="module" src="/src/main.js"></script>
 </body>
 

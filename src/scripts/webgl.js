@@ -95,7 +95,7 @@ export default class webglEngine {
 				x: -pointer.x * 0.7,
 				duration: 1,
 			}).to(this.plane.rotation, {
-				y: -pointer.x * 0.5 + 2,
+				x: -pointer.x * 0.5,
 				delay: -1,
 			});
 		});

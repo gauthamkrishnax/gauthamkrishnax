@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "gsap": "^3.11.4",
-    "kursor": "^0.1.6",
     "locomotive-scroll": "^4.1.4",
+    "magicmouse.js": "^1.2.1",
     "three": "^0.148.0"
   }
 }
