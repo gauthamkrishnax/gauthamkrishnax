@@ -241,4 +241,7 @@ tl3
 			stagger: 0.1,
 		},
 		"<"
-	);
+	)
+	.to(".rotating-star", {
+		animationDuration: "5s",
+	});

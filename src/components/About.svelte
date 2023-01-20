@@ -1,6 +1,7 @@
 <div data-scroll-section class="container">
 	<div class="hero about-section">
 		<svg
+			class="rotating-star"
 			width="300"
 			height="300"
 			viewBox="0 0 20 20"
