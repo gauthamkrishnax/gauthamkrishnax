@@ -220,9 +220,9 @@ tl2
 
 let tl3 = gsap.timeline({
 	scrollTrigger: {
-		trigger: ".about-section",
+		trigger: ".about-container",
 		scrub: true,
-		start: "-=300 center",
+		start: "top center",
 		end: "max",
 	},
 	ease: "none",
@@ -231,17 +231,14 @@ let tl3 = gsap.timeline({
 tl3
 	.from(".about-heading", {
 		opacity: 0,
-		y: 100,
+		y: -100,
+		duration: 2,
 	})
-	.from(
-		".about-link",
-		{
-			opacity: 0,
-			y: -50,
-			stagger: 0.1,
-		},
-		"<"
-	)
+	.from(".about-link", {
+		opacity: 0,
+		y: -50,
+		stagger: 0.5,
+	})
 	.to(".rotating-star", {
 		animationDuration: "5s",
 	});

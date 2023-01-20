@@ -1,4 +1,4 @@
-<div data-scroll-section class="container">
+<div data-scroll-section class="about-container container">
 	<div class="hero about-section">
 		<svg
 			class="rotating-star"
