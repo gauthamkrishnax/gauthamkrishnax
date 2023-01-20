@@ -21,6 +21,7 @@ import fragmentNoise from "../shaders/noise/fragment.glsl?raw";
 
 export default class webglEngine {
 	constructor(options) {
+		this.asscroll = options.asscroll;
 		this.clock = new THREE.Clock();
 		this.scene = new THREE.Scene();
 		this.scene.background = new THREE.Color("rgb(0,0,0)");
@@ -77,10 +78,13 @@ export default class webglEngine {
 
 	setupEventListeners() {
 		window.addEventListener("resize", () => {
-			this.camera.aspect = window.innerWidth / window.innerHeight;
+			const width = window.innerWidth;
+			const height = window.innerHeight;
+			this.camera.aspect = width / height;
 			this.camera.updateProjectionMatrix();
-			this.renderer.setSize(window.innerWidth, window.innerHeight);
-			this.composer.setSize(window.innerWidth, window.innerHeight);
+			this.renderer.setSize(width, height);
+			this.composer.setSize(width, height);
+			this.asscroll.resize({ width, height });
 		});
 
 		const pointer = { x: 0, y: 0 };
@@ -92,7 +96,7 @@ export default class webglEngine {
 			let tl = gsap.timeline();
 
 			tl.to(this.blob.position, {
-				x: -pointer.x * 0.7,
+				x: -pointer.x * 0.3,
 				duration: 1,
 			}).to(this.plane.rotation, {
 				x: -pointer.x * 0.5,

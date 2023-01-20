@@ -1,17 +1,17 @@
 <script>
+	import About from "./components/About.svelte";
 	import Home from "./components/Home.svelte";
+	import Works from "./components/Works.svelte";
 </script>
 
 <main>
 	<Home />
-	<div class="works" />
+	<Works />
+	<About />
 </main>
 
 <style>
 	main {
 		position: relative;
-	}
-	div {
-		min-height: 100vh;
 	}
 </style>

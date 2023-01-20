@@ -88,6 +88,7 @@
 		grid-template-rows: 0.1fr 1fr 0.11fr;
 		grid-auto-columns: 1fr;
 		gap: 0px 0px;
+		border-bottom: 1px #555 solid;
 	}
 
 	.header {
@@ -183,6 +184,8 @@
 	}
 
 	.footer span:nth-child(3) {
+		position: relative;
+		z-index: 10;
 		justify-self: flex-end;
 	}
 
@@ -225,7 +228,7 @@
 	@media only screen and (max-width: 720px) {
 		.container {
 			grid-template-rows: 0.05fr 1fr 0.11fr;
-			background-color: rgba(0.1, 0.1, 0.1, 0.5);
+			/* background-color: rgba(0.1, 0.1, 0.1, 0.5); */
 		}
 		h1 {
 			font-size: 3rem;

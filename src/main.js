@@ -1,14 +1,60 @@
 import "./app.css";
 import App from "./App.svelte";
-import LocomotiveScroll from "locomotive-scroll";
+
+import ASScroll from "@ashthornton/asscroll";
+
 import webglEngine from "./scripts/webgl";
+
 import { magicMouse } from "magicmouse.js";
 
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/all";
 gsap.registerPlugin(ScrollTrigger);
 
+//GSAP-SCROLL-TRIGGER AND ASSCROLL SCROLL PROXY
+
+// https://github.com/ashthornton/asscroll
+const asscroll = new ASScroll({
+	disableRaf: true,
+	touchScrollType: "scrollTop",
+	disableResize: true,
+});
+
+gsap.ticker.add(asscroll.update);
+
+ScrollTrigger.defaults({
+	scroller: asscroll.containerElement,
+});
+
+ScrollTrigger.scrollerProxy(asscroll.containerElement, {
+	scrollTop(value) {
+		return arguments.length
+			? (asscroll.currentPos = value)
+			: asscroll.currentPos;
+	},
+	getBoundingClientRect() {
+		return {
+			top: 0,
+			left: 0,
+			width: window.innerWidth,
+			height: window.innerHeight,
+		};
+	},
+});
+
+asscroll.on("update", ScrollTrigger.update);
+ScrollTrigger.addEventListener("refresh", asscroll.resize);
+
+gsap.ticker.add(asscroll.update);
+
+window.addEventListener("load", () => {
+	asscroll.enable();
+});
+
+//END
+
 let webgl = new webglEngine({
+	asscroll: asscroll,
 	dom: document.getElementById("webgl"),
 });
 
@@ -19,81 +65,17 @@ const app = new App({
 
 export default app;
 
-const options = {
+magicMouse({
 	cursorOuter: "circle-basic",
 	hoverEffect: "pointer-overlay",
 	hoverItemMove: false,
 	defaultCursor: false,
 	outerWidth: 30,
 	outerHeight: 30,
-};
-magicMouse(options);
-
-// --- SETUP START ---
-// Using Locomotive Scroll from Locomotive https://github.com/locomotivemtl/locomotive-scroll
-const locoScroll = new LocomotiveScroll({
-	el: document.querySelector(".smooth-scroll"),
-	smooth: true,
-	reloadOnContextChange: true,
 });
-// each time Locomotive Scroll updates, tell ScrollTrigger to update too (sync positioning)
-locoScroll.on("scroll", ScrollTrigger.update);
-
-// tell ScrollTrigger to use these proxy methods for the ".smooth-scroll" element since Locomotive Scroll is hijacking things
-ScrollTrigger.scrollerProxy(".smooth-scroll", {
-	scrollTop(value) {
-		return arguments.length
-			? locoScroll.scrollTo(value, { duration: 0, disableLerp: true })
-			: // @ts-ignore
-			  locoScroll.scroll.instance.scroll.y;
-	}, // we don't have to define a scrollLeft because we're only scrolling vertically.
-	getBoundingClientRect() {
-		return {
-			top: 0,
-			left: 0,
-			width: window.innerWidth,
-			height: window.innerHeight,
-		};
-	},
-	// LocomotiveScroll handles things completely differently on mobile devices - it doesn't even transform the container at all! So to get the correct behavior and avoid jitters, we should pin things with position: fixed on mobile. We sense it by checking to see if there's a transform applied to the container (the LocomotiveScroll-controlled element).
-	// @ts-ignore
-	pinType: document.querySelector(".smooth-scroll").style.transform
-		? "transform"
-		: "fixed",
-});
-
-// each time the window updates, we should refresh ScrollTrigger and then update LocomotiveScroll.
-ScrollTrigger.addEventListener("refresh", () => locoScroll.update());
-ScrollTrigger.defaults({ scroller: ".smooth-scroll" });
-// --- SETUP END ---
-
-// function is_touch_enabled() {
-// 	return (
-// 		"ontouchstart" in window ||
-// 		navigator.maxTouchPoints > 0 ||
-// 		// @ts-ignore
-// 		navigator.msMaxTouchPoints > 0
-// 	);
-// }
-
-// if (is_touch_enabled()) {
-// 	document.querySelector("#wrapper").classList.add("wrapper-touch");
-// }
-
-var uagent = navigator.userAgent.toLowerCase();
-if (
-	uagent.search("iphone") > -1 ||
-	uagent.search("ipad") > -1 ||
-	uagent.search("android") > -1 ||
-	uagent.search("blackberry") > -1 ||
-	uagent.search("webos") > -1
-) {
-	document.querySelector("#wrapper").classList.add("wrapper-touch");
-}
 
 let tlinit = gsap.timeline({
 	ease: "power1.out",
-	delay: 1,
 });
 
 tlinit
@@ -101,14 +83,19 @@ tlinit
 		y: -4,
 		ease: "elastic.out(0.5, 0.5)",
 		duration: 2,
+		delay: 0.5,
 	})
-	.from(".anim-home-circle", {
-		width: 0,
-		height: 0,
-		opacity: 0,
-		duration: 1,
-		stagger: 0.1,
-	})
+	.from(
+		".anim-home-circle",
+		{
+			width: 0,
+			height: 0,
+			opacity: 0,
+			duration: 0.5,
+			stagger: 0.1,
+		},
+		"-=100%"
+	)
 	.from(".anime-home", {
 		opacity: 0,
 		stagger: 0.5,
@@ -126,46 +113,132 @@ let tl = gsap.timeline({
 	ease: "none",
 });
 
-tl.to(
-	webgl.blob.rotation,
+// mm.add("(max-width: 999px)", () => {
+// 	tl.to(
+// 		webgl.camera.position,
+// 		{
+// 			z: 5,
+// 		},
+// 		"-=100%"
+// 	).to(
+// 		webgl.camera.rotation,
+// 		{
+// 			y: 0,
+// 		},
+// 		"-=100%"
+// 	);
+// });
+
+let mm = gsap.matchMedia(),
+	breakPoint = 1000;
+
+mm.add(
 	{
-		y: 2,
-		z: 1,
+		isDesktop: `(min-width: ${breakPoint}px)`,
+		isMobile: `(max-width: ${breakPoint - 1}px)`,
+		reduceMotion: "(prefers-reduced-motion: reduce)",
 	},
-	"-100%"
-)
-	.to(
-		webgl.camera.position,
+	(context) => {
+		// context.conditions has a boolean property for each condition defined above indicating if it's matched or not.
+		let { isDesktop, isMobile, reduceMotion } = context.conditions;
+
+		tl.to(
+			webgl.blob.rotation,
+			{
+				y: isDesktop ? 2 : 3,
+				z: isDesktop ? 1 : 3,
+			},
+			"-100%"
+		)
+			.to(
+				webgl.camera.position,
+				{
+					z: isDesktop ? 4 : 5,
+				},
+				"-=100%"
+			)
+			.to(
+				webgl.camera.rotation,
+				{
+					y: isDesktop ? -1.2 : 0,
+				},
+				"-=100%"
+			)
+			.to(
+				webgl.plane.position,
+				{
+					x: -2,
+				},
+				"-=100%"
+			)
+			.to(
+				".circle-1",
+				{
+					x: -100,
+				},
+				"-100%"
+			)
+			.to(
+				".circle-2",
+				{
+					x: 200,
+				},
+				"-100%"
+			);
+
+		return () => {
+			// optionally return a cleanup function that will be called when none of the conditions match anymore (after having matched)
+			// it'll automatically call context.revert() - do NOT do that here . Only put custom cleanup code here.
+		};
+	}
+);
+
+let tl2 = gsap.timeline({
+	scrollTrigger: {
+		trigger: ".navigation-list",
+		scrub: true,
+		start: "top bottom",
+		end: "top top",
+		// markers: true,
+	},
+	ease: "none",
+});
+
+tl2
+	.from(".works-heading", {
+		opacity: 0,
+	})
+	.from(
+		".navigation-item",
 		{
-			z: 4,
+			opacity: 0,
+			y: -50,
+			stagger: 0.2,
 		},
-		"-=100%"
-	)
-	.to(
-		webgl.camera.rotation,
+		"<"
+	);
+
+let tl3 = gsap.timeline({
+	scrollTrigger: {
+		trigger: ".about-section",
+		scrub: true,
+		start: "-=300 center",
+		end: "max",
+	},
+	ease: "none",
+});
+
+tl3
+	.from(".about-heading", {
+		opacity: 0,
+		y: 100,
+	})
+	.from(
+		".about-link",
 		{
-			y: -1.2,
+			opacity: 0,
+			y: -50,
+			stagger: 0.1,
 		},
-		"-=100%"
-	)
-	.to(
-		webgl.plane.position,
-		{
-			x: -2,
-		},
-		"-=100%"
-	)
-	.to(
-		".circle-1",
-		{
-			x: -100,
-		},
-		"-100%"
-	)
-	.to(
-		".circle-2",
-		{
-			x: 200,
-		},
-		"-100%"
+		"<"
 	);

@@ -15,6 +15,7 @@
     "vite": "^4.0.0"
   },
   "dependencies": {
+    "@ashthornton/asscroll": "^2.0.11",
     "gsap": "^3.11.4",
     "locomotive-scroll": "^4.1.4",
     "magicmouse.js": "^1.2.1",
