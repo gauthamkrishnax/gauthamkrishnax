@@ -6,7 +6,7 @@ I love creating things. I taught myself designing when I was 16 and started free
  Now I love combining both of the skills to build creative softwares and designs.
 <br />
 <br />
-Currently I am a Computer Science middler in Vellore Instistute of Technology, Chennai while I reside in Kerala, India. My main focus these days is to learn new technology and create user-centered products.
+Currently I am a UI Developer | Technical Consultant at Adobe. My main focus these days is to learn new technology and create user-centered products.
 </p>
 <br />
 <br />
