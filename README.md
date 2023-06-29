@@ -11,7 +11,7 @@ Currently I am a UI Developer | Technical Consultant at Adobe. My main focus the
 <br />
 <br />
 
-- 📫 How to reach me: [8.gautham@pm.me](mailto:8.gautham@pm.me)
+- 📫 How to reach me: [gauthamkrishnax@gmail.com](gauthamkrishnax@gmail.com)
 - 🔗 My website: [https://gauthamkrishnax.me/](https://gauthamkrishnax.me/)
 
 <br />
