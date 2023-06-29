@@ -1,9 +1,7 @@
 <h1 align="center">Hi 👋, I'm Gautham Krishna !</h1>
 <br>
 <p>
-I love creating things. I taught myself designing when I was 16 and started freelancing.
- My Intrest in coding started when I wanted to make my mockup UI designs real. 
- Now I love combining both of the skills to build creative softwares and designs.
+I love creating things.
 <br />
 <br />
 Currently I am a UI Developer | Technical Consultant at Adobe. My main focus these days is to learn new technology and create user-centered products.
