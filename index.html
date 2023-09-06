@@ -60,7 +60,8 @@
     </div>
   </div>
   <script>
-    let count = 0, done = !1; const load = document.querySelector("#loader"), web = document.querySelector("#webgl"), interval = setInterval(() => { 99 == count ? count = 99 : (count++, load.children[0].textContent = count), document.fonts.onloadingdone = (() => { done = !0 }), web.children.length > 0 && done && (count = 100, load.children[0].textContent = count, load.classList.add("get-rid"), clearInterval(interval)) }, 20);
+    let count = 0, done = !1;
+    const load = document.querySelector("#loader"), web = document.querySelector("#webgl"), interval = setInterval(() => { 99 == count ? count = 99 : (count++, load.children[0].textContent = count), document.fonts.ready.then(() => { done = !0 }), web.children.length > 0 && done && (count = 100, load.children[0].textContent = count, load.classList.add("get-rid"), clearInterval(interval)) }, 20);
   </script>
   <script type="module" src="/src/main.js"></script>
 </body>
