@@ -20,6 +20,4 @@ Currently I am a UI Developer | Technical Consultant at Adobe. My main focus the
 </p>
 <hr />
 
-### Show some ❤️ by starring some of the repositories!
-
 <img alt="GIF" src="https://media.giphy.com/media/vzO0Vc8b2VBLi/giphy.gif" />
