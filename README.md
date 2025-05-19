@@ -1,23 +1,9 @@
-<h1 align="center">Hi 👋, I'm Gautham Krishna !</h1>
-<br>
+<h1 align="center">Hi 👋, I'm Gautham !</h1>
 <p>
 I love creating things.
-<br />
-<br />
-Currently I am a UI Developer | Technical Consultant at Adobe. My main focus these days is to learn new technology and create user-centered products.
+I'm a UI Developer and Technical Consultant at Adobe, always exploring new tech and passionate about creating intuitive, user-first products.
 </p>
-<br />
-<br />
 
 - 📫 How to reach me: [gauthamkrishnax@gmail.com](gauthamkrishnax@gmail.com)
-- 🔗 My website: [https://gauthamkrishnax.me/](https://gauthamkrishnax.me/)
+- 🔗 My website: [https://gauthamkrishna.in/](https://gauthamkrishna.in/)
 
-<br />
-<hr />
-<p>
-  <img src = "https://github-readme-stats.vercel.app/api?username=gauthamkrishnax&show_icons=true&theme=bear" width = 400>
-  <img src = "https://github-readme-streak-stats.herokuapp.com?user=gauthamkrishnax&theme=dark&hide_border=true" width = 400>
-</p>
-<hr />
-
-<img alt="GIF" src="https://media.giphy.com/media/vzO0Vc8b2VBLi/giphy.gif" />
