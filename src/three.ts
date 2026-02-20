@@ -6,10 +6,10 @@ const CONFIG = {
 
   grid: {
     segments: 20,
-    opacity: 0.13,
+    opacity: 0.23,
     lineColor: 0x000000,
     pointColor: 0x000000,
-    pointSize: 5,
+    pointSize: 8,
     position: { x: -0.18, y: 0.05, z: -0.68 },
     rotation: { x: Math.PI * 25/ 180, y: -Math.PI * 60/ 180, z: 0 }, // radians
   },
@@ -25,6 +25,11 @@ const CONFIG = {
     far: 10,
     position: { x: 0.5, y: 0.4, z: 1.4 },
     lookAt: { x: 0, y: 0, z: 0 },
+    scroll: {
+      thresholdPixels: 400,
+      positionWhenScrolled: { x: 0.5, y: 1, z: 0.8 },
+      lerpSpeed: 0.08, // 0–1: higher = faster catch-up per frame
+    },
   },
 
   renderer: {
@@ -155,8 +160,33 @@ async function init(): Promise<void> {
     camConfig.near,
     camConfig.far
   );
+  const lookAt = camConfig.lookAt;
   camera.position.set(camConfig.position.x, camConfig.position.y, camConfig.position.z);
-  camera.lookAt(camConfig.lookAt.x, camConfig.lookAt.y, camConfig.lookAt.z);
+  camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
+
+  const scrollConfig = camConfig.scroll;
+  const targetCameraPosition = new THREE.Vector3(
+    camConfig.position.x,
+    camConfig.position.y,
+    camConfig.position.z
+  );
+
+  function updateCameraTargetFromScroll(): void {
+    if (!scrollConfig) return;
+    const y = typeof window !== 'undefined' ? window.scrollY : 0;
+    const t = Math.min(1, Math.max(0, y / scrollConfig.thresholdPixels));
+    const a = camConfig.position;
+    const b = scrollConfig.positionWhenScrolled;
+    targetCameraPosition.set(
+      a.x + t * (b.x - a.x),
+      a.y + t * (b.y - a.y),
+      a.z + t * (b.z - a.z)
+    );
+  }
+  updateCameraTargetFromScroll();
+  window.addEventListener('scroll', updateCameraTargetFromScroll, { passive: true });
+
+  const lerpSpeed = scrollConfig?.lerpSpeed ?? 0.08;
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(width, height);
@@ -188,6 +218,10 @@ async function init(): Promise<void> {
     const t = timer.getElapsed();
     (lineMat.uniforms.uTime as import('three').Uniform).value = t;
     (pointsMat.uniforms.uTime as import('three').Uniform).value = t;
+    if (scrollConfig) {
+      camera.position.lerp(targetCameraPosition, lerpSpeed);
+      camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
+    }
     renderer.render(scene, camera);
   }
 
@@ -218,6 +252,7 @@ async function init(): Promise<void> {
 
   const cleanup = (): void => {
     cancelAnimationFrame(rafId);
+    window.removeEventListener('scroll', updateCameraTargetFromScroll);
     resizeObserver.disconnect();
     renderer.dispose();
     lineGeo.dispose();
