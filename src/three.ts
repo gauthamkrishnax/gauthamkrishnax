@@ -15,11 +15,11 @@ const CONFIG = {
     plane: {
       enabled: true,
       color: 0xFEFEFE,
-      opacity: 0.2,
+      opacity: 0.3,
     },
     highlight: {
       enabled: true,
-      color: 0xDFEBFF,
+      color: 0xD7D7D7,
       radius: 1,
       intensity: 1,
       followLerp: 0.06, // 0–1: lower = more delay/smoother follow after mouse move
@@ -161,7 +161,8 @@ function createPlaneMaterial(THREE: ThreeModule): import('three').ShaderMaterial
 function createWaveMaterial(
   THREE: ThreeModule,
   color: number,
-  isLine: boolean
+  isLine: boolean,
+  enableHighlight = false
 ): import('three').ShaderMaterial {
   const { grid, wave } = CONFIG;
   const c = new THREE.Color(color);
@@ -180,7 +181,7 @@ function createWaveMaterial(
       uMouseGrid: { value: new THREE.Vector2(-10, -10) },
       uHighlightRadius: { value: highlight?.radius ?? 0.5 },
       uHighlightColor: { value: new THREE.Vector3(highlightColor.r, highlightColor.g, highlightColor.b) },
-      uHighlightIntensity: { value: highlight?.enabled ? (highlight?.intensity ?? 0.7) : 0 },
+      uHighlightIntensity: { value: enableHighlight && highlight?.enabled ? (highlight?.intensity ?? 0.7) : 0 },
     },
     vertexShader: `
       uniform float uTime;
@@ -297,11 +298,11 @@ async function init(): Promise<void> {
   containerEl.appendChild(renderer.domElement);
 
   const lineGeo = createGridLineGeometry(THREE);
-  const lineMat = createWaveMaterial(THREE, grid.lineColor, true);
+  const lineMat = createWaveMaterial(THREE, grid.lineColor, true, false);
   const gridLines = new THREE.LineSegments(lineGeo, lineMat);
 
   const pointsGeo = createGridPointsGeometry(THREE);
-  const pointsMat = createWaveMaterial(THREE, grid.pointColor, false);
+  const pointsMat = createWaveMaterial(THREE, grid.pointColor, false, false);
   const gridPoints = new THREE.Points(pointsGeo, pointsMat);
 
   const gridGroup = new THREE.Group();
