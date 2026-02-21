@@ -151,6 +151,11 @@ main {
   img {
     max-width: 300px;
     margin-bottom: -70px;
+    filter: grayscale(100%);	
+    transition: filter 0.3s ease-in-out;
+    &:hover {
+      filter: grayscale(0%);
+    }
   }
 
   p {

@@ -6,10 +6,10 @@ const CONFIG = {
 
   grid: {
     segments: 20,
-    opacity: 0.23,
-    lineColor: 0x000000,
-    pointColor: 0x000000,
-    pointSize: 8,
+    opacity: 1,
+    lineColor: 0xD7D7D7,
+    pointColor: 0xD6D6D6,
+    pointSize: 5,
     position: { x: -0.18, y: 0.05, z: -0.68 },
     rotation: { x: Math.PI * 25/ 180, y: -Math.PI * 60/ 180, z: 0 }, // radians
   },
