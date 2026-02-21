@@ -19,9 +19,10 @@ const CONFIG = {
     },
     highlight: {
       enabled: true,
-      color: 0x525869,
-      radius: 0.8,
+      color: 0xDFEBFF,
+      radius: 1,
       intensity: 1,
+      followLerp: 0.06, // 0–1: lower = more delay/smoother follow after mouse move
     },
   },
 
@@ -45,6 +46,8 @@ const CONFIG = {
 
   renderer: {
     maxPixelRatio: 1.2,
+    antialias: false,
+    powerPreference: 'high-performance' as const,
   },
 } as const;
 
@@ -283,7 +286,11 @@ async function init(): Promise<void> {
 
   const lerpSpeed = scrollConfig?.lerpSpeed ?? 0.08;
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  const renderer = new THREE.WebGLRenderer({
+    alpha: true,
+    antialias: renConfig.antialias ?? false,
+    powerPreference: renConfig.powerPreference ?? 'high-performance',
+  });
   renderer.setSize(width, height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, renConfig.maxPixelRatio));
   renderer.setClearColor(0x000000, 0);
@@ -302,8 +309,9 @@ async function init(): Promise<void> {
   gridGroup.rotation.set(grid.rotation.x, grid.rotation.y, grid.rotation.z);
 
   let planeMat: import('three').ShaderMaterial | null = null;
+  let planeGeo: import('three').BufferGeometry | null = null;
   if (grid.plane?.enabled) {
-    const planeGeo = createGridPlaneGeometry(THREE);
+    planeGeo = createGridPlaneGeometry(THREE);
     planeMat = createPlaneMaterial(THREE);
     const gridPlane = new THREE.Mesh(planeGeo, planeMat);
     gridGroup.add(gridPlane);
@@ -313,17 +321,19 @@ async function init(): Promise<void> {
   gridGroup.add(gridPoints);
   scene.add(gridGroup);
 
+  const highlightLerp = grid.highlight?.followLerp ?? 0.06;
   let mouseGridX = -10;
   let mouseGridZ = -10;
+  let targetMouseGridX = -10;
+  let targetMouseGridZ = -10;
 
   function onMouseMove(e: MouseEvent): void {
-    mouseGridZ = 1 - 2 * (e.clientX / window.innerWidth);
-    mouseGridX = -1 + 2 * (e.clientY / window.innerHeight);
-    
+    targetMouseGridZ = 1 - 2 * (e.clientX / window.innerWidth);
+    targetMouseGridX = -1 + 2 * (e.clientY / window.innerHeight);
   }
   function onMouseLeave(): void {
-    mouseGridX = -10;
-    mouseGridZ = -10;
+    targetMouseGridX = -10;
+    targetMouseGridZ = -10;
   }
   window.addEventListener('mousemove', onMouseMove, { passive: true });
   window.addEventListener('mouseleave', onMouseLeave, { passive: true });
@@ -335,6 +345,8 @@ async function init(): Promise<void> {
     rafId = requestAnimationFrame(animate);
     timer.update(timestamp ?? performance.now());
     const t = timer.getElapsed();
+    mouseGridX += (targetMouseGridX - mouseGridX) * highlightLerp;
+    mouseGridZ += (targetMouseGridZ - mouseGridZ) * highlightLerp;
     (lineMat.uniforms.uTime as import('three').Uniform).value = t;
     (pointsMat.uniforms.uTime as import('three').Uniform).value = t;
     lineMat.uniforms.uMouseGrid.value.set(mouseGridX, mouseGridZ);
@@ -387,6 +399,8 @@ async function init(): Promise<void> {
     pointsGeo.dispose();
     lineMat.dispose();
     pointsMat.dispose();
+    if (planeGeo) planeGeo.dispose();
+    if (planeMat) planeMat.dispose();
     if (containerEl.contains(renderer.domElement)) {
       containerEl.removeChild(renderer.domElement);
     }
