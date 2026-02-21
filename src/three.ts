@@ -12,6 +12,17 @@ const CONFIG = {
     pointSize: 5,
     position: { x: -0.18, y: 0.05, z: -0.68 },
     rotation: { x: Math.PI * 25/ 180, y: -Math.PI * 60/ 180, z: 0 }, // radians
+    plane: {
+      enabled: true,
+      color: 0xFEFEFE,
+      opacity: 0.2,
+    },
+    highlight: {
+      enabled: true,
+      color: 0x525869,
+      radius: 0.8,
+      intensity: 1,
+    },
   },
 
   wave: {
@@ -81,15 +92,19 @@ function createGridPointsGeometry(THREE: ThreeModule): import('three').BufferGeo
   return geo;
 }
 
-function createWaveMaterial(
-  THREE: ThreeModule,
-  color: number,
-  isLine: boolean
-): import('three').ShaderMaterial {
+function createGridPlaneGeometry(THREE: ThreeModule): import('three').BufferGeometry {
+  const { segments } = CONFIG.grid;
+  const geo = new THREE.PlaneGeometry(2, 2, segments, segments);
+  geo.rotateX(-Math.PI / 2);
+  return geo;
+}
+
+function createPlaneMaterial(THREE: ThreeModule): import('three').ShaderMaterial {
   const { grid, wave } = CONFIG;
-  const c = new THREE.Color(color);
-  const pointSize = isLine ? 0 : grid.pointSize;
-  const pointSizeFloat = pointSize % 1 === 0 ? `${pointSize}.0` : String(pointSize);
+  const planeConfig = grid.plane ?? { enabled: true, color: 0xE8E8E8, opacity: 0.22 };
+  const c = new THREE.Color(planeConfig.color);
+  const highlight = grid.highlight;
+  const highlightColor = new THREE.Color(highlight?.color ?? 0xff6600);
 
   return new THREE.ShaderMaterial({
     uniforms: {
@@ -97,12 +112,19 @@ function createWaveMaterial(
       uAmplitude: { value: wave.amplitude },
       uSpeed: { value: wave.speed },
       uColor: { value: new THREE.Vector3(c.r, c.g, c.b) },
-      uOpacity: { value: grid.opacity },
+      uOpacity: { value: planeConfig.opacity },
+      uMouseGrid: { value: new THREE.Vector2(-10, -10) },
+      uHighlightRadius: { value: highlight?.radius ?? 0.5 },
+      uHighlightColor: { value: new THREE.Vector3(highlightColor.r, highlightColor.g, highlightColor.b) },
+      uHighlightIntensity: { value: highlight?.enabled ? (highlight?.intensity ?? 0.7) : 0 },
     },
     vertexShader: `
       uniform float uTime;
       uniform float uAmplitude;
       uniform float uSpeed;
+      uniform vec2 uMouseGrid;
+      uniform float uHighlightRadius;
+      varying float vHighlight;
       void main() {
         float t = uTime * uSpeed;
         float y = uAmplitude * (
@@ -112,6 +134,69 @@ function createWaveMaterial(
         );
         vec3 pos = position + vec3(0.0, y, 0.0);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+        float d = distance(position.xz, uMouseGrid);
+        vHighlight = 1.0 - smoothstep(0.0, uHighlightRadius, d);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 uColor;
+      uniform float uOpacity;
+      uniform vec3 uHighlightColor;
+      uniform float uHighlightIntensity;
+      varying float vHighlight;
+      void main() {
+        vec3 col = mix(uColor, uHighlightColor, vHighlight * uHighlightIntensity);
+        gl_FragColor = vec4(col, uOpacity);
+      }
+    `,
+    transparent: true,
+    depthWrite: true,
+    side: THREE.DoubleSide,
+  });
+}
+
+function createWaveMaterial(
+  THREE: ThreeModule,
+  color: number,
+  isLine: boolean
+): import('three').ShaderMaterial {
+  const { grid, wave } = CONFIG;
+  const c = new THREE.Color(color);
+  const pointSize = isLine ? 0 : grid.pointSize;
+  const pointSizeFloat = pointSize % 1 === 0 ? `${pointSize}.0` : String(pointSize);
+  const highlight = grid.highlight;
+  const highlightColor = new THREE.Color(highlight?.color ?? 0xff6600);
+
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0 },
+      uAmplitude: { value: wave.amplitude },
+      uSpeed: { value: wave.speed },
+      uColor: { value: new THREE.Vector3(c.r, c.g, c.b) },
+      uOpacity: { value: grid.opacity },
+      uMouseGrid: { value: new THREE.Vector2(-10, -10) },
+      uHighlightRadius: { value: highlight?.radius ?? 0.5 },
+      uHighlightColor: { value: new THREE.Vector3(highlightColor.r, highlightColor.g, highlightColor.b) },
+      uHighlightIntensity: { value: highlight?.enabled ? (highlight?.intensity ?? 0.7) : 0 },
+    },
+    vertexShader: `
+      uniform float uTime;
+      uniform float uAmplitude;
+      uniform float uSpeed;
+      uniform vec2 uMouseGrid;
+      uniform float uHighlightRadius;
+      varying float vHighlight;
+      void main() {
+        float t = uTime * uSpeed;
+        float y = uAmplitude * (
+          sin(position.x * 3.0 + t) * cos(position.z * 2.5 + t * 0.8) +
+          sin(position.x * 5.0 + t * 1.3) * 0.4 * cos(position.z * 4.0 + t * 0.6) +
+          sin((position.x + position.z) * 2.0 + t * 0.7) * 0.5
+        );
+        vec3 pos = position + vec3(0.0, y, 0.0);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+        float d = distance(position.xz, uMouseGrid);
+        vHighlight = 1.0 - smoothstep(0.0, uHighlightRadius, d);
         ${isLine ? '' : `gl_PointSize = ${pointSizeFloat};`}
       }
     `,
@@ -119,15 +204,25 @@ function createWaveMaterial(
       ? `
       uniform vec3 uColor;
       uniform float uOpacity;
-      void main() { gl_FragColor = vec4(uColor, uOpacity); }
+      uniform vec3 uHighlightColor;
+      uniform float uHighlightIntensity;
+      varying float vHighlight;
+      void main() {
+        vec3 col = mix(uColor, uHighlightColor, vHighlight * uHighlightIntensity);
+        gl_FragColor = vec4(col, uOpacity);
+      }
     `
       : `
       uniform vec3 uColor;
       uniform float uOpacity;
+      uniform vec3 uHighlightColor;
+      uniform float uHighlightIntensity;
+      varying float vHighlight;
       void main() {
         vec2 c = gl_PointCoord - 0.5;
         if (dot(c, c) > 0.25) discard;
-        gl_FragColor = vec4(uColor, uOpacity);
+        vec3 col = mix(uColor, uHighlightColor, vHighlight * uHighlightIntensity);
+        gl_FragColor = vec4(col, uOpacity);
       }
     `,
     transparent: true,
@@ -205,9 +300,33 @@ async function init(): Promise<void> {
   const gridGroup = new THREE.Group();
   gridGroup.position.set(grid.position.x, grid.position.y, grid.position.z);
   gridGroup.rotation.set(grid.rotation.x, grid.rotation.y, grid.rotation.z);
+
+  let planeMat: import('three').ShaderMaterial | null = null;
+  if (grid.plane?.enabled) {
+    const planeGeo = createGridPlaneGeometry(THREE);
+    planeMat = createPlaneMaterial(THREE);
+    const gridPlane = new THREE.Mesh(planeGeo, planeMat);
+    gridGroup.add(gridPlane);
+  }
+
   gridGroup.add(gridLines);
   gridGroup.add(gridPoints);
   scene.add(gridGroup);
+
+  let mouseGridX = -10;
+  let mouseGridZ = -10;
+
+  function onMouseMove(e: MouseEvent): void {
+    mouseGridZ = 1 - 2 * (e.clientX / window.innerWidth);
+    mouseGridX = -1 + 2 * (e.clientY / window.innerHeight);
+    
+  }
+  function onMouseLeave(): void {
+    mouseGridX = -10;
+    mouseGridZ = -10;
+  }
+  window.addEventListener('mousemove', onMouseMove, { passive: true });
+  window.addEventListener('mouseleave', onMouseLeave, { passive: true });
 
   const timer = new THREE.Timer();
   let rafId: number;
@@ -218,6 +337,12 @@ async function init(): Promise<void> {
     const t = timer.getElapsed();
     (lineMat.uniforms.uTime as import('three').Uniform).value = t;
     (pointsMat.uniforms.uTime as import('three').Uniform).value = t;
+    lineMat.uniforms.uMouseGrid.value.set(mouseGridX, mouseGridZ);
+    pointsMat.uniforms.uMouseGrid.value.set(mouseGridX, mouseGridZ);
+    if (planeMat) {
+      (planeMat.uniforms.uTime as import('three').Uniform).value = t;
+      planeMat.uniforms.uMouseGrid.value.set(mouseGridX, mouseGridZ);
+    }
     if (scrollConfig) {
       camera.position.lerp(targetCameraPosition, lerpSpeed);
       camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
@@ -230,6 +355,7 @@ async function init(): Promise<void> {
     timer.update(performance.now());
     (lineMat.uniforms.uTime as import('three').Uniform).value = timer.getElapsed();
     (pointsMat.uniforms.uTime as import('three').Uniform).value = timer.getElapsed();
+    if (planeMat) (planeMat.uniforms.uTime as import('three').Uniform).value = timer.getElapsed();
     renderer.render(scene, camera);
     animate();
   };
@@ -253,6 +379,8 @@ async function init(): Promise<void> {
   const cleanup = (): void => {
     cancelAnimationFrame(rafId);
     window.removeEventListener('scroll', updateCameraTargetFromScroll);
+    window.removeEventListener('mousemove', onMouseMove);
+    window.removeEventListener('mouseleave', onMouseLeave);
     resizeObserver.disconnect();
     renderer.dispose();
     lineGeo.dispose();
