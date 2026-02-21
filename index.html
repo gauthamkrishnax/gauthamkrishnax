@@ -27,8 +27,18 @@
       </div>
       <div class="works">
         <h2>Works</h2>
+
+        {{! Project Cards with data.js data}}
+        <div class="projects">
+          {{#each projects}}
+            {{> card project=this }}
+          {{/each}}
+        {{! end of projects }}
+
+        </div>
       </div>
     </main>
+    
     {{> footer }}
     <script type="module" src="/src/main.ts"></script>
     <script type="module" src="/src/three.ts" defer></script>
