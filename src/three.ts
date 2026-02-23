@@ -17,6 +17,7 @@ import {
   Vector3,
   WebGLRenderer,
 } from 'three';
+import { color } from 'three/tsl';
 
 // ─── Config (all tunable) ─────────────────────────────────────────────────────
 const CONFIG = {
@@ -37,7 +38,7 @@ const CONFIG = {
     },
     highlight: {
       enabled: true,
-      color: 0xB2B2B2,
+      color: 0xAAAAAA,
       radius: 1,
       intensity: 1,
       followLerp: 0.06, // 0–1: lower = more delay/smoother follow after mouse move

@@ -22,7 +22,7 @@ export default {
             "lastName": "Shader",
             "tag": "Design & Development",
             "thumbnail": "/src/images/blob/thumbnail.jpg",
-            "cardSize": "medium"
+            "cardSize": "medium",
         },
         {
             "id": "amra",
