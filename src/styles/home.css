@@ -1,0 +1,202 @@
+/* Home */
+main {
+    overflow: hidden;
+  }
+  
+  .hero {
+    margin: 40px 15px;
+    padding: 40px 60px;
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    max-width: 900px;
+    position: relative;
+  
+    .three-canvas {
+      position: absolute;
+      bottom: -200px;
+      width: 100%;
+      height: 850px;
+      right: -50%;
+      z-index: 2;
+      pointer-events: none;
+    }
+  
+    .circle {
+      width: 8px;
+      height: 8px;
+      background-color: var(--color-border);
+      border-radius: 50%;
+      position: absolute;
+      top: -4px;
+      right: -4px;
+    }
+  
+    .mask {
+      width: 700px;
+      height: 700px;
+      position: absolute;
+      bottom: -200px;
+      right: -200px;
+      background: var(--color-background);
+      background: repeating-linear-gradient(to top right, rgba(254, 254, 254, 0) 0%, rgba(254, 254, 254, 1) 30%, rgba(254, 254, 254, 1) 70%, rgba(254, 254, 254, 0) 100%);
+  
+    }
+  }
+  
+  .hero-content {
+    position: relative;
+  
+    z-index: 5;
+    margin-top: 3em;
+  
+    h1 {
+      margin: 0;
+      font-family: var(--font-regular);
+      font-weight: 400;
+      font-size: var(--font-size-md);
+    }
+  
+    img {
+      max-width: 300px;
+      margin-bottom: -70px;
+      filter: grayscale(100%);	
+      transition: filter 0.3s ease-in-out;
+      &:hover {
+        filter: grayscale(0%);
+      }
+    }
+  
+    p {
+      max-width: 540px;
+      font-family: var(--font-light);
+      margin-top: 0;
+      margin-bottom: 3em;
+    }
+  }
+  
+  .works {
+    margin: 40px 75px;
+    margin-top: 200px;
+    min-height: 60vh;
+  
+    h2 {
+      font-family: var(--font-light);
+      font-size: var(--font-size-md);
+    }
+  
+    .projects {
+      display: inline-grid;
+      grid-template-columns: repeat(3, 360px); /* exactly 3 columns */
+      column-gap: 30px;
+      row-gap: 0;
+    }
+  
+    .card {
+      position: relative;
+      cursor: pointer;
+      border-radius: 3px;
+      border: 1px solid var(--color-border);
+      width: 360px;
+      isolation: isolate;
+      background-color: var(--color-background);
+      transition: all 0.3s ease-in-out;
+      grid-row: span 27;
+      height: 270px;
+      margin-bottom: 30px;
+  
+  
+      & >div:first-child {
+        height: 90px;
+        transition: all 0.3s ease-in-out;
+      }
+  
+      & >div:first-child  > div {
+        position: absolute;
+        z-index: 5;
+        margin: 10px 20px;
+        transition: all 0.3s ease-in-out;
+      }
+  
+      h3{
+        margin: 0;
+        strong{
+          font-weight: 700;
+        }
+        font-weight: 300;
+        font-size: 32px;
+      }
+      p {
+        margin: 0;
+        font-family: var(--font-light);
+        font-size: var(--font-size-xxs);
+      }
+      img {
+        display: block;
+        height: 180px;
+        width: 100%;
+        object-fit: cover;
+        mix-blend-mode: exclusion;
+        mix-blend-mode: difference;
+        filter: grayscale(100%);
+        transition: all 0.3s ease-in-out;
+      }
+  
+      &.inverted {
+        img {
+          mix-blend-mode: normal;
+        }
+      }
+  
+      &.medium {
+        height: 330px;
+        grid-row: span 33;
+        img {
+          height: 240px;
+        }
+      }
+  
+      &.large {
+        height: 390px;
+        grid-row: span 39;
+        img {
+          height: 300px;
+        }
+      }
+  
+      &:hover {
+        background-color: var(--color-text);
+  
+        & > div:first-child {
+          height: 0;
+        }
+  
+        & > div:first-child  > div {
+          color: var(--color-background);
+          p {
+            color: var(--color-background);
+          }
+          transform: translateY(50px);
+        }
+  
+        img {
+          opacity: 0.5;
+          height: 270px;
+          mix-blend-mode: normal;
+          filter: grayscale(0%);
+        }
+      }
+  
+      
+      &.medium:hover {
+        img {
+          height: 330px;
+        }
+      }
+  
+      &.large:hover {
+        img {
+          height: 390px;
+        }
+      }
+    }
+  }

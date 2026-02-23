@@ -1,4 +1,22 @@
-type ThreeModule = typeof import('three');
+import {
+  BufferGeometry,
+  Color,
+  DoubleSide,
+  Float32BufferAttribute,
+  Group,
+  LineSegments,
+  Mesh,
+  PerspectiveCamera,
+  PlaneGeometry,
+  Points,
+  Scene,
+  ShaderMaterial,
+  Timer,
+  Uniform,
+  Vector2,
+  Vector3,
+  WebGLRenderer,
+} from 'three';
 
 // ─── Config (all tunable) ─────────────────────────────────────────────────────
 const CONFIG = {
@@ -19,7 +37,7 @@ const CONFIG = {
     },
     highlight: {
       enabled: true,
-      color: 0xD7D7D7,
+      color: 0xB2B2B2,
       radius: 1,
       intensity: 1,
       followLerp: 0.06, // 0–1: lower = more delay/smoother follow after mouse move
@@ -52,7 +70,7 @@ const CONFIG = {
 } as const;
 
 // ─── Grid geometry ────────────────────────────────────────────────────────────
-function createGridLineGeometry(THREE: ThreeModule): import('three').BufferGeometry {
+function createGridLineGeometry(): BufferGeometry {
   const { segments } = CONFIG.grid;
   const n = segments + 1;
   const positions: number[] = [];
@@ -74,12 +92,12 @@ function createGridLineGeometry(THREE: ThreeModule): import('three').BufferGeome
     }
   }
 
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  const geo = new BufferGeometry();
+  geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
   return geo;
 }
 
-function createGridPointsGeometry(THREE: ThreeModule): import('three').BufferGeometry {
+function createGridPointsGeometry(): BufferGeometry {
   const { segments } = CONFIG.grid;
   const n = segments + 1;
   const positions: number[] = [];
@@ -90,35 +108,35 @@ function createGridPointsGeometry(THREE: ThreeModule): import('three').BufferGeo
       positions.push(x, 0, z);
     }
   }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  const geo = new BufferGeometry();
+  geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
   return geo;
 }
 
-function createGridPlaneGeometry(THREE: ThreeModule): import('three').BufferGeometry {
+function createGridPlaneGeometry(): BufferGeometry {
   const { segments } = CONFIG.grid;
-  const geo = new THREE.PlaneGeometry(2, 2, segments, segments);
+  const geo = new PlaneGeometry(2, 2, segments, segments);
   geo.rotateX(-Math.PI / 2);
   return geo;
 }
 
-function createPlaneMaterial(THREE: ThreeModule): import('three').ShaderMaterial {
+function createPlaneMaterial(): ShaderMaterial {
   const { grid, wave } = CONFIG;
   const planeConfig = grid.plane ?? { enabled: true, color: 0xE8E8E8, opacity: 0.22 };
-  const c = new THREE.Color(planeConfig.color);
+  const c = new Color(planeConfig.color);
   const highlight = grid.highlight;
-  const highlightColor = new THREE.Color(highlight?.color ?? 0xff6600);
+  const highlightColor = new Color(highlight?.color ?? 0xff6600);
 
-  return new THREE.ShaderMaterial({
+  return new ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
       uAmplitude: { value: wave.amplitude },
       uSpeed: { value: wave.speed },
-      uColor: { value: new THREE.Vector3(c.r, c.g, c.b) },
+      uColor: { value: new Vector3(c.r, c.g, c.b) },
       uOpacity: { value: planeConfig.opacity },
-      uMouseGrid: { value: new THREE.Vector2(-10, -10) },
+      uMouseGrid: { value: new Vector2(-10, -10) },
       uHighlightRadius: { value: highlight?.radius ?? 0.5 },
-      uHighlightColor: { value: new THREE.Vector3(highlightColor.r, highlightColor.g, highlightColor.b) },
+      uHighlightColor: { value: new Vector3(highlightColor.r, highlightColor.g, highlightColor.b) },
       uHighlightIntensity: { value: highlight?.enabled ? (highlight?.intensity ?? 0.7) : 0 },
     },
     vertexShader: `
@@ -154,33 +172,32 @@ function createPlaneMaterial(THREE: ThreeModule): import('three').ShaderMaterial
     `,
     transparent: true,
     depthWrite: true,
-    side: THREE.DoubleSide,
+    side: DoubleSide,
   });
 }
 
 function createWaveMaterial(
-  THREE: ThreeModule,
   color: number,
   isLine: boolean,
   enableHighlight = false
-): import('three').ShaderMaterial {
+): ShaderMaterial {
   const { grid, wave } = CONFIG;
-  const c = new THREE.Color(color);
+  const c = new Color(color);
   const pointSize = isLine ? 0 : grid.pointSize;
   const pointSizeFloat = pointSize % 1 === 0 ? `${pointSize}.0` : String(pointSize);
   const highlight = grid.highlight;
-  const highlightColor = new THREE.Color(highlight?.color ?? 0xff6600);
+  const highlightColor = new Color(highlight?.color ?? 0xff6600);
 
-  return new THREE.ShaderMaterial({
+  return new ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
       uAmplitude: { value: wave.amplitude },
       uSpeed: { value: wave.speed },
-      uColor: { value: new THREE.Vector3(c.r, c.g, c.b) },
+      uColor: { value: new Vector3(c.r, c.g, c.b) },
       uOpacity: { value: grid.opacity },
-      uMouseGrid: { value: new THREE.Vector2(-10, -10) },
+      uMouseGrid: { value: new Vector2(-10, -10) },
       uHighlightRadius: { value: highlight?.radius ?? 0.5 },
-      uHighlightColor: { value: new THREE.Vector3(highlightColor.r, highlightColor.g, highlightColor.b) },
+      uHighlightColor: { value: new Vector3(highlightColor.r, highlightColor.g, highlightColor.b) },
       uHighlightIntensity: { value: enableHighlight && highlight?.enabled ? (highlight?.intensity ?? 0.7) : 0 },
     },
     vertexShader: `
@@ -231,19 +248,11 @@ function createWaveMaterial(
     `,
     transparent: true,
     depthWrite: !isLine,
-    side: THREE.DoubleSide,
+    side: DoubleSide,
   });
 }
 
-async function init(): Promise<void> {
-  let THREE: ThreeModule;
-  try {
-    THREE = await import('three');
-  } catch (err) {
-    console.error('[three] Dynamic import failed:', err);
-    throw err;
-  }
-
+function init(): void {
   const container = document.getElementById(CONFIG.containerId);
   if (!container) return;
   const containerEl: HTMLElement = container;
@@ -252,8 +261,8 @@ async function init(): Promise<void> {
   const height = containerEl.clientHeight;
   const { camera: camConfig, renderer: renConfig, grid } = CONFIG;
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
+  const scene = new Scene();
+  const camera = new PerspectiveCamera(
     camConfig.fov,
     width / height,
     camConfig.near,
@@ -264,7 +273,7 @@ async function init(): Promise<void> {
   camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
 
   const scrollConfig = camConfig.scroll;
-  const targetCameraPosition = new THREE.Vector3(
+  const targetCameraPosition = new Vector3(
     camConfig.position.x,
     camConfig.position.y,
     camConfig.position.z
@@ -287,7 +296,7 @@ async function init(): Promise<void> {
 
   const lerpSpeed = scrollConfig?.lerpSpeed ?? 0.08;
 
-  const renderer = new THREE.WebGLRenderer({
+  const renderer = new WebGLRenderer({
     alpha: true,
     antialias: renConfig.antialias ?? false,
     powerPreference: renConfig.powerPreference ?? 'high-performance',
@@ -297,24 +306,24 @@ async function init(): Promise<void> {
   renderer.setClearColor(0x000000, 0);
   containerEl.appendChild(renderer.domElement);
 
-  const lineGeo = createGridLineGeometry(THREE);
-  const lineMat = createWaveMaterial(THREE, grid.lineColor, true, false);
-  const gridLines = new THREE.LineSegments(lineGeo, lineMat);
+  const lineGeo = createGridLineGeometry();
+  const lineMat = createWaveMaterial(grid.lineColor, true, false);
+  const gridLines = new LineSegments(lineGeo, lineMat);
 
-  const pointsGeo = createGridPointsGeometry(THREE);
-  const pointsMat = createWaveMaterial(THREE, grid.pointColor, false, false);
-  const gridPoints = new THREE.Points(pointsGeo, pointsMat);
+  const pointsGeo = createGridPointsGeometry();
+  const pointsMat = createWaveMaterial(grid.pointColor, false, false);
+  const gridPoints = new Points(pointsGeo, pointsMat);
 
-  const gridGroup = new THREE.Group();
+  const gridGroup = new Group();
   gridGroup.position.set(grid.position.x, grid.position.y, grid.position.z);
   gridGroup.rotation.set(grid.rotation.x, grid.rotation.y, grid.rotation.z);
 
-  let planeMat: import('three').ShaderMaterial | null = null;
-  let planeGeo: import('three').BufferGeometry | null = null;
+  let planeMat: ShaderMaterial | null = null;
+  let planeGeo: BufferGeometry | null = null;
   if (grid.plane?.enabled) {
-    planeGeo = createGridPlaneGeometry(THREE);
-    planeMat = createPlaneMaterial(THREE);
-    const gridPlane = new THREE.Mesh(planeGeo, planeMat);
+    planeGeo = createGridPlaneGeometry();
+    planeMat = createPlaneMaterial();
+    const gridPlane = new Mesh(planeGeo, planeMat);
     gridGroup.add(gridPlane);
   }
 
@@ -339,7 +348,7 @@ async function init(): Promise<void> {
   window.addEventListener('mousemove', onMouseMove, { passive: true });
   window.addEventListener('mouseleave', onMouseLeave, { passive: true });
 
-  const timer = new THREE.Timer();
+  const timer = new Timer();
   let rafId: number;
 
   function animate(timestamp?: number): void {
@@ -348,12 +357,12 @@ async function init(): Promise<void> {
     const t = timer.getElapsed();
     mouseGridX += (targetMouseGridX - mouseGridX) * highlightLerp;
     mouseGridZ += (targetMouseGridZ - mouseGridZ) * highlightLerp;
-    (lineMat.uniforms.uTime as import('three').Uniform).value = t;
-    (pointsMat.uniforms.uTime as import('three').Uniform).value = t;
+    (lineMat.uniforms.uTime as Uniform).value = t;
+    (pointsMat.uniforms.uTime as Uniform).value = t;
     lineMat.uniforms.uMouseGrid.value.set(mouseGridX, mouseGridZ);
     pointsMat.uniforms.uMouseGrid.value.set(mouseGridX, mouseGridZ);
     if (planeMat) {
-      (planeMat.uniforms.uTime as import('three').Uniform).value = t;
+      (planeMat.uniforms.uTime as Uniform).value = t;
       planeMat.uniforms.uMouseGrid.value.set(mouseGridX, mouseGridZ);
     }
     if (scrollConfig) {
@@ -366,9 +375,9 @@ async function init(): Promise<void> {
   // Warm up WebGL (shader compile, etc.) outside rAF to avoid "handler took Xms" violation
   const runLoop = (): void => {
     timer.update(performance.now());
-    (lineMat.uniforms.uTime as import('three').Uniform).value = timer.getElapsed();
-    (pointsMat.uniforms.uTime as import('three').Uniform).value = timer.getElapsed();
-    if (planeMat) (planeMat.uniforms.uTime as import('three').Uniform).value = timer.getElapsed();
+    (lineMat.uniforms.uTime as Uniform).value = timer.getElapsed();
+    (pointsMat.uniforms.uTime as Uniform).value = timer.getElapsed();
+    if (planeMat) (planeMat.uniforms.uTime as Uniform).value = timer.getElapsed();
     renderer.render(scene, camera);
     animate();
   };
@@ -411,9 +420,11 @@ async function init(): Promise<void> {
 }
 
 function runInit(): void {
-  init().catch((err) => {
+  try {
+    init();
+  } catch (err) {
     console.error('[three] Scene failed to load:', err);
-  });
+  }
 }
 
 // Prevent "Uncaught (in promise) timeout" from appearing as unhandled when init/import fails

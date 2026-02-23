@@ -1,4 +1,9 @@
-<div>
-    <h2>{{project.name}}</h2>
-    <p>{{project.description}}</p>
+<div class="card {{cardSize}} {{cardInverted}}">
+    <div>
+        <div>
+            <h3><strong>{{project.firstName}}</strong>{{project.lastName}}</h3>
+            <p>{{project.tag}}</p>
+        </div>
+    </div>
+        <img src="{{project.thumbnail}}" alt="{{project.firstName}}{{project.lastName}} Project Thumbnail">
 </div>

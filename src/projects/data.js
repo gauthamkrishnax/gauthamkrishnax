@@ -1,18 +1,55 @@
 export default {
     "projects": [
         {
-            "id": "experience-league",
-            "name": "Experience League",
-            "description": "Description of Project 1",
-            "image": "image1.jpg",
-            "url": "https://www.project1.com"
+            "id": "sermobot",
+            "firstName": "Sermo",
+            "lastName": "bot",
+            "tag": "Design & Development",
+            "thumbnail": "/src/images/sermobot/thumbnail.jpg",
+            "cardSize": "small"
         },
         {
-            "id": "sermobot",
-            "name": "SermoBot App",
-            "description": "Description of Project 2",
-            "image": "image2.jpg",
-            "url": "https://www.project2.com"
+            "id": "experience-league",
+            "firstName": "Experience",
+            "lastName": "League",
+            "tag": "Development",
+            "thumbnail": "/src/images/exl/thumbnail.jpg",
+            "cardSize": "large"
+        },
+        {
+            "id": "blobshader",
+            "firstName": "Blob",
+            "lastName": "Shader",
+            "tag": "Design & Development",
+            "thumbnail": "/src/images/blob/thumbnail.jpg",
+            "cardSize": "medium"
+        },
+        {
+            "id": "amra",
+            "firstName": "Amra",
+            "lastName": "App",
+            "tag": "Design & Development",
+            "thumbnail": "/src/images/amra/thumbnail.jpg",
+            "cardSize": "large",
+            "cardInverted": "inverted"
+        },
+        {
+            "id": "fairdeal",
+            "firstName": "Fairdeal",
+            "lastName": "Home",
+            "tag": "Design & Development",
+            "thumbnail": "/src/images/fairdeal/thumbnail.jpg",
+            "cardSize": "small",
+            "cardInverted": "inverted"
+        },
+        {
+            "id": "tara",
+            "firstName": "Tara",
+            "lastName": "App",
+            "tag": "Design",
+            "thumbnail": "/src/images/tara/thumbnail.jpg",
+            "cardSize": "large",
+            "cardInverted": "inverted"
         }
     ]
 }
