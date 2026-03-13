@@ -8,7 +8,8 @@
  * ------------------------------------------------------------------------- */
 
 html {
-  font-size: var(--base-font-size);
+  scroll-behavior: smooth;
+  font-size: var(--base-font-size); /* 14px; rem units are relative to this */
 }
 
 body {
@@ -23,6 +24,11 @@ p {
   color: var(--color-text-secondary);
   max-width: 42.86rem; /* 600px */
   line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: 0.01em;
+  line-height: 1.2;
 }
 
 /* -------------------------------------------------------------------------
@@ -57,6 +63,27 @@ img {
 
 strong {
   font-family: var(--font-bold);
+}
+
+a.cta-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background-color: var(--color-black);
+  width: fit-content;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  color: var(--color-white);
+}
+
+a.cta-link.secondary {
+  background-color: var(--color-white);
+  color: var(--color-black);
+  border: 1px solid var(--color-black);
+
+  svg path {
+    fill: var(--color-black);
+  }
 }
 
 /* -------------------------------------------------------------------------

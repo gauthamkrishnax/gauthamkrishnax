@@ -18,6 +18,7 @@
   --color-gray-900: #222222;
   --color-gray-500: #888888;
   --color-gray-200: #d7d7d7;
+  --color-blue-500: #007bff;
 
   /* Semantic color aliases */
   --color-background: var(--color-white);
@@ -25,6 +26,7 @@
   --color-text-secondary: var(--color-gray-900);
   --color-border: var(--color-gray-200);
   --color-link-underline: var(--color-gray-500);
+  --color-link: var(--color-blue-500);
 
   /* -------------------------------------------------------------------------
    * Spacing scale (rem; use for margin, padding, gap)
@@ -43,8 +45,9 @@
   --space-6xl: 4.25rem;   /* ~60px */
   --space-7xl: 5rem;      /* 70px */
   --space-8xl: 5.35rem;   /* ~75px */
-  --space-9xl: 8.5rem;    /* ~120px */
-  --space-10xl: 14.3rem;  /* ~200px */
+  --space-9xl: 6rem;      /* 84px */
+  --space-10xl: 8.5rem;    /* ~120px */
+  --space-11xl: 14.3rem;  /* ~200px */
 
   /* Component spacing – aliases to spacing scale (close enough values) */
   --section-gap: var(--space-3xl);        /* ~40px */
@@ -52,7 +55,7 @@
   --section-gap-lg: var(--space-8xl);     /* ~75px */
   --footer-margin-top: var(--space-4xl);
   --footer-padding-y: var(--space-6xl);
-  --footer-padding-bottom: var(--space-9xl);
+  --footer-padding-bottom: var(--space-10xl);
   --footer-gap: var(--space-4xl);
   --footer-text-margin: var(--space-lg);
   --hero-padding: var(--space-3xl);
@@ -60,7 +63,7 @@
   --card-margin-bottom: var(--space-xl);
   --card-inner-padding-y: var(--space-sm);
   --card-inner-padding-x: var(--space-lg);
-  --works-margin-top: var(--space-10xl);
+  --works-margin-top: var(--space-11xl);
   --grid-gap: var(--space-xl);
   --card-hover-translate: var(--space-4xl);
   --entrance-translate-sm: var(--space-sm);
@@ -68,6 +71,10 @@
   --entrance-translate-lg: var(--space-lg);
   --circle-size: var(--space-xs);
   --circle-offset: var(--space-2xs);
+
+  --project-margin: var(--space-8xl);
+  --project-margin-top: var(--space-9xl);
+  --project-max-width: 900px;
 
   /* -------------------------------------------------------------------------
    * Typography – font families
@@ -77,12 +84,16 @@
   --font-light: "Ranade-Light", sans-serif;
   --font-light-italic: "Ranade-LightItalic", sans-serif;
 
-  /* Typography – font sizes */
-  --font-size-xxs: 0.75rem;
-  --font-size-xs: 0.857rem;
-  --font-size-sm: 1rem;
-  --font-size-md: 1.2rem;
-  --font-size-lg: 2.286rem; /* ~32px */
+  /* Typography – font sizes (scale: 0.75 → 1 → 1.125 → 1.5 → 2.25 → 3rem) */
+  --font-size-xxs: 0.85rem;   /* 11.9px – captions, footer, fine print */
+  --font-size-sm: 1rem;       /* 14px – body default */
+  --font-size-md: 1.5rem;   /* 21px – lead, subheads, nav */
+  --font-size-lg: 2.25rem;   /* 31.5px – card titles, section headings */
+  --font-size-xl: 3rem;       /* 42px – hero / page titles */
+  --font-size-2xl: 3.5rem;    /* 49px – display (optional) */
+
+  /* Alias: body text should use --font-size-sm */
+  --font-size-body: var(--font-size-sm);
 
   /* -------------------------------------------------------------------------
    * Radius
@@ -105,4 +116,5 @@
   --z-base: 1;
   --z-content: 5;
   --z-canvas: 2;
+  --z-sticky: 10;
 }
