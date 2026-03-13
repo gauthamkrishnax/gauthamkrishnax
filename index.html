@@ -19,7 +19,7 @@
             with a strong sense of visual and interaction design. Every detail
             is intentional, engineered for clarity, speed, and lasting impact.
           </p>
-          <img src="/src/images/potrait.jpg" alt="My potrait">
+          <img src="/src/images/potrait.jpg" alt="My potrait" />
         </div>
         <div id="three-canvas" class="three-canvas" aria-hidden="true"></div>
         <div class="mask" aria-hidden="true"></div>
@@ -30,17 +30,31 @@
 
         {{! Project Cards with data.js data}}
         <div class="projects">
-          {{#each projects}}
-            {{> card project=this }}
-          {{/each}}
-        {{! end of projects }}
-
+          {{#each projects}} {{> card project=this }} {{/each}} {{! end of
+          projects }}
         </div>
       </div>
     </main>
-    
+
     {{> footer }}
-    <script type="module" src="/src/main.ts"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelector(".hero")?.classList.add("hero-loaded");
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach(
+              (e) => e.isIntersecting && e.target.classList.add("is-visible"),
+            );
+          },
+          { rootMargin: "0px 0px -40px 0px", threshold: 0 },
+        );
+
+        document
+          .querySelectorAll(".works h2, .projects .card")
+          .forEach((el) => observer.observe(el));
+      });
+    </script>
     <script type="module" src="/src/three.ts" defer></script>
   </body>
 </html>

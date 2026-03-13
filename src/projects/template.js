@@ -35,6 +35,7 @@ export default function template(project) {
   </head>
   <body class="project">
     {{> header }}
+    <div class="sticky-sentinel" aria-hidden="true"></div>
     <div class="sticky">
       <div class="project-title">
       <h1>${project.displayHeading}</h1>
@@ -52,6 +53,35 @@ export default function template(project) {
     </div>
     {{> footer }}
   </body>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const sticky = document.querySelector('.sticky');
+      const sentinel = document.querySelector('.sticky-sentinel');
+      if (!sticky || !sentinel) return;
+
+      const FADE_RANGE = 120;
+      let ticking = false;
+
+      function updateStuckProgress() {
+        const top = sentinel.getBoundingClientRect().top;
+        const progress = Math.max(0, Math.min(1, 1 - top / FADE_RANGE));
+        sticky.style.setProperty('--stuck-progress', progress);
+        sticky.style.setProperty('--stuck-opacity', 1 - progress);
+        sticky.classList.toggle('is-fully-stuck', progress >= 0.99);
+        ticking = false;
+      }
+
+      function onScroll() {
+        if (!ticking) {
+          requestAnimationFrame(updateStuckProgress);
+          ticking = true;
+        }
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      updateStuckProgress();
+    });
+    </script>
 </html>
 `;
 

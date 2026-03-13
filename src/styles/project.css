@@ -7,6 +7,14 @@ body.project {
   .header {
     margin-top: var(--project-margin-top);
     margin-left: var(--project-margin);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .sticky-sentinel {
+    height: 1px;
+    width: 100%;
+    pointer-events: none;
+    visibility: hidden;
   }
 
   .sticky {
@@ -16,24 +24,38 @@ body.project {
     z-index: 1000;
   }
 
+  /* Scroll-driven: only description (p). --stuck-progress and --stuck-opacity set by JS */
+  .project-title p {
+    overflow: hidden;
+    opacity: var(--stuck-opacity, 1);
+    transform: translateY(calc(var(--stuck-progress, 0) * -0.35em));
+    max-height: calc(12em * (1 - var(--stuck-progress, 0)));
+    margin-top: calc(var(--space-2xs) * (1 - var(--stuck-progress, 0)));
+  }
+
+  .sticky.is-fully-stuck .project-title p {
+    pointer-events: none;
+    visibility: hidden;
+  }
+
   .project-title {
-    padding-top: var(--space-sm);
+    padding-top: var(--space-xs);
     margin: 0 var(--project-margin);
   }
 
   .project-title h1 {
+    margin-top: var(--space-xs);
     margin-bottom: var(--space-2xs);
     animation: project-title-in 0.5s ease-out both;
   }
 
   .project-title p {
     font-family: var(--font-light-italic);
-    margin-top: var(--space-2xs);
     animation: project-title-in 0.5s ease-out 0.1s both;
   }
 
   .project-title .cta {
-    margin: var(--space-2xl) 0 var(--space-xl);
+    margin-bottom: var(--space-xl);
     display: flex;
     gap: var(--space-xl);
     animation: project-title-in 0.5s ease-out 0.2s both;
