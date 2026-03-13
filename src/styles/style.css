@@ -1,33 +1,14 @@
+@import "./tokens.css";
 @import "./fonts.css";
 @import "./home.css";
 @import "./project.css";
 
-
-:root {
-  /* Fonts */
-  --font-regular: "Ranade-Regular", sans-serif;
-  --font-bold: "Ranade-Bold", sans-serif;
-  --font-light: "Ranade-Light", sans-serif;
-  --font-light-italic: "Ranade-LightItalic", sans-serif;
-
-
-  /* Font Sizes */
-  --font-size-xxs: 0.75rem;
-  --font-size-xs: 1.2rem;
-  --font-size-sm: 1rem;
-  --font-size-md: 1.2rem;
-  --font-size-xs: 1.2rem;
-  --font-size-xs: 1.2rem;
-
-  /* Colors */
-  --color-background: #fefefe;
-  --color-text: #151515;
-  --color-secondary-text: #222222;
-  --color-border: #d7d7d7;
-}
+/* -------------------------------------------------------------------------
+ * Base
+ * ------------------------------------------------------------------------- */
 
 html {
-  font-size: 14px;
+  font-size: var(--base-font-size);
 }
 
 body {
@@ -35,14 +16,18 @@ body {
   min-height: 100vh;
   font-family: var(--font-regular);
   color: var(--color-text);
-  background-color: var(--background-color);
+  background-color: var(--color-background);
 }
 
 p {
-  color: var(--color-secondary-text);
-  max-width: 600px;
-  line-height: 150%;
+  color: var(--color-text-secondary);
+  max-width: 42.86rem; /* 600px */
+  line-height: 1.5;
 }
+
+/* -------------------------------------------------------------------------
+ * Links
+ * ------------------------------------------------------------------------- */
 
 a:not(.card-link) {
   position: relative;
@@ -51,14 +36,14 @@ a:not(.card-link) {
 }
 
 a:not(.card-link)::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 0;
   height: 1px;
   bottom: 0;
   left: 0;
-  background-color: #888888;
-  transition: width 0.3s;
+  background-color: var(--color-link-underline);
+  transition: width var(--duration-normal) var(--ease-in-out);
 }
 
 a:not(.card-link):hover::after {
@@ -74,40 +59,47 @@ strong {
   font-family: var(--font-bold);
 }
 
-.header {
-  div {
-    font-family: var(--font-light);
-    font-size: var(--font-size-md);
-  }
-  div:last-child {
-    color: var(--color-secondary-text);
-    font-family: var(--font-light);
-    font-size: var(--font-size-xxs);
-  }
+/* -------------------------------------------------------------------------
+ * Header
+ * ------------------------------------------------------------------------- */
+
+.header div {
+  font-family: var(--font-light);
+  font-size: var(--font-size-md);
 }
+
+.header div:last-child {
+  color: var(--color-text-secondary);
+  font-family: var(--font-light);
+  font-size: var(--font-size-xxs);
+}
+
+/* -------------------------------------------------------------------------
+ * Footer
+ * ------------------------------------------------------------------------- */
 
 .footer {
   position: relative;
-  z-index: 5;
-  margin-top: 50px;
-  padding: 60px 0 120px;
+  z-index: var(--z-content);
+  margin-top: var(--footer-margin-top);
+  padding: var(--footer-padding-y) 0 var(--footer-padding-bottom);
   border-top: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
 
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    gap: 50px;
-  }
+.footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: var(--footer-gap);
+}
 
-  p {
-    font-family: var(--font-light);
-    font-size: var(--font-size-xxs);
-    margin-top: 20px;
-  }
+.footer p {
+  font-family: var(--font-light);
+  font-size: var(--font-size-xxs);
+  margin-top: var(--footer-text-margin);
 }
