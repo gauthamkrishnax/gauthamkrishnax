@@ -1,20 +1,7 @@
-@font-face {
-    font-family: "Ranade-LightItalic";
-    src:
-      url("./fonts/Ranade-LightItalic.woff2") format("woff2"),
-      url("./fonts/Ranade-LightItalic.woff") format("woff"),
-      url("./fonts/Ranade-LightItalic.ttf") format("truetype");
-    font-weight: 300;
-    font-display: swap;
-    font-style: italic;
-  }
-
-  :root {
-    --font-family-light-italic: "Ranade-LightItalic", sans-serif;
-  }
-
+body.project {
   h3 {
     font-weight: 300;
     font-style: italic;
     font-family: var(--font-family-light-italic);
   }
+}

@@ -10,9 +10,8 @@ export default function template(project) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>${project.name} | Gautham Krishna</title>
         <link rel="stylesheet" href="/src/styles/style.css">
-        <link rel="stylesheet" href="/src/styles/project.css">
     </head>
-    <body>
+    <body class="project">
         {{> header }}
         <main>
             {{> ${project.id} }}

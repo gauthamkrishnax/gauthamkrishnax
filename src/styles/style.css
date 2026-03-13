@@ -1,5 +1,6 @@
 @import "./fonts.css";
 @import "./home.css";
+@import "./project.css";
 
 
 :root {
@@ -7,6 +8,8 @@
   --font-regular: "Ranade-Regular", sans-serif;
   --font-bold: "Ranade-Bold", sans-serif;
   --font-light: "Ranade-Light", sans-serif;
+  --font-light-italic: "Ranade-LightItalic", sans-serif;
+
 
   /* Font Sizes */
   --font-size-xxs: 0.75rem;
