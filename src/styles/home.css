@@ -93,6 +93,7 @@ main {
     }
   
     .card {
+      color: inherit;
       position: relative;
       cursor: pointer;
       border-radius: 3px;
@@ -263,6 +264,26 @@ main {
   .projects .card.is-visible:nth-child(7) { transition-delay: 0.36s; }
   .projects .card.is-visible:nth-child(8) { transition-delay: 0.42s; }
   .projects .card.is-visible:nth-child(9) { transition-delay: 0.48s; }
+
+  /* Tablet: 2-column grid */
+  @media (max-width: 1024px) {
+    .works .projects {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .works .projects .card {
+      width: 100%;
+    }
+  }
+
+  /* Mobile: 1-column grid */
+  @media (max-width: 768px) {
+    .works .projects {
+      grid-template-columns: 1fr;
+    }
+    .works .projects .card {
+      width: 100%;
+    }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .hero-content h1,
