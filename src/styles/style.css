@@ -41,13 +41,13 @@ p {
   line-height: 150%;
 }
 
-a {
+a:not(.card-link) {
   position: relative;
   text-decoration: none;
   color: inherit;
 }
 
-a::after {
+a:not(.card-link)::after {
   content: '';
   position: absolute;
   width: 0;
@@ -58,7 +58,7 @@ a::after {
   transition: width 0.3s;
 }
 
-a:hover::after {
+a:not(.card-link):hover::after {
   width: 100%;
 }
 

@@ -13,12 +13,9 @@ import {
   ShaderMaterial,
   Timer,
   Uniform,
-  Vector2,
   Vector3,
   WebGLRenderer,
 } from 'three';
-import { color } from 'three/tsl';
-
 // ─── Config (all tunable) ─────────────────────────────────────────────────────
 const CONFIG = {
   containerId: 'three-canvas',
@@ -35,13 +32,6 @@ const CONFIG = {
       enabled: true,
       color: 0xFEFEFE,
       opacity: 0.3,
-    },
-    highlight: {
-      enabled: true,
-      color: 0xAAAAAA,
-      radius: 1,
-      intensity: 1,
-      followLerp: 0.06, // 0–1: lower = more delay/smoother follow after mouse move
     },
   },
 
@@ -125,8 +115,6 @@ function createPlaneMaterial(): ShaderMaterial {
   const { grid, wave } = CONFIG;
   const planeConfig = grid.plane ?? { enabled: true, color: 0xE8E8E8, opacity: 0.22 };
   const c = new Color(planeConfig.color);
-  const highlight = grid.highlight;
-  const highlightColor = new Color(highlight?.color ?? 0xff6600);
 
   return new ShaderMaterial({
     uniforms: {
@@ -135,18 +123,11 @@ function createPlaneMaterial(): ShaderMaterial {
       uSpeed: { value: wave.speed },
       uColor: { value: new Vector3(c.r, c.g, c.b) },
       uOpacity: { value: planeConfig.opacity },
-      uMouseGrid: { value: new Vector2(-10, -10) },
-      uHighlightRadius: { value: highlight?.radius ?? 0.5 },
-      uHighlightColor: { value: new Vector3(highlightColor.r, highlightColor.g, highlightColor.b) },
-      uHighlightIntensity: { value: highlight?.enabled ? (highlight?.intensity ?? 0.7) : 0 },
     },
     vertexShader: `
       uniform float uTime;
       uniform float uAmplitude;
       uniform float uSpeed;
-      uniform vec2 uMouseGrid;
-      uniform float uHighlightRadius;
-      varying float vHighlight;
       void main() {
         float t = uTime * uSpeed;
         float y = uAmplitude * (
@@ -156,19 +137,13 @@ function createPlaneMaterial(): ShaderMaterial {
         );
         vec3 pos = position + vec3(0.0, y, 0.0);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-        float d = distance(position.xz, uMouseGrid);
-        vHighlight = 1.0 - smoothstep(0.0, uHighlightRadius, d);
       }
     `,
     fragmentShader: `
       uniform vec3 uColor;
       uniform float uOpacity;
-      uniform vec3 uHighlightColor;
-      uniform float uHighlightIntensity;
-      varying float vHighlight;
       void main() {
-        vec3 col = mix(uColor, uHighlightColor, vHighlight * uHighlightIntensity);
-        gl_FragColor = vec4(col, uOpacity);
+        gl_FragColor = vec4(uColor, uOpacity);
       }
     `,
     transparent: true,
@@ -177,17 +152,11 @@ function createPlaneMaterial(): ShaderMaterial {
   });
 }
 
-function createWaveMaterial(
-  color: number,
-  isLine: boolean,
-  enableHighlight = false
-): ShaderMaterial {
+function createWaveMaterial(color: number, isLine: boolean): ShaderMaterial {
   const { grid, wave } = CONFIG;
   const c = new Color(color);
   const pointSize = isLine ? 0 : grid.pointSize;
   const pointSizeFloat = pointSize % 1 === 0 ? `${pointSize}.0` : String(pointSize);
-  const highlight = grid.highlight;
-  const highlightColor = new Color(highlight?.color ?? 0xff6600);
 
   return new ShaderMaterial({
     uniforms: {
@@ -196,18 +165,11 @@ function createWaveMaterial(
       uSpeed: { value: wave.speed },
       uColor: { value: new Vector3(c.r, c.g, c.b) },
       uOpacity: { value: grid.opacity },
-      uMouseGrid: { value: new Vector2(-10, -10) },
-      uHighlightRadius: { value: highlight?.radius ?? 0.5 },
-      uHighlightColor: { value: new Vector3(highlightColor.r, highlightColor.g, highlightColor.b) },
-      uHighlightIntensity: { value: enableHighlight && highlight?.enabled ? (highlight?.intensity ?? 0.7) : 0 },
     },
     vertexShader: `
       uniform float uTime;
       uniform float uAmplitude;
       uniform float uSpeed;
-      uniform vec2 uMouseGrid;
-      uniform float uHighlightRadius;
-      varying float vHighlight;
       void main() {
         float t = uTime * uSpeed;
         float y = uAmplitude * (
@@ -217,8 +179,6 @@ function createWaveMaterial(
         );
         vec3 pos = position + vec3(0.0, y, 0.0);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-        float d = distance(position.xz, uMouseGrid);
-        vHighlight = 1.0 - smoothstep(0.0, uHighlightRadius, d);
         ${isLine ? '' : `gl_PointSize = ${pointSizeFloat};`}
       }
     `,
@@ -226,25 +186,17 @@ function createWaveMaterial(
       ? `
       uniform vec3 uColor;
       uniform float uOpacity;
-      uniform vec3 uHighlightColor;
-      uniform float uHighlightIntensity;
-      varying float vHighlight;
       void main() {
-        vec3 col = mix(uColor, uHighlightColor, vHighlight * uHighlightIntensity);
-        gl_FragColor = vec4(col, uOpacity);
+        gl_FragColor = vec4(uColor, uOpacity);
       }
     `
       : `
       uniform vec3 uColor;
       uniform float uOpacity;
-      uniform vec3 uHighlightColor;
-      uniform float uHighlightIntensity;
-      varying float vHighlight;
       void main() {
         vec2 c = gl_PointCoord - 0.5;
         if (dot(c, c) > 0.25) discard;
-        vec3 col = mix(uColor, uHighlightColor, vHighlight * uHighlightIntensity);
-        gl_FragColor = vec4(col, uOpacity);
+        gl_FragColor = vec4(uColor, uOpacity);
       }
     `,
     transparent: true,
@@ -308,11 +260,11 @@ function init(): void {
   containerEl.appendChild(renderer.domElement);
 
   const lineGeo = createGridLineGeometry();
-  const lineMat = createWaveMaterial(grid.lineColor, true, false);
+  const lineMat = createWaveMaterial(grid.lineColor, true);
   const gridLines = new LineSegments(lineGeo, lineMat);
 
   const pointsGeo = createGridPointsGeometry();
-  const pointsMat = createWaveMaterial(grid.pointColor, false, false);
+  const pointsMat = createWaveMaterial(grid.pointColor, false);
   const gridPoints = new Points(pointsGeo, pointsMat);
 
   const gridGroup = new Group();
@@ -332,23 +284,6 @@ function init(): void {
   gridGroup.add(gridPoints);
   scene.add(gridGroup);
 
-  const highlightLerp = grid.highlight?.followLerp ?? 0.06;
-  let mouseGridX = -10;
-  let mouseGridZ = -10;
-  let targetMouseGridX = -10;
-  let targetMouseGridZ = -10;
-
-  function onMouseMove(e: MouseEvent): void {
-    targetMouseGridZ = 1 - 2 * (e.clientX / window.innerWidth);
-    targetMouseGridX = -1 + 2 * (e.clientY / window.innerHeight);
-  }
-  function onMouseLeave(): void {
-    targetMouseGridX = -10;
-    targetMouseGridZ = -10;
-  }
-  window.addEventListener('mousemove', onMouseMove, { passive: true });
-  window.addEventListener('mouseleave', onMouseLeave, { passive: true });
-
   const timer = new Timer();
   let rafId: number;
 
@@ -356,16 +291,9 @@ function init(): void {
     rafId = requestAnimationFrame(animate);
     timer.update(timestamp ?? performance.now());
     const t = timer.getElapsed();
-    mouseGridX += (targetMouseGridX - mouseGridX) * highlightLerp;
-    mouseGridZ += (targetMouseGridZ - mouseGridZ) * highlightLerp;
     (lineMat.uniforms.uTime as Uniform).value = t;
     (pointsMat.uniforms.uTime as Uniform).value = t;
-    lineMat.uniforms.uMouseGrid.value.set(mouseGridX, mouseGridZ);
-    pointsMat.uniforms.uMouseGrid.value.set(mouseGridX, mouseGridZ);
-    if (planeMat) {
-      (planeMat.uniforms.uTime as Uniform).value = t;
-      planeMat.uniforms.uMouseGrid.value.set(mouseGridX, mouseGridZ);
-    }
+    if (planeMat) (planeMat.uniforms.uTime as Uniform).value = t;
     if (scrollConfig) {
       camera.position.lerp(targetCameraPosition, lerpSpeed);
       camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
@@ -402,8 +330,6 @@ function init(): void {
   const cleanup = (): void => {
     cancelAnimationFrame(rafId);
     window.removeEventListener('scroll', updateCameraTargetFromScroll);
-    window.removeEventListener('mousemove', onMouseMove);
-    window.removeEventListener('mouseleave', onMouseLeave);
     resizeObserver.disconnect();
     renderer.dispose();
     lineGeo.dispose();
