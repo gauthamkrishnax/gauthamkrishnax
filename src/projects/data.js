@@ -10,7 +10,7 @@ export default {
             "displayHeading": "Sermobot",
             "description": "AI powered chatbot for the web",
             "url": "https://sermo.gauthamkrishna.in/",
-            "github": "https://github.com/sermobot"
+            "github": "https://github.com/gauthamkrishnax/sermobot"
         },
         {
             "id": "experience-league",

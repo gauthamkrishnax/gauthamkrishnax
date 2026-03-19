@@ -301,6 +301,16 @@ main {
  * ------------------------------------------------------------------------- */
 
 @media (max-width: 64rem) { /* 1024px */
+
+  .hero .three-canvas {
+    opacity: 0.5;
+  }
+
+  .hero {
+    margin: var(--section-gap-sm) var(--section-gap-sm);
+    padding: var(--space-6xl) var(--space-md);
+  }
+
   .works .projects {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -310,11 +320,18 @@ main {
 }
 
 @media (max-width: 48rem) { /* 768px */
+  .works {
+    margin: var(--section-gap-lg) var(--section-gap-sm);
+  }
   .works .projects {
     grid-template-columns: 1fr;
   }
   .works .projects .card {
     width: 100%;
+  }
+  .works .card h3 {
+    font-size: var(--font-size-md);
+    word-break: break-all;
   }
 }
 

@@ -30,7 +30,7 @@ export default function template(project) {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${project.firstName} ${project.lastName} | Gautham Krishna</title>
+    <title>${project.displayHeading} | Gautham Krishna</title>
     <link rel="stylesheet" href="/src/styles/style.css" />
   </head>
   <body class="project">

@@ -68,7 +68,7 @@ body.project {
   }
 
   main {
-    max-width: 700px;
+    max-width: var(--project-content-max-width); /* 600px */
     margin: var(--project-margin);
     margin-left: calc(var(--space-2xl) + var(--project-margin));
 
@@ -102,5 +102,30 @@ body.project {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 64rem) { /* 1024px */
+
+  body.project {
+
+    .header {
+      margin-left: var(--space-md);
+    }
+    .project-title {
+      margin: 0 var(--space-md);
+    }
+
+    main {
+      margin: var(--space-md) var(--space-md);
+    }
+
+    .separator {
+      width: 100%;
+    }
+
+    .back-to-top {
+      margin: var(--space-6xl) var(--space-md);
+    }
   }
 }

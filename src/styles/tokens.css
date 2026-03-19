@@ -75,6 +75,7 @@
   --project-margin: var(--space-8xl);
   --project-margin-top: var(--space-9xl);
   --project-max-width: 900px;
+  --project-content-max-width: 800px;
 
   /* -------------------------------------------------------------------------
    * Typography – font families

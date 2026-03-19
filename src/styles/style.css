@@ -22,13 +22,16 @@ body {
 
 p {
   color: var(--color-text-secondary);
-  max-width: 42.86rem; /* 600px */
   line-height: 1.5;
 }
 
 h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0.01em;
   line-height: 1.2;
+}
+
+h2:not(:first-child),h3:not(:first-child),h4:not(:first-child),h5:not(:first-child),h6:not(:first-child) {
+  margin-top: var(--space-6xl);
 }
 
 /* -------------------------------------------------------------------------
@@ -122,11 +125,15 @@ a.cta-link.secondary {
   padding: 0;
   margin: 0;
   display: flex;
+  justify-content: center;
   gap: var(--footer-gap);
+  flex-wrap: wrap;
+  margin: 0 10px;
 }
 
 .footer p {
   font-family: var(--font-light);
   font-size: var(--font-size-xxs);
   margin-top: var(--footer-text-margin);
+  text-align: center;
 }
