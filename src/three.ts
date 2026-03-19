@@ -13,6 +13,7 @@ import {
   ShaderMaterial,
   Timer,
   Uniform,
+  Vector2,
   Vector3,
   WebGLRenderer,
 } from 'three';
@@ -23,16 +24,41 @@ const CONFIG = {
   grid: {
     segments: 20,
     opacity: 1,
-    lineColor: 0xD7D7D7,
-    pointColor: 0xD6D6D6,
+    /** B&W scene — no accent on lines/points */
+    lineColor: 0x9a9a9a,
+    pointColor: 0x7a7a7a,
     pointSize: 5,
     position: { x: -0.18, y: 0.05, z: -0.68 },
     rotation: { x: Math.PI * 25/ 180, y: -Math.PI * 60/ 180, z: 0 }, // radians
+    /** Slow idle motion — updates group matrix only, same 3 draw calls */
+    idleMotion: {
+      amp: { x: 0.024, y: 0.028, z: 0.016 },
+      speed: { x: 0.2, y: 0.17, z: 0.23 },
+    },
     plane: {
       enabled: true,
-      color: 0xFEFEFE,
-      opacity: 0.3,
+      color: 0xd8d8d8,
+      opacity: 0.38,
+      /** Fragment-only scrolled sine lattice — “living” surface, no extra geometry */
+      surfaceNoise: {
+        scale: 4.2,
+        scrollSpeed: 0.038,
+        strength: 0.07,
+      },
+      /** Grayscale highlight; uPointer follows viewport-normalized body pointer */
+      pointerSpot: 0.36,
     },
+    /** Grid lines/points stay gray */
+    accentMix: 0,
+    /** Extra tilt when pointer is over the canvas rect (radians at edge) */
+    pointerParallax: { x: 0.11, y: 0.13 },
+    /**
+     * Exponential follow rates (1/s), frame-rate independent via Timer delta.
+     * Higher = snappier; rotation rate lower than UV = smoother tilt.
+     */
+    pointerFollowRate: 16,
+    pointerRotFollowRate: 9,
+    fresnelPower: 2.35,
   },
 
   wave: {
@@ -59,6 +85,26 @@ const CONFIG = {
     powerPreference: 'high-performance' as const,
   },
 } as const;
+
+/** Resolved once at init — matches `tokens.css` accent without parsing `var()` chains */
+function readAccentRgb(): Vector3 {
+  if (typeof document === 'undefined') {
+    return new Vector3(0, 0.482, 1);
+  }
+  const raw = getComputedStyle(document.documentElement)
+    .getPropertyValue('--color-blue-500')
+    .trim();
+  const hex = raw.match(/^#([\da-f]{6})$/i);
+  if (hex) {
+    const h = hex[1];
+    return new Vector3(
+      parseInt(h.slice(0, 2), 16) / 255,
+      parseInt(h.slice(2, 4), 16) / 255,
+      parseInt(h.slice(4, 6), 16) / 255
+    );
+  }
+  return new Vector3(0, 0.482, 1);
+}
 
 // ─── Grid geometry ────────────────────────────────────────────────────────────
 function createGridLineGeometry(): BufferGeometry {
@@ -115,6 +161,12 @@ function createPlaneMaterial(): ShaderMaterial {
   const { grid, wave } = CONFIG;
   const planeConfig = grid.plane ?? { enabled: true, color: 0xE8E8E8, opacity: 0.22 };
   const c = new Color(planeConfig.color);
+  const noise = planeConfig.surfaceNoise ?? {
+    scale: 4.2,
+    scrollSpeed: 0.045,
+    strength: 0.11,
+  };
+  const spot = planeConfig.pointerSpot ?? 0.32;
 
   return new ShaderMaterial({
     uniforms: {
@@ -123,11 +175,21 @@ function createPlaneMaterial(): ShaderMaterial {
       uSpeed: { value: wave.speed },
       uColor: { value: new Vector3(c.r, c.g, c.b) },
       uOpacity: { value: planeConfig.opacity },
+      uFresnelPower: { value: grid.fresnelPower },
+      uNoiseScale: { value: noise.scale },
+      uNoiseScroll: { value: noise.scrollSpeed },
+      uNoiseStrength: { value: noise.strength },
+      uPointer: { value: new Vector2(0.5, 0.5) },
+      uPointerSpot: { value: spot },
     },
     vertexShader: `
       uniform float uTime;
       uniform float uAmplitude;
       uniform float uSpeed;
+      varying float vDisp;
+      varying vec2 vUv;
+      varying vec3 vWorldNormal;
+      varying vec3 vWorldPos;
       void main() {
         float t = uTime * uSpeed;
         float y = uAmplitude * (
@@ -136,14 +198,62 @@ function createPlaneMaterial(): ShaderMaterial {
           sin((position.x + position.z) * 2.0 + t * 0.7) * 0.5
         );
         vec3 pos = position + vec3(0.0, y, 0.0);
+        vDisp = y / max(uAmplitude, 0.0001);
+        vUv = uv;
+        vWorldNormal = normalize(mat3(modelMatrix) * normal);
+        vWorldPos = (modelMatrix * vec4(pos, 1.0)).xyz;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
       }
     `,
     fragmentShader: `
       uniform vec3 uColor;
       uniform float uOpacity;
+      uniform float uFresnelPower;
+      uniform float uTime;
+      uniform float uNoiseScale;
+      uniform float uNoiseScroll;
+      uniform float uNoiseStrength;
+      uniform vec2 uPointer;
+      uniform float uPointerSpot;
+      varying float vDisp;
+      varying vec2 vUv;
+      varying vec3 vWorldNormal;
+      varying vec3 vWorldPos;
+
+      float hash21(vec2 p) {
+        return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+      }
+
       void main() {
-        gl_FragColor = vec4(uColor, uOpacity);
+        vec3 viewDir = normalize(cameraPosition - vWorldPos);
+        float ndv = max(dot(normalize(vWorldNormal), viewDir), 0.0);
+        float fresnel = pow(1.0 - ndv, uFresnelPower);
+        float crest = smoothstep(0.12, 1.0, vDisp * 0.5 + 0.5);
+        vec3 tint = mix(uColor * 0.94, uColor * 1.06, fresnel * 0.45 + crest * 0.22);
+        float alpha = uOpacity * (0.86 + fresnel * 0.16);
+
+        vec2 flow = vUv * uNoiseScale;
+        float s = uTime * uNoiseScroll;
+        flow += vec2(1.0, 0.58) * s;
+        flow += vec2(-0.42, 0.91) * s * 0.38;
+
+        float lattice =
+          sin(flow.x * 6.2831853) * sin(flow.y * 6.2831853) * 0.38 +
+          sin(dot(flow, vec2(4.15, 2.88)) * 6.2831853 + uTime * 0.31) * 0.32 +
+          sin(dot(flow, vec2(-2.05, 5.2)) * 4.7123889 - uTime * 0.26) * 0.30;
+        lattice = lattice * 0.5 + 0.5;
+
+        vec2 ncell = floor(flow * 14.0);
+        float grain = hash21(ncell + fract(flow) * 0.001);
+        float detail = mix(lattice, lattice * 0.92 + grain * 0.16, 0.35);
+
+        float lift = mix(1.0 - uNoiseStrength * 0.55, 1.0 + uNoiseStrength * 0.75, detail);
+        vec3 col = tint * lift;
+
+        float spot = exp(-distance(vUv, uPointer) * 3.8);
+        col = mix(col, min(vec3(1.0), col * 1.22), spot * uPointerSpot);
+
+        gl_FragColor = vec4(col, alpha);
       }
     `,
     transparent: true,
@@ -152,7 +262,11 @@ function createPlaneMaterial(): ShaderMaterial {
   });
 }
 
-function createWaveMaterial(color: number, isLine: boolean): ShaderMaterial {
+function createWaveMaterial(
+  color: number,
+  isLine: boolean,
+  accent: Vector3
+): ShaderMaterial {
   const { grid, wave } = CONFIG;
   const c = new Color(color);
   const pointSize = isLine ? 0 : grid.pointSize;
@@ -165,11 +279,14 @@ function createWaveMaterial(color: number, isLine: boolean): ShaderMaterial {
       uSpeed: { value: wave.speed },
       uColor: { value: new Vector3(c.r, c.g, c.b) },
       uOpacity: { value: grid.opacity },
+      uAccent: { value: accent.clone() },
+      uAccentMix: { value: grid.accentMix },
     },
     vertexShader: `
       uniform float uTime;
       uniform float uAmplitude;
       uniform float uSpeed;
+      varying float vDisp;
       void main() {
         float t = uTime * uSpeed;
         float y = uAmplitude * (
@@ -178,6 +295,7 @@ function createWaveMaterial(color: number, isLine: boolean): ShaderMaterial {
           sin((position.x + position.z) * 2.0 + t * 0.7) * 0.5
         );
         vec3 pos = position + vec3(0.0, y, 0.0);
+        vDisp = y / max(uAmplitude, 0.0001);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
         ${isLine ? '' : `gl_PointSize = ${pointSizeFloat};`}
       }
@@ -185,18 +303,32 @@ function createWaveMaterial(color: number, isLine: boolean): ShaderMaterial {
     fragmentShader: isLine
       ? `
       uniform vec3 uColor;
+      uniform vec3 uAccent;
       uniform float uOpacity;
+      uniform float uAccentMix;
+      varying float vDisp;
       void main() {
-        gl_FragColor = vec4(uColor, uOpacity);
+        float crest = smoothstep(0.18, 0.95, vDisp * 0.5 + 0.5);
+        vec3 col = mix(uColor, mix(uColor, uAccent, 0.88), crest * uAccentMix * 0.48);
+        gl_FragColor = vec4(col, uOpacity);
       }
     `
       : `
       uniform vec3 uColor;
+      uniform vec3 uAccent;
       uniform float uOpacity;
+      uniform float uAccentMix;
+      uniform float uTime;
+      varying float vDisp;
       void main() {
         vec2 c = gl_PointCoord - 0.5;
-        if (dot(c, c) > 0.25) discard;
-        gl_FragColor = vec4(uColor, uOpacity);
+        float r2 = dot(c, c);
+        float alpha = uOpacity * (1.0 - smoothstep(0.1, 0.48, r2));
+        if (alpha < 0.015) discard;
+        float crest = smoothstep(0.08, 1.0, vDisp * 0.5 + 0.5);
+        vec3 col = mix(uColor, mix(uColor, uAccent, 0.92), crest * uAccentMix * 0.72);
+        float pulse = 0.94 + 0.06 * sin(uTime * 1.15 + vDisp * 4.5);
+        gl_FragColor = vec4(col, alpha * pulse);
       }
     `,
     transparent: true,
@@ -259,20 +391,45 @@ function init(): void {
   renderer.setClearColor(0x000000, 0);
   containerEl.appendChild(renderer.domElement);
 
+  const accent = readAccentRgb();
+
   const lineGeo = createGridLineGeometry();
-  const lineMat = createWaveMaterial(grid.lineColor, true);
+  const lineMat = createWaveMaterial(grid.lineColor, true, accent);
   const gridLines = new LineSegments(lineGeo, lineMat);
 
   const pointsGeo = createGridPointsGeometry();
-  const pointsMat = createWaveMaterial(grid.pointColor, false);
+  const pointsMat = createWaveMaterial(grid.pointColor, false, accent);
   const gridPoints = new Points(pointsGeo, pointsMat);
 
   const gridGroup = new Group();
   gridGroup.position.set(grid.position.x, grid.position.y, grid.position.z);
-  gridGroup.rotation.set(grid.rotation.x, grid.rotation.y, grid.rotation.z);
+  const baseRot = grid.rotation;
+  gridGroup.rotation.set(baseRot.x, baseRot.y, baseRot.z);
+  const idle = grid.idleMotion ?? {
+    amp: { x: 0.024, y: 0.028, z: 0.016 },
+    speed: { x: 0.2, y: 0.17, z: 0.23 },
+  };
 
   let planeMat: ShaderMaterial | null = null;
   let planeGeo: BufferGeometry | null = null;
+  const pointerTarget = new Vector2(0.5, 0.5);
+  const pointerSmooth = new Vector2(0.5, 0.5);
+  const ptrTiltSmooth = { x: 0, y: 0 };
+  const ptrAmp = grid.pointerParallax ?? { x: 0.11, y: 0.13 };
+  const ptrFollowRate = grid.pointerFollowRate ?? 16;
+  const ptrRotFollowRate = grid.pointerRotFollowRate ?? 9;
+
+  function onPointerMove(ev: PointerEvent): void {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    if (w < 1 || h < 1) return;
+    pointerTarget.set(
+      Math.min(1, Math.max(0, ev.clientX / w)),
+      Math.min(1, Math.max(0, ev.clientY / h))
+    );
+  }
+  document.body.addEventListener('pointermove', onPointerMove, { passive: true });
+
   if (grid.plane?.enabled) {
     planeGeo = createGridPlaneGeometry();
     planeMat = createPlaneMaterial();
@@ -285,15 +442,44 @@ function init(): void {
   scene.add(gridGroup);
 
   const timer = new Timer();
+  timer.connect(document);
   let rafId: number;
+
+  function expSmooth(dt: number, rate: number): number {
+    const d = Math.min(Math.max(dt, 0), 0.05);
+    return 1 - Math.exp(-rate * d);
+  }
 
   function animate(timestamp?: number): void {
     rafId = requestAnimationFrame(animate);
     timer.update(timestamp ?? performance.now());
+    const dt = timer.getDelta();
     const t = timer.getElapsed();
     (lineMat.uniforms.uTime as Uniform).value = t;
     (pointsMat.uniforms.uTime as Uniform).value = t;
     if (planeMat) (planeMat.uniforms.uTime as Uniform).value = t;
+
+    const uvK = expSmooth(dt, ptrFollowRate);
+    pointerSmooth.x += (pointerTarget.x - pointerSmooth.x) * uvK;
+    pointerSmooth.y += (pointerTarget.y - pointerSmooth.y) * uvK;
+    if (planeMat) {
+      (planeMat.uniforms.uPointer as Uniform).value.copy(pointerSmooth);
+    }
+
+    const px = (pointerSmooth.x - 0.5) * 2;
+    const py = (pointerSmooth.y - 0.5) * 2;
+    const tiltTargetX = py * ptrAmp.x;
+    const tiltTargetY = px * ptrAmp.y;
+    const rotK = expSmooth(dt, ptrRotFollowRate);
+    ptrTiltSmooth.x += (tiltTargetX - ptrTiltSmooth.x) * rotK;
+    ptrTiltSmooth.y += (tiltTargetY - ptrTiltSmooth.y) * rotK;
+
+    const idleX = Math.sin(t * idle.speed.x) * idle.amp.x;
+    const idleY = Math.cos(t * idle.speed.y * 0.92) * idle.amp.y;
+    gridGroup.rotation.x = baseRot.x + idleX + ptrTiltSmooth.x;
+    gridGroup.rotation.y = baseRot.y + idleY + ptrTiltSmooth.y;
+    gridGroup.rotation.z =
+      baseRot.z + Math.sin(t * idle.speed.z * 1.05) * idle.amp.z;
     if (scrollConfig) {
       camera.position.lerp(targetCameraPosition, lerpSpeed);
       camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
@@ -308,7 +494,7 @@ function init(): void {
     (pointsMat.uniforms.uTime as Uniform).value = timer.getElapsed();
     if (planeMat) (planeMat.uniforms.uTime as Uniform).value = timer.getElapsed();
     renderer.render(scene, camera);
-    animate();
+    animate(performance.now());
   };
   if (typeof requestIdleCallback !== 'undefined') {
     requestIdleCallback(runLoop, { timeout: 300 });
@@ -329,7 +515,9 @@ function init(): void {
 
   const cleanup = (): void => {
     cancelAnimationFrame(rafId);
+    timer.dispose();
     window.removeEventListener('scroll', updateCameraTargetFromScroll);
+    document.body.removeEventListener('pointermove', onPointerMove);
     resizeObserver.disconnect();
     renderer.dispose();
     lineGeo.dispose();
