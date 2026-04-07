@@ -1,0 +1,73 @@
+
+<h2>Overview</h2>
+
+<p><a href="https://experienceleague.adobe.com/">Experience League</a> is Adobe’s learning and community destination: courses, tutorials, documentation, certification paths, and community content for Experience Cloud and related products. The public site is implemented as an <strong>Edge Delivery Services</strong> (EDS) project—content-forward, Git-backed front-end code running on Adobe’s <a href="https://www.aem.live/">AEM Edge Delivery</a> platform (documented on <a href="https://www.aem.live/">aem.live</a>).</p>
+<p>The open-source implementation lives in the <a href="https://github.com/adobe-experience-league/exlm">exlm</a> repository (“Experience League Modernization”). Authors and pipelines produce HTML that flows through a converter and configuration; the repo supplies blocks, scripts, styles, and routing metadata that shape what visitors see at <code>experienceleague.adobe.com</code>.</p>
+
+<h2>Platform: Edge Delivery Services</h2>
+<p>EDS (described in Adobe’s <a href="https://www.aem.live/">AEM Edge Delivery</a> documentation) treats familiar documents and structured sources as the starting point for fast, static-friendly pages. Teams pair a <strong>content source</strong> (for example a converter or upstream HTML pipeline) with a <strong>GitHub project</strong> that defines presentation: block scripts, shared styles, icons, and build-time configuration such as <code>fstab.yaml</code> (mounting the content root), <code>paths.yaml</code> / <code>paths.json</code>, and Helix-oriented files like <code>helix-query.yaml</code> and <code>helix-sitemap.yaml</code> for indexing and discovery.</p>
+<p>That split keeps authoring workflows separate from front-end engineering while still allowing preview URLs, branch previews, and rapid iteration—patterns highlighted across <a href="https://www.aem.live/">aem.live</a> for performance, preview fidelity, and developer experience.</p>
+
+<h2>Architecture</h2>
+<p>The diagram below is a simplified view of how Experience League fits the EDS model: upstream content is combined with the <code>exlm</code> codebase, then served through Adobe’s edge stack to browsers.</p>
+<p>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 420" role="img" aria-labelledby="exlArchTitle">
+    <title id="exlArchTitle">Experience League and Edge Delivery architecture</title>
+    <defs>
+      <marker id="exlArchArrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+        <path d="M0,0 L7,3.5 L0,7 z" fill="#222" />
+      </marker>
+    </defs>
+    <rect x="1" y="1" width="558" height="418" fill="#fafafa" stroke="#222" stroke-width="2" />
+    <text x="280" y="28" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="15" font-weight="bold">Experience League (EDS)</text>
+
+    <rect x="40" y="48" width="220" height="76" fill="#fff5e6" stroke="#333" stroke-width="1.5" />
+    <text x="150" y="78" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="12" font-weight="bold">Content pipeline</text>
+    <text x="150" y="98" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="10" fill="#444">Converter / upstream HTML</text>
+    <text x="150" y="114" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="10" fill="#444">(see <tspan font-weight="bold">fstab.yaml</tspan> in exlm)</text>
+
+    <rect x="300" y="48" width="220" height="76" fill="#e8f4ff" stroke="#333" stroke-width="1.5" />
+    <text x="410" y="78" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="12" font-weight="bold">GitHub: exlm</text>
+    <text x="410" y="98" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="10" fill="#444">blocks/, scripts/, styles/</text>
+    <text x="410" y="114" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="10" fill="#444">component models, icons, assets</text>
+
+    <line x1="280" y1="124" x2="280" y2="148" stroke="#222" stroke-width="2" marker-end="url(#exlArchArrow)" />
+
+    <rect x="100" y="148" width="360" height="64" fill="#e8fff0" stroke="#333" stroke-width="1.5" />
+    <text x="280" y="176" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="12" font-weight="bold">AEM Edge Delivery</text>
+    <text x="280" y="196" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="10" fill="#444">Compose pages, cache, preview &amp; production hosts (<tspan font-style="italic">hlx.page</tspan> / <tspan font-style="italic">hlx.live</tspan>)</text>
+
+    <line x1="280" y1="212" x2="280" y2="236" stroke="#222" stroke-width="2" marker-end="url(#exlArchArrow)" />
+
+    <rect x="80" y="236" width="400" height="72" fill="#fff" stroke="#333" stroke-width="1.5" stroke-dasharray="6 4" />
+    <text x="280" y="264" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="12" font-weight="bold">Visitors</text>
+    <text x="280" y="284" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="10" fill="#444">experienceleague.adobe.com — learning, docs, community</text>
+
+    <text x="280" y="330" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="11" font-weight="bold">Local development</text>
+    <rect x="60" y="342" width="440" height="62" fill="#f0e8ff" stroke="#333" stroke-width="1.2" />
+    <text x="280" y="364" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="10" fill="#333">Node 22 · <tspan font-weight="bold">@adobe/aem-cli</tspan> · <tspan font-weight="bold">npm run up</tspan> → proxy (e.g. localhost:3000)</text>
+    <text x="280" y="382" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="9" fill="#555">Optional: <tspan font-weight="bold">npm run up-secure</tspan> + hosts entry for signed-in flows — see repo README</text>
+  </svg>
+</p>
+
+<h2>Engineering notes</h2>
+<p>The <code>exlm</code> tree follows common EDS conventions: <strong>blocks</strong> map authored sections to JavaScript and CSS; <strong>scripts</strong> hold shared logic; <strong>styles</strong> and <strong>fonts</strong> centralize design tokens and typography. JSON alongside the repo (<code>component-definition.json</code>, <code>component-models.json</code>, <code>component-filters.json</code>) describes authoring surfaces for the CMS side of the stack.</p>
+<p>Quality tooling in the project (linting, formatting, path validation) keeps a large surface area consistent—important when many contributors touch blocks and content-driven layouts. Releases and contribution expectations are documented in the repository’s README and <code>CONTRIBUTING.md</code>.</p>
+
+<h2>Features</h2>
+<p>Production Experience League delivers personalized learning entry points, curated paths, community hooks, certification messaging, and event promotion—wrapped in a fast, componentized front-end.</p>
+<p>From a developer standpoint, the stack emphasizes <strong>plain HTML, CSS, and JavaScript</strong> at the edge (as described on <a href="https://www.aem.live/">aem.live</a>), Git-based workflows, branch previews, and integration with Adobe’s delivery pipeline rather than a monolithic SPA framework for the document shell.</p>
+
+<h2>Links</h2>
+<p>
+  <a href="https://experienceleague.adobe.com/">Live Experience League site</a> — end-user learning and community hub.
+</p>
+<p>
+  <a href="https://github.com/adobe-experience-league/exlm">adobe-experience-league/exlm on GitHub</a> — site implementation source (Apache-2.0).
+</p>
+<p>
+  <a href="https://www.aem.live/">Adobe Experience Manager — Edge Delivery documentation</a> — EDS concepts, authoring, build, publish, and operations.
+</p>
+<p>
+  The repo README lists preview and live Helix-style URLs for the <code>main</code> branch (for example <code>main--exlm--adobe-experience-league.hlx.page</code> and <code>.hlx.live</code>) for comparing staged output against production.
+</p>

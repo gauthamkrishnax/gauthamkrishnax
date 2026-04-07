@@ -1,17 +1,72 @@
-type ThreeModule = typeof import('three');
-
+import {
+  BufferGeometry,
+  Color,
+  DoubleSide,
+  Float32BufferAttribute,
+  Group,
+  LineSegments,
+  Mesh,
+  PerspectiveCamera,
+  PlaneGeometry,
+  Points,
+  Scene,
+  ShaderMaterial,
+  Timer,
+  Uniform,
+  Vector2,
+  Vector3,
+  WebGLRenderer,
+} from 'three';
 // ─── Config (all tunable) ─────────────────────────────────────────────────────
 const CONFIG = {
   containerId: 'three-canvas',
 
   grid: {
     segments: 20,
-    opacity: 0.23,
-    lineColor: 0x000000,
-    pointColor: 0x000000,
-    pointSize: 8,
-    position: { x: -0.18, y: 0.05, z: -0.68 },
+    opacity: 1,
+    /** B&W scene — no accent on lines/points */
+    lineColor: 0xbababa,
+    pointColor: 0xdadada,
+    pointSize: 10,
+    position: { x: 0, y: -0.55, z: -0.88 },
     rotation: { x: Math.PI * 25/ 180, y: -Math.PI * 60/ 180, z: 0 }, // radians
+    /** Slow idle motion — updates group matrix only, same 3 draw calls */
+    idleMotion: {
+      amp: { x: 0.024, y: 0.028, z: 0.016 },
+      speed: { x: 0.2, y: 0.17, z: 0.23 },
+    },
+    plane: {
+      enabled: true,
+      color: 0xfafafa,
+      opacity: 0.38,
+      /** Fragment-only scrolled sine lattice — “living” surface, no extra geometry */
+      surfaceNoise: {
+        scale: 4.2,
+        scrollSpeed: 0.038,
+        strength: 0.07,
+      },
+      /** Grayscale highlight; uPointer follows viewport-normalized body pointer */
+      pointerSpot: 0.36,
+    },
+    /** Grid lines/points stay gray */
+    accentMix: 0,
+    /** Extra tilt when pointer is over the canvas rect (radians at edge) */
+    pointerParallax: { x: 0.11, y: 0.13 },
+    /**
+     * Exponential follow rates (1/s), frame-rate independent via Timer delta.
+     * Higher = snappier; rotation rate lower than UV = smoother tilt.
+     */
+    pointerFollowRate: 16,
+    pointerRotFollowRate: 9,
+    fresnelPower: 2.35,
+    /**
+     * Stacked “sheets”: same plane mesh + grid lines + points repeated, offset per layer.
+     * Layer i is translated by (i * step.x, i * step.y, i * step.z) in the grid group’s space.
+     */
+    stack: {
+      count: 5,
+      step: { x: -0.22, y: 0.18, z: -0.28 },
+    },
   },
 
   wave: {
@@ -33,12 +88,34 @@ const CONFIG = {
   },
 
   renderer: {
-    maxPixelRatio: 1.2,
+    maxPixelRatio: 2.2,
+    antialias: true,
+    powerPreference: 'high-performance' as const,
   },
 } as const;
 
+/** Resolved once at init — matches `tokens.css` accent without parsing `var()` chains */
+function readAccentRgb(): Vector3 {
+  if (typeof document === 'undefined') {
+    return new Vector3(0, 0.482, 1);
+  }
+  const raw = getComputedStyle(document.documentElement)
+    .getPropertyValue('--color-blue-500')
+    .trim();
+  const hex = raw.match(/^#([\da-f]{6})$/i);
+  if (hex) {
+    const h = hex[1];
+    return new Vector3(
+      parseInt(h.slice(0, 2), 16) / 255,
+      parseInt(h.slice(2, 4), 16) / 255,
+      parseInt(h.slice(4, 6), 16) / 255
+    );
+  }
+  return new Vector3(0, 0.482, 1);
+}
+
 // ─── Grid geometry ────────────────────────────────────────────────────────────
-function createGridLineGeometry(THREE: ThreeModule): import('three').BufferGeometry {
+function createGridLineGeometry(): BufferGeometry {
   const { segments } = CONFIG.grid;
   const n = segments + 1;
   const positions: number[] = [];
@@ -60,12 +137,12 @@ function createGridLineGeometry(THREE: ThreeModule): import('three').BufferGeome
     }
   }
 
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  const geo = new BufferGeometry();
+  geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
   return geo;
 }
 
-function createGridPointsGeometry(THREE: ThreeModule): import('three').BufferGeometry {
+function createGridPointsGeometry(): BufferGeometry {
   const { segments } = CONFIG.grid;
   const n = segments + 1;
   const positions: number[] = [];
@@ -76,33 +153,51 @@ function createGridPointsGeometry(THREE: ThreeModule): import('three').BufferGeo
       positions.push(x, 0, z);
     }
   }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  const geo = new BufferGeometry();
+  geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
   return geo;
 }
 
-function createWaveMaterial(
-  THREE: ThreeModule,
-  color: number,
-  isLine: boolean
-): import('three').ShaderMaterial {
-  const { grid, wave } = CONFIG;
-  const c = new THREE.Color(color);
-  const pointSize = isLine ? 0 : grid.pointSize;
-  const pointSizeFloat = pointSize % 1 === 0 ? `${pointSize}.0` : String(pointSize);
+function createGridPlaneGeometry(): BufferGeometry {
+  const { segments } = CONFIG.grid;
+  const geo = new PlaneGeometry(2, 2, segments, segments);
+  geo.rotateX(-Math.PI / 2);
+  return geo;
+}
 
-  return new THREE.ShaderMaterial({
+function createPlaneMaterial(): ShaderMaterial {
+  const { grid, wave } = CONFIG;
+  const planeConfig = grid.plane ?? { enabled: true, color: 0xE8E8E8, opacity: 0.22 };
+  const c = new Color(planeConfig.color);
+  const noise = planeConfig.surfaceNoise ?? {
+    scale: 4.2,
+    scrollSpeed: 0.045,
+    strength: 0.11,
+  };
+  const spot = planeConfig.pointerSpot ?? 0.32;
+
+  return new ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
       uAmplitude: { value: wave.amplitude },
       uSpeed: { value: wave.speed },
-      uColor: { value: new THREE.Vector3(c.r, c.g, c.b) },
-      uOpacity: { value: grid.opacity },
+      uColor: { value: new Vector3(c.r, c.g, c.b) },
+      uOpacity: { value: planeConfig.opacity },
+      uFresnelPower: { value: grid.fresnelPower },
+      uNoiseScale: { value: noise.scale },
+      uNoiseScroll: { value: noise.scrollSpeed },
+      uNoiseStrength: { value: noise.strength },
+      uPointer: { value: new Vector2(0.5, 0.5) },
+      uPointerSpot: { value: spot },
     },
     vertexShader: `
       uniform float uTime;
       uniform float uAmplitude;
       uniform float uSpeed;
+      varying float vDisp;
+      varying vec2 vUv;
+      varying vec3 vWorldNormal;
+      varying vec3 vWorldPos;
       void main() {
         float t = uTime * uSpeed;
         float y = uAmplitude * (
@@ -111,6 +206,104 @@ function createWaveMaterial(
           sin((position.x + position.z) * 2.0 + t * 0.7) * 0.5
         );
         vec3 pos = position + vec3(0.0, y, 0.0);
+        vDisp = y / max(uAmplitude, 0.0001);
+        vUv = uv;
+        vWorldNormal = normalize(mat3(modelMatrix) * normal);
+        vWorldPos = (modelMatrix * vec4(pos, 1.0)).xyz;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 uColor;
+      uniform float uOpacity;
+      uniform float uFresnelPower;
+      uniform float uTime;
+      uniform float uNoiseScale;
+      uniform float uNoiseScroll;
+      uniform float uNoiseStrength;
+      uniform vec2 uPointer;
+      uniform float uPointerSpot;
+      varying float vDisp;
+      varying vec2 vUv;
+      varying vec3 vWorldNormal;
+      varying vec3 vWorldPos;
+
+      float hash21(vec2 p) {
+        return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+      }
+
+      void main() {
+        vec3 viewDir = normalize(cameraPosition - vWorldPos);
+        float ndv = max(dot(normalize(vWorldNormal), viewDir), 0.0);
+        float fresnel = pow(1.0 - ndv, uFresnelPower);
+        float crest = smoothstep(0.12, 1.0, vDisp * 0.5 + 0.5);
+        vec3 tint = mix(uColor * 0.94, uColor * 1.06, fresnel * 0.45 + crest * 0.22);
+        float alpha = uOpacity * (0.86 + fresnel * 0.16);
+
+        vec2 flow = vUv * uNoiseScale;
+        float s = uTime * uNoiseScroll;
+        flow += vec2(1.0, 0.58) * s;
+        flow += vec2(-0.42, 0.91) * s * 0.38;
+
+        float lattice =
+          sin(flow.x * 6.2831853) * sin(flow.y * 6.2831853) * 0.38 +
+          sin(dot(flow, vec2(4.15, 2.88)) * 6.2831853 + uTime * 0.31) * 0.32 +
+          sin(dot(flow, vec2(-2.05, 5.2)) * 4.7123889 - uTime * 0.26) * 0.30;
+        lattice = lattice * 0.5 + 0.5;
+
+        vec2 ncell = floor(flow * 14.0);
+        float grain = hash21(ncell + fract(flow) * 0.001);
+        float detail = mix(lattice, lattice * 0.92 + grain * 0.16, 0.35);
+
+        float lift = mix(1.0 - uNoiseStrength * 0.55, 1.0 + uNoiseStrength * 0.75, detail);
+        vec3 col = tint * lift;
+
+        float spot = exp(-distance(vUv, uPointer) * 3.8);
+        col = mix(col, min(vec3(1.0), col * 1.22), spot * uPointerSpot);
+
+        gl_FragColor = vec4(col, alpha);
+      }
+    `,
+    transparent: true,
+    depthWrite: true,
+    side: DoubleSide,
+  });
+}
+
+function createWaveMaterial(
+  color: number,
+  isLine: boolean,
+  accent: Vector3
+): ShaderMaterial {
+  const { grid, wave } = CONFIG;
+  const c = new Color(color);
+  const pointSize = isLine ? 0 : grid.pointSize;
+  const pointSizeFloat = pointSize % 1 === 0 ? `${pointSize}.0` : String(pointSize);
+
+  return new ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0 },
+      uAmplitude: { value: wave.amplitude },
+      uSpeed: { value: wave.speed },
+      uColor: { value: new Vector3(c.r, c.g, c.b) },
+      uOpacity: { value: grid.opacity },
+      uAccent: { value: accent.clone() },
+      uAccentMix: { value: grid.accentMix },
+    },
+    vertexShader: `
+      uniform float uTime;
+      uniform float uAmplitude;
+      uniform float uSpeed;
+      varying float vDisp;
+      void main() {
+        float t = uTime * uSpeed;
+        float y = uAmplitude * (
+          sin(position.x * 3.0 + t) * cos(position.z * 2.5 + t * 0.8) +
+          sin(position.x * 5.0 + t * 1.3) * 0.4 * cos(position.z * 4.0 + t * 0.6) +
+          sin((position.x + position.z) * 2.0 + t * 0.7) * 0.5
+        );
+        vec3 pos = position + vec3(0.0, y, 0.0);
+        vDisp = y / max(uAmplitude, 0.0001);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
         ${isLine ? '' : `gl_PointSize = ${pointSizeFloat};`}
       }
@@ -118,33 +311,41 @@ function createWaveMaterial(
     fragmentShader: isLine
       ? `
       uniform vec3 uColor;
+      uniform vec3 uAccent;
       uniform float uOpacity;
-      void main() { gl_FragColor = vec4(uColor, uOpacity); }
+      uniform float uAccentMix;
+      varying float vDisp;
+      void main() {
+        float crest = smoothstep(0.18, 0.95, vDisp * 0.5 + 0.5);
+        vec3 col = mix(uColor, mix(uColor, uAccent, 0.88), crest * uAccentMix * 0.48);
+        gl_FragColor = vec4(col, uOpacity);
+      }
     `
       : `
       uniform vec3 uColor;
+      uniform vec3 uAccent;
       uniform float uOpacity;
+      uniform float uAccentMix;
+      uniform float uTime;
+      varying float vDisp;
       void main() {
         vec2 c = gl_PointCoord - 0.5;
-        if (dot(c, c) > 0.25) discard;
-        gl_FragColor = vec4(uColor, uOpacity);
+        float r2 = dot(c, c);
+        float alpha = uOpacity * (1.0 - smoothstep(0.1, 0.48, r2));
+        if (alpha < 0.015) discard;
+        float crest = smoothstep(0.08, 1.0, vDisp * 0.5 + 0.5);
+        vec3 col = mix(uColor, mix(uColor, uAccent, 0.92), crest * uAccentMix * 0.72);
+        float pulse = 0.94 + 0.06 * sin(uTime * 1.15 + vDisp * 4.5);
+        gl_FragColor = vec4(col, alpha * pulse);
       }
     `,
     transparent: true,
     depthWrite: !isLine,
-    side: THREE.DoubleSide,
+    side: DoubleSide,
   });
 }
 
-async function init(): Promise<void> {
-  let THREE: ThreeModule;
-  try {
-    THREE = await import('three');
-  } catch (err) {
-    console.error('[three] Dynamic import failed:', err);
-    throw err;
-  }
-
+function init(): void {
   const container = document.getElementById(CONFIG.containerId);
   if (!container) return;
   const containerEl: HTMLElement = container;
@@ -153,8 +354,8 @@ async function init(): Promise<void> {
   const height = containerEl.clientHeight;
   const { camera: camConfig, renderer: renConfig, grid } = CONFIG;
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
+  const scene = new Scene();
+  const camera = new PerspectiveCamera(
     camConfig.fov,
     width / height,
     camConfig.near,
@@ -165,7 +366,7 @@ async function init(): Promise<void> {
   camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
 
   const scrollConfig = camConfig.scroll;
-  const targetCameraPosition = new THREE.Vector3(
+  const targetCameraPosition = new Vector3(
     camConfig.position.x,
     camConfig.position.y,
     camConfig.position.z
@@ -188,36 +389,122 @@ async function init(): Promise<void> {
 
   const lerpSpeed = scrollConfig?.lerpSpeed ?? 0.08;
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  const renderer = new WebGLRenderer({
+    alpha: true,
+    antialias: renConfig.antialias ?? false,
+    powerPreference: renConfig.powerPreference ?? 'high-performance',
+  });
   renderer.setSize(width, height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, renConfig.maxPixelRatio));
   renderer.setClearColor(0x000000, 0);
   containerEl.appendChild(renderer.domElement);
 
-  const lineGeo = createGridLineGeometry(THREE);
-  const lineMat = createWaveMaterial(THREE, grid.lineColor, true);
-  const gridLines = new THREE.LineSegments(lineGeo, lineMat);
+  const accent = readAccentRgb();
 
-  const pointsGeo = createGridPointsGeometry(THREE);
-  const pointsMat = createWaveMaterial(THREE, grid.pointColor, false);
-  const gridPoints = new THREE.Points(pointsGeo, pointsMat);
+  const lineGeo = createGridLineGeometry();
+  const lineMat = createWaveMaterial(grid.lineColor, true, accent);
 
-  const gridGroup = new THREE.Group();
+  const pointsGeo = createGridPointsGeometry();
+  const pointsMat = createWaveMaterial(grid.pointColor, false, accent);
+
+  const gridGroup = new Group();
   gridGroup.position.set(grid.position.x, grid.position.y, grid.position.z);
-  gridGroup.rotation.set(grid.rotation.x, grid.rotation.y, grid.rotation.z);
-  gridGroup.add(gridLines);
-  gridGroup.add(gridPoints);
+  const baseRot = grid.rotation;
+  gridGroup.rotation.set(baseRot.x, baseRot.y, baseRot.z);
+  const idle = grid.idleMotion ?? {
+    amp: { x: 0.024, y: 0.028, z: 0.016 },
+    speed: { x: 0.2, y: 0.17, z: 0.23 },
+  };
+
+  const stackCfg = grid.stack ?? { count: 1, step: { x: 0, y: 0, z: 0 } };
+  const layerCount = Math.max(1, Math.floor(stackCfg.count));
+  const sx = stackCfg.step?.x ?? 0;
+  const sy = stackCfg.step?.y ?? 0;
+  const sz = stackCfg.step?.z ?? 0;
+
+  let planeMat: ShaderMaterial | null = null;
+  let planeGeo: BufferGeometry | null = null;
+  const pointerTarget = new Vector2(0.5, 0.5);
+  const pointerSmooth = new Vector2(0.5, 0.5);
+  const ptrTiltSmooth = { x: 0, y: 0 };
+  const ptrAmp = grid.pointerParallax ?? { x: 0.11, y: 0.13 };
+  const ptrFollowRate = grid.pointerFollowRate ?? 16;
+  const ptrRotFollowRate = grid.pointerRotFollowRate ?? 9;
+
+  function onPointerMove(ev: PointerEvent): void {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    if (w < 1 || h < 1) return;
+    pointerTarget.set(
+      Math.min(1, Math.max(0, ev.clientX / w)),
+      Math.min(1, Math.max(0, ev.clientY / h))
+    );
+  }
+  document.body.addEventListener('pointermove', onPointerMove, { passive: true });
+
+  if (grid.plane?.enabled) {
+    planeGeo = createGridPlaneGeometry();
+    planeMat = createPlaneMaterial();
+  }
+
+  for (let i = 0; i < layerCount; i++) {
+    const ox = i * sx;
+    const oy = i * sy;
+    const oz = i * sz;
+    if (planeGeo && planeMat) {
+      const gridPlane = new Mesh(planeGeo, planeMat);
+      gridPlane.position.set(ox, oy, oz);
+      gridGroup.add(gridPlane);
+    }
+    const gridLines = new LineSegments(lineGeo, lineMat);
+    gridLines.position.set(ox, oy, oz);
+    gridGroup.add(gridLines);
+    const gridPoints = new Points(pointsGeo, pointsMat);
+    gridPoints.position.set(ox, oy, oz);
+    gridGroup.add(gridPoints);
+  }
+
   scene.add(gridGroup);
 
-  const timer = new THREE.Timer();
+  const timer = new Timer();
+  timer.connect(document);
   let rafId: number;
+
+  function expSmooth(dt: number, rate: number): number {
+    const d = Math.min(Math.max(dt, 0), 0.05);
+    return 1 - Math.exp(-rate * d);
+  }
 
   function animate(timestamp?: number): void {
     rafId = requestAnimationFrame(animate);
     timer.update(timestamp ?? performance.now());
+    const dt = timer.getDelta();
     const t = timer.getElapsed();
-    (lineMat.uniforms.uTime as import('three').Uniform).value = t;
-    (pointsMat.uniforms.uTime as import('three').Uniform).value = t;
+    (lineMat.uniforms.uTime as Uniform).value = t;
+    (pointsMat.uniforms.uTime as Uniform).value = t;
+    if (planeMat) (planeMat.uniforms.uTime as Uniform).value = t;
+
+    const uvK = expSmooth(dt, ptrFollowRate);
+    pointerSmooth.x += (pointerTarget.x - pointerSmooth.x) * uvK;
+    pointerSmooth.y += (pointerTarget.y - pointerSmooth.y) * uvK;
+    if (planeMat) {
+      (planeMat.uniforms.uPointer as Uniform).value.copy(pointerSmooth);
+    }
+
+    const px = (pointerSmooth.x - 0.5) * 2;
+    const py = (pointerSmooth.y - 0.5) * 2;
+    const tiltTargetX = py * ptrAmp.x;
+    const tiltTargetY = px * ptrAmp.y;
+    const rotK = expSmooth(dt, ptrRotFollowRate);
+    ptrTiltSmooth.x += (tiltTargetX - ptrTiltSmooth.x) * rotK;
+    ptrTiltSmooth.y += (tiltTargetY - ptrTiltSmooth.y) * rotK;
+
+    const idleX = Math.sin(t * idle.speed.x) * idle.amp.x;
+    const idleY = Math.cos(t * idle.speed.y * 0.92) * idle.amp.y;
+    gridGroup.rotation.x = baseRot.x + idleX + ptrTiltSmooth.x;
+    gridGroup.rotation.y = baseRot.y + idleY + ptrTiltSmooth.y;
+    gridGroup.rotation.z =
+      baseRot.z + Math.sin(t * idle.speed.z * 1.05) * idle.amp.z;
     if (scrollConfig) {
       camera.position.lerp(targetCameraPosition, lerpSpeed);
       camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
@@ -228,10 +515,11 @@ async function init(): Promise<void> {
   // Warm up WebGL (shader compile, etc.) outside rAF to avoid "handler took Xms" violation
   const runLoop = (): void => {
     timer.update(performance.now());
-    (lineMat.uniforms.uTime as import('three').Uniform).value = timer.getElapsed();
-    (pointsMat.uniforms.uTime as import('three').Uniform).value = timer.getElapsed();
+    (lineMat.uniforms.uTime as Uniform).value = timer.getElapsed();
+    (pointsMat.uniforms.uTime as Uniform).value = timer.getElapsed();
+    if (planeMat) (planeMat.uniforms.uTime as Uniform).value = timer.getElapsed();
     renderer.render(scene, camera);
-    animate();
+    animate(performance.now());
   };
   if (typeof requestIdleCallback !== 'undefined') {
     requestIdleCallback(runLoop, { timeout: 300 });
@@ -252,13 +540,17 @@ async function init(): Promise<void> {
 
   const cleanup = (): void => {
     cancelAnimationFrame(rafId);
+    timer.dispose();
     window.removeEventListener('scroll', updateCameraTargetFromScroll);
+    document.body.removeEventListener('pointermove', onPointerMove);
     resizeObserver.disconnect();
     renderer.dispose();
     lineGeo.dispose();
     pointsGeo.dispose();
     lineMat.dispose();
     pointsMat.dispose();
+    if (planeGeo) planeGeo.dispose();
+    if (planeMat) planeMat.dispose();
     if (containerEl.contains(renderer.domElement)) {
       containerEl.removeChild(renderer.domElement);
     }
@@ -268,9 +560,11 @@ async function init(): Promise<void> {
 }
 
 function runInit(): void {
-  init().catch((err) => {
+  try {
+    init();
+  } catch (err) {
     console.error('[three] Scene failed to load:', err);
-  });
+  }
 }
 
 // Prevent "Uncaught (in promise) timeout" from appearing as unhandled when init/import fails

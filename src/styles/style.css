@@ -1,26 +1,15 @@
-:root {
-  /* Fonts */
-  --font-regular: "Ranade-Regular", sans-serif;
-  --font-bold: "Ranade-Bold", sans-serif;
-  --font-light: "Ranade-Light", sans-serif;
+@import "./tokens.css";
+@import "./fonts.css";
+@import "./home.css";
+@import "./project.css";
 
-  /* Font Sizes */
-  --font-size-xxs: 0.75rem;
-  --font-size-xs: 1.2rem;
-  --font-size-sm: 1rem;
-  --font-size-md: 1.2rem;
-  --font-size-xs: 1.2rem;
-  --font-size-xs: 1.2rem;
-
-  /* Colors */
-  --color-background: #fefefe;
-  --color-text: #151515;
-  --color-secondary-text: #222222;
-  --color-border: #d7d7d7;
-}
+/* -------------------------------------------------------------------------
+ * Base
+ * ------------------------------------------------------------------------- */
 
 html {
-  font-size: 14px;
+  scroll-behavior: smooth;
+  font-size: var(--base-font-size); /* 14px; rem units are relative to this */
 }
 
 body {
@@ -28,18 +17,46 @@ body {
   min-height: 100vh;
   font-family: var(--font-regular);
   color: var(--color-text);
-  background-color: var(--background-color);
+  background-color: var(--color-background);
 }
 
 p {
-  color: var(--color-secondary-text);
-  max-width: 600px;
-  line-height: 150%;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
 }
 
-a {
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+h2:not(:first-child),h3:not(:first-child),h4:not(:first-child),h5:not(:first-child),h6:not(:first-child) {
+  margin-top: var(--space-6xl);
+}
+
+/* -------------------------------------------------------------------------
+ * Links
+ * ------------------------------------------------------------------------- */
+
+a:not(.card-link) {
+  position: relative;
   text-decoration: none;
   color: inherit;
+}
+
+a:not(.card-link)::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--color-link-underline);
+  transition: width var(--duration-normal) var(--ease-in-out);
+}
+
+a:not(.card-link):hover::after {
+  width: 100%;
 }
 
 img {
@@ -51,152 +68,131 @@ strong {
   font-family: var(--font-bold);
 }
 
-.header {
-  div {
-    font-family: var(--font-light);
-    font-size: var(--font-size-md);
-  }
-  div:last-child {
-    color: var(--color-secondary-text);
-    font-family: var(--font-light);
-    font-size: var(--font-size-xxs);
+a.cta-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background-color: var(--color-black);
+  width: fit-content;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  color: var(--color-white);
+}
+
+a.cta-link.secondary {
+  background-color: var(--color-white);
+  color: var(--color-black);
+  border: 1px solid var(--color-black);
+
+  svg path {
+    fill: var(--color-black);
   }
 }
 
+/* -------------------------------------------------------------------------
+ * Header
+ * ------------------------------------------------------------------------- */
+
+.header div {
+  font-family: var(--font-light);
+  font-size: var(--font-size-md);
+}
+
+.header div:last-child {
+  color: var(--color-text-secondary);
+  font-family: var(--font-light);
+  font-size: var(--font-size-xxs);
+}
+
+/* -------------------------------------------------------------------------
+ * Footer
+ * ------------------------------------------------------------------------- */
+
 .footer {
   position: relative;
-  z-index: 5;
-  margin-top: 20px;
-  padding: 60px 0 120px;
+  z-index: var(--z-content);
+  margin-top: var(--footer-margin-top);
+  padding: var(--footer-padding-y) 0 var(--footer-padding-bottom);
   border-top: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    gap: 50px;
-  }
-
-  p {
-    font-family: var(--font-light);
-    font-size: var(--font-size-xxs);
-    margin-top: 20px;
-  }
 }
 
-/* Home */
-
-main {
+.footer .marquee {
+  align-self: stretch;
+  margin-bottom: var(--footer-gap);
   overflow: hidden;
+  background: #000;
+  color: var(--color-white);
+  padding: var(--space-sm) 0;
 }
 
-.hero {
-  margin: 40px 15px;
-  padding: 40px 60px;
-  border: 1px solid var(--color-border);
-  border-radius: 3px;
-  max-width: 900px;
-  position: relative;
+.footer .marquee__track {
+  display: flex;
+  width: max-content;
+  animation: footer-marquee 25s linear infinite;
+}
 
-  .three-canvas {
-    position: absolute;
-    bottom: -200px;
+.footer .marquee__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding-right: var(--space-lg);
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.footer .marquee__dot {
+  opacity: 0.4;
+}
+
+@keyframes footer-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer .marquee__track {
+    animation: none;
+    justify-content: center;
     width: 100%;
-    height: 850px;
-    right: -50%;
-    z-index: 2;
-    pointer-events: none;
+    flex-wrap: wrap;
   }
 
-  .circle {
-    width: 8px;
-    height: 8px;
-    background-color: var(--color-border);
-    border-radius: 50%;
-    position: absolute;
-    top: -4px;
-    right: -4px;
+  .footer .marquee__row[aria-hidden="true"] {
+    display: none;
   }
 
-  .mask {
-    width: 700px;
-    height: 700px;
-    position: absolute;
-    bottom: -200px;
-    right: -200px;
-    background: var(--color-background);
-    background: repeating-linear-gradient(to top right, rgba(254, 254, 254, 0) 0%, rgba(254, 254, 254, 1) 30%, rgba(254, 254, 254, 1) 70%, rgba(254, 254, 254, 0) 100%);
-
+  .footer .marquee__row {
+    justify-content: center;
+    padding-right: 0;
+    white-space: normal;
   }
 }
 
-.hero-content {
-  position: relative;
-
-  z-index: 5;
-  margin-top: 3em;
-
-  h1 {
-    margin: 0;
-    font-family: var(--font-regular);
-    font-weight: 400;
-    font-size: var(--font-size-md);
-  }
-
-  img {
-    max-width: 300px;
-    margin-bottom: -70px;
-  }
-
-  p {
-    max-width: 540px;
-    font-family: var(--font-light);
-    margin-top: 0;
-    margin-bottom: 3em;
-  }
+.footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  gap: var(--footer-gap);
+  flex-wrap: wrap;
+  margin: 0 10px;
 }
 
-.works {
-  margin: 40px 75px;
-  margin-top: 200px;
-  min-height: 60vh;
-}
-
-/* Fonts Definitions	 */
-@font-face {
-  font-family: "Ranade-Light";
-  src:
-    url("../fonts/Ranade-Light.woff2") format("woff2"),
-    url("../fonts/Ranade-Light.woff") format("woff"),
-    url("../fonts/Ranade-Light.ttf") format("truetype");
-  font-weight: 300;
-  font-display: swap;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Ranade-Regular";
-  src:
-    url("../fonts/Ranade-Regular.woff2") format("woff2"),
-    url("../fonts/Ranade-Regular.woff") format("woff"),
-    url("../fonts/Ranade-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-display: swap;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Ranade-Bold";
-  src:
-    url("../fonts/Ranade-Bold.woff2") format("woff2"),
-    url("../fonts/Ranade-Bold.woff") format("woff"),
-    url("../fonts/Ranade-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-display: swap;
-  font-style: normal;
+.footer p {
+  font-family: var(--font-light);
+  font-size: var(--font-size-xxs);
+  margin-top: var(--footer-text-margin);
+  text-align: center;
 }

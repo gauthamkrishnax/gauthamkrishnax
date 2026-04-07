@@ -2,10 +2,44 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gautham Krishna | Portfolio</title>
+    <meta
+      name="description"
+      content="Frontend engineer at Adobe. I design and build scalable, high-performance web platforms—blending modern architecture with visual and interaction design."
+    />
+    <meta name="author" content="Gautham Krishna" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#151515" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    {{#if siteOrigin}}
+    <link rel="canonical" href="{{siteOrigin}}/" />
+    <meta property="og:url" content="{{siteOrigin}}/" />
+    {{/if}}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Gautham Krishna" />
+    <meta property="og:title" content="Gautham Krishna | Portfolio" />
+    <meta
+      property="og:description"
+      content="Frontend engineer at Adobe. Artisan digital experiences—scalable platforms, modern architecture, and intentional design."
+    />
+    <meta property="og:image" content="{{ogImage}}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Gautham Krishna — portfolio, dark grid" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Gautham Krishna | Portfolio" />
+    <meta
+      name="twitter:description"
+      content="Frontend engineer at Adobe. Artisan digital experiences—scalable platforms, modern architecture, and intentional design."
+    />
+    <meta name="twitter:image" content="{{ogImage}}" />
+    <meta name="twitter:image:alt" content="Gautham Krishna — portfolio, dark grid" />
     <link rel="stylesheet" href="/src/styles/style.css" />
-    <title>Gautham krishna | Portfolio</title>
   </head>
   <body>
     <main>
@@ -19,7 +53,7 @@
             with a strong sense of visual and interaction design. Every detail
             is intentional, engineered for clarity, speed, and lasting impact.
           </p>
-          <img src="/src/images/me.jpg" alt="My potrait">
+          <img src="/src/images/potrait.jpg" alt="My potrait" />
         </div>
         <div id="three-canvas" class="three-canvas" aria-hidden="true"></div>
         <div class="mask" aria-hidden="true"></div>
@@ -27,10 +61,34 @@
       </div>
       <div class="works">
         <h2>Works</h2>
+
+        {{! Project Cards with data.js data}}
+        <div class="projects">
+          {{#each projects}} {{> card project=this }} {{/each}} {{! end of
+          projects }}
+        </div>
       </div>
     </main>
+
     {{> footer }}
-    <script type="module" src="/src/main.ts"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelector(".hero")?.classList.add("hero-loaded");
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach(
+              (e) => e.isIntersecting && e.target.classList.add("is-visible"),
+            );
+          },
+          { rootMargin: "0px 0px -40px 0px", threshold: 0 },
+        );
+
+        document
+          .querySelectorAll(".works h2, .projects .card")
+          .forEach((el) => observer.observe(el));
+      });
+    </script>
     <script type="module" src="/src/three.ts" defer></script>
   </body>
 </html>
