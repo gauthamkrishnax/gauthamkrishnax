@@ -28,7 +28,7 @@ const CONFIG = {
     lineColor: 0xbababa,
     pointColor: 0xdadada,
     pointSize: 10,
-    position: { x: -0.18, y: 0.05, z: -0.68 },
+    position: { x: 0, y: -0.55, z: -0.88 },
     rotation: { x: Math.PI * 25/ 180, y: -Math.PI * 60/ 180, z: 0 }, // radians
     /** Slow idle motion — updates group matrix only, same 3 draw calls */
     idleMotion: {
@@ -59,6 +59,14 @@ const CONFIG = {
     pointerFollowRate: 16,
     pointerRotFollowRate: 9,
     fresnelPower: 2.35,
+    /**
+     * Stacked “sheets”: same plane mesh + grid lines + points repeated, offset per layer.
+     * Layer i is translated by (i * step.x, i * step.y, i * step.z) in the grid group’s space.
+     */
+    stack: {
+      count: 5,
+      step: { x: -0.22, y: 0.18, z: -0.28 },
+    },
   },
 
   wave: {
@@ -395,11 +403,9 @@ function init(): void {
 
   const lineGeo = createGridLineGeometry();
   const lineMat = createWaveMaterial(grid.lineColor, true, accent);
-  const gridLines = new LineSegments(lineGeo, lineMat);
 
   const pointsGeo = createGridPointsGeometry();
   const pointsMat = createWaveMaterial(grid.pointColor, false, accent);
-  const gridPoints = new Points(pointsGeo, pointsMat);
 
   const gridGroup = new Group();
   gridGroup.position.set(grid.position.x, grid.position.y, grid.position.z);
@@ -409,6 +415,12 @@ function init(): void {
     amp: { x: 0.024, y: 0.028, z: 0.016 },
     speed: { x: 0.2, y: 0.17, z: 0.23 },
   };
+
+  const stackCfg = grid.stack ?? { count: 1, step: { x: 0, y: 0, z: 0 } };
+  const layerCount = Math.max(1, Math.floor(stackCfg.count));
+  const sx = stackCfg.step?.x ?? 0;
+  const sy = stackCfg.step?.y ?? 0;
+  const sz = stackCfg.step?.z ?? 0;
 
   let planeMat: ShaderMaterial | null = null;
   let planeGeo: BufferGeometry | null = null;
@@ -433,12 +445,25 @@ function init(): void {
   if (grid.plane?.enabled) {
     planeGeo = createGridPlaneGeometry();
     planeMat = createPlaneMaterial();
-    const gridPlane = new Mesh(planeGeo, planeMat);
-    gridGroup.add(gridPlane);
   }
 
-  gridGroup.add(gridLines);
-  gridGroup.add(gridPoints);
+  for (let i = 0; i < layerCount; i++) {
+    const ox = i * sx;
+    const oy = i * sy;
+    const oz = i * sz;
+    if (planeGeo && planeMat) {
+      const gridPlane = new Mesh(planeGeo, planeMat);
+      gridPlane.position.set(ox, oy, oz);
+      gridGroup.add(gridPlane);
+    }
+    const gridLines = new LineSegments(lineGeo, lineMat);
+    gridLines.position.set(ox, oy, oz);
+    gridGroup.add(gridLines);
+    const gridPoints = new Points(pointsGeo, pointsMat);
+    gridPoints.position.set(ox, oy, oz);
+    gridGroup.add(gridPoints);
+  }
+
   scene.add(gridGroup);
 
   const timer = new Timer();

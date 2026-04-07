@@ -23,8 +23,8 @@ main {
   position: absolute;
   bottom: -14.29rem; /* -200px */
   width: 100vw;
-  height: 60.71rem; /* 850px */
-  /* right: -50%; */
+  height: 100vh;
+
   left: 0;
   z-index: var(--z-canvas);
   pointer-events: none;
@@ -305,6 +305,8 @@ main {
 
   .hero .three-canvas {
     opacity: 0.5;
+    height: 80vh;
+    bottom: calc(-1 * var(--space-6xl));
   }
 
   .hero {
