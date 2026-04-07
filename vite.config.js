@@ -7,6 +7,8 @@ import handlebars from 'vite-plugin-handlebars'
 import projectsData from './src/projects/data.js'
 import projectsTemplate from './src/projects/template.js'
 
+const publishedProjects = projectsData.projects.filter((p) => p.publish === true)
+
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const projectsDir = resolve(__dirname, 'projects')
 
@@ -38,7 +40,7 @@ function generateProjectPages() {
       const input = {
         main: resolve(__dirname, 'index.html'),
       }
-      for (const project of projectsData.projects) {
+      for (const project of publishedProjects) {
         const html = projectsTemplate(project)
         const filename = `${project.id}.html`
         const filePath = resolve(projectsDir, filename)
@@ -60,7 +62,7 @@ export default defineConfig({
     generateProjectPages(),
     handlebars({
       context: {
-        projects: projectsData.projects,
+        projects: publishedProjects,
       },
         partialDirectory: [resolve(__dirname, 'src/components'), resolve(__dirname, 'src/projects/content')],
     })

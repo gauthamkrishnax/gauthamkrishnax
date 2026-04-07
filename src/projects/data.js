@@ -1,3 +1,4 @@
+/** Set `publish: true` to show a project card on the home page and include it in the production build. */
 export default {
     "projects": [
         {
@@ -10,7 +11,8 @@ export default {
             "displayHeading": "Sermobot",
             "description": "AI powered chatbot for the web",
             "url": "https://sermo.gauthamkrishna.in/",
-            "github": "https://github.com/gauthamkrishnax/sermobot"
+            "github": "https://github.com/gauthamkrishnax/sermobot",
+            "publish": true
         },
         {
             "id": "experience-league",
@@ -22,7 +24,8 @@ export default {
             "displayHeading": "Adobe Experience League",
             "description": "Adobe learning hub on Edge Delivery Services (AEM)",
             "url": "https://experienceleague.adobe.com/",
-            "github": "https://github.com/adobe-experience-league/exlm"
+            "github": "https://github.com/adobe-experience-league/exlm",
+            "publish": true
         },
         {
             "id": "blobshader",
