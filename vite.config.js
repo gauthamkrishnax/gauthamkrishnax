@@ -9,6 +9,12 @@ import projectsTemplate from './src/projects/template.js'
 
 const publishedProjects = projectsData.projects.filter((p) => p.publish === true)
 
+/** Set in production for absolute canonical & Open Graph URLs (no trailing slash). */
+const siteOrigin = (process.env.VITE_SITE_ORIGIN || "").replace(/\/$/, "")
+const defaultOgImage = siteOrigin
+  ? `${siteOrigin}/og-default.png`
+  : "/og-default.png"
+
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const projectsDir = resolve(__dirname, 'projects')
 
@@ -41,7 +47,7 @@ function generateProjectPages() {
         main: resolve(__dirname, 'index.html'),
       }
       for (const project of publishedProjects) {
-        const html = projectsTemplate(project)
+        const html = projectsTemplate(project, { siteOrigin })
         const filename = `${project.id}.html`
         const filePath = resolve(projectsDir, filename)
         writeFileSync(filePath, html, 'utf-8')
@@ -63,6 +69,8 @@ export default defineConfig({
     handlebars({
       context: {
         projects: publishedProjects,
+        siteOrigin,
+        ogImage: defaultOgImage,
       },
         partialDirectory: [resolve(__dirname, 'src/components'), resolve(__dirname, 'src/projects/content')],
     })
