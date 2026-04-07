@@ -115,8 +115,7 @@ function readAccentRgb(): Vector3 {
 }
 
 // ─── Grid geometry ────────────────────────────────────────────────────────────
-function createGridLineGeometry(): BufferGeometry {
-  const { segments } = CONFIG.grid;
+function createGridLineGeometry(segments: number): BufferGeometry {
   const n = segments + 1;
   const positions: number[] = [];
 
@@ -142,8 +141,7 @@ function createGridLineGeometry(): BufferGeometry {
   return geo;
 }
 
-function createGridPointsGeometry(): BufferGeometry {
-  const { segments } = CONFIG.grid;
+function createGridPointsGeometry(segments: number): BufferGeometry {
   const n = segments + 1;
   const positions: number[] = [];
   for (let j = 0; j < n; j++) {
@@ -158,8 +156,7 @@ function createGridPointsGeometry(): BufferGeometry {
   return geo;
 }
 
-function createGridPlaneGeometry(): BufferGeometry {
-  const { segments } = CONFIG.grid;
+function createGridPlaneGeometry(segments: number): BufferGeometry {
   const geo = new PlaneGeometry(2, 2, segments, segments);
   geo.rotateX(-Math.PI / 2);
   return geo;
@@ -348,11 +345,27 @@ function createWaveMaterial(
 function init(): void {
   const container = document.getElementById(CONFIG.containerId);
   if (!container) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return;
+  }
   const containerEl: HTMLElement = container;
 
   const width = containerEl.clientWidth;
   const height = containerEl.clientHeight;
   const { camera: camConfig, renderer: renConfig, grid } = CONFIG;
+
+  const nav = navigator as Navigator & {
+    connection?: { saveData?: boolean };
+  };
+  const lite =
+    Boolean(nav.connection?.saveData) ||
+    window.matchMedia('(pointer: coarse)').matches ||
+    window.innerWidth <= 768;
+  const gridSegments = lite ? 12 : grid.segments;
+  const maxPixelRatio = lite
+    ? 1
+    : Math.min(window.devicePixelRatio, renConfig.maxPixelRatio);
+  const useAntialias = lite ? false : (renConfig.antialias ?? false);
 
   const scene = new Scene();
   const camera = new PerspectiveCamera(
@@ -391,20 +404,20 @@ function init(): void {
 
   const renderer = new WebGLRenderer({
     alpha: true,
-    antialias: renConfig.antialias ?? false,
+    antialias: useAntialias,
     powerPreference: renConfig.powerPreference ?? 'high-performance',
   });
   renderer.setSize(width, height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, renConfig.maxPixelRatio));
+  renderer.setPixelRatio(maxPixelRatio);
   renderer.setClearColor(0x000000, 0);
   containerEl.appendChild(renderer.domElement);
 
   const accent = readAccentRgb();
 
-  const lineGeo = createGridLineGeometry();
+  const lineGeo = createGridLineGeometry(gridSegments);
   const lineMat = createWaveMaterial(grid.lineColor, true, accent);
 
-  const pointsGeo = createGridPointsGeometry();
+  const pointsGeo = createGridPointsGeometry(gridSegments);
   const pointsMat = createWaveMaterial(grid.pointColor, false, accent);
 
   const gridGroup = new Group();
@@ -417,7 +430,8 @@ function init(): void {
   };
 
   const stackCfg = grid.stack ?? { count: 1, step: { x: 0, y: 0, z: 0 } };
-  const layerCount = Math.max(1, Math.floor(stackCfg.count));
+  const stackCount = lite ? Math.min(2, stackCfg.count) : stackCfg.count;
+  const layerCount = Math.max(1, Math.floor(stackCount));
   const sx = stackCfg.step?.x ?? 0;
   const sy = stackCfg.step?.y ?? 0;
   const sz = stackCfg.step?.z ?? 0;
@@ -443,7 +457,7 @@ function init(): void {
   document.body.addEventListener('pointermove', onPointerMove, { passive: true });
 
   if (grid.plane?.enabled) {
-    planeGeo = createGridPlaneGeometry();
+    planeGeo = createGridPlaneGeometry(gridSegments);
     planeMat = createPlaneMaterial();
   }
 
@@ -512,7 +526,7 @@ function init(): void {
     renderer.render(scene, camera);
   }
 
-  // Warm up WebGL (shader compile, etc.) outside rAF to avoid "handler took Xms" violation
+  // First frame after import (already deferred by loader); start rAF loop.
   const runLoop = (): void => {
     timer.update(performance.now());
     (lineMat.uniforms.uTime as Uniform).value = timer.getElapsed();
@@ -521,11 +535,7 @@ function init(): void {
     renderer.render(scene, camera);
     animate(performance.now());
   };
-  if (typeof requestIdleCallback !== 'undefined') {
-    requestIdleCallback(runLoop, { timeout: 300 });
-  } else {
-    setTimeout(runLoop, 0);
-  }
+  requestAnimationFrame(runLoop);
 
   function onResize(): void {
     const w = containerEl.clientWidth;
