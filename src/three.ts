@@ -25,9 +25,9 @@ const CONFIG = {
     segments: 20,
     opacity: 1,
     /** B&W scene — no accent on lines/points */
-    lineColor: 0x9a9a9a,
-    pointColor: 0x7a7a7a,
-    pointSize: 5,
+    lineColor: 0xbababa,
+    pointColor: 0xdadada,
+    pointSize: 10,
     position: { x: -0.18, y: 0.05, z: -0.68 },
     rotation: { x: Math.PI * 25/ 180, y: -Math.PI * 60/ 180, z: 0 }, // radians
     /** Slow idle motion — updates group matrix only, same 3 draw calls */
@@ -37,7 +37,7 @@ const CONFIG = {
     },
     plane: {
       enabled: true,
-      color: 0xd8d8d8,
+      color: 0xfafafa,
       opacity: 0.38,
       /** Fragment-only scrolled sine lattice — “living” surface, no extra geometry */
       surfaceNoise: {
@@ -80,8 +80,8 @@ const CONFIG = {
   },
 
   renderer: {
-    maxPixelRatio: 1.2,
-    antialias: false,
+    maxPixelRatio: 2.2,
+    antialias: true,
     powerPreference: 'high-performance' as const,
   },
 } as const;

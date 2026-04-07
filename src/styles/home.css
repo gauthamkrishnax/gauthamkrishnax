@@ -22,9 +22,10 @@ main {
 .hero .three-canvas {
   position: absolute;
   bottom: -14.29rem; /* -200px */
-  width: 100%;
+  width: 100vw;
   height: 60.71rem; /* 850px */
-  right: -50%;
+  /* right: -50%; */
+  left: 0;
   z-index: var(--z-canvas);
   pointer-events: none;
   transform: translateZ(0);
