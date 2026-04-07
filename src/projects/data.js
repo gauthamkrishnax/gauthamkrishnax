@@ -18,7 +18,11 @@ export default {
             "lastName": "League",
             "tag": "Development",
             "thumbnail": "/src/images/exl/thumbnail.jpg",
-            "cardSize": "large"
+            "cardSize": "large",
+            "displayHeading": "Adobe Experience League",
+            "description": "Adobe learning hub on Edge Delivery Services (AEM)",
+            "url": "https://experienceleague.adobe.com/",
+            "github": "https://github.com/adobe-experience-league/exlm"
         },
         {
             "id": "blobshader",
