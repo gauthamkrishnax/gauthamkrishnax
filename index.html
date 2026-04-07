@@ -40,10 +40,11 @@
     <meta name="twitter:image" content="{{ogImage}}" />
     <meta name="twitter:image:alt" content="Gautham Krishna — portfolio, dark grid" />
     <link rel="stylesheet" href="/src/styles/style.css" />
+    <link rel="preload" href="/src/images/potrait.jpg" as="image" />
   </head>
   <body>
     <main>
-      <div class="hero">
+      <div class="hero hero-loaded">
         {{> header }}
         <div class="hero-content">
           <h1>I create artisan digital experiences.</h1>
@@ -53,7 +54,15 @@
             with a strong sense of visual and interaction design. Every detail
             is intentional, engineered for clarity, speed, and lasting impact.
           </p>
-          <img src="/src/images/potrait.jpg" alt="My potrait" />
+          <img
+            src="/src/images/potrait.jpg"
+            alt="Portrait of Gautham Krishna"
+            width="298"
+            height="447"
+            decoding="async"
+            fetchpriority="high"
+            sizes="(max-width: 48rem) 85vw, 21.43rem"
+          />
         </div>
         <div id="three-canvas" class="three-canvas" aria-hidden="true"></div>
         <div class="mask" aria-hidden="true"></div>
@@ -73,8 +82,6 @@
     {{> footer }}
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        document.querySelector(".hero")?.classList.add("hero-loaded");
-
         const observer = new IntersectionObserver(
           (entries) => {
             entries.forEach(
@@ -89,6 +96,6 @@
           .forEach((el) => observer.observe(el));
       });
     </script>
-    <script type="module" src="/src/three.ts" defer></script>
+    <script type="module" src="/src/three-loader.ts"></script>
   </body>
 </html>
