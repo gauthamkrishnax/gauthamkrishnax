@@ -62,6 +62,91 @@
   </svg>
 </p>
 
+<h2>AI Halo shader</h2>
+
+<p>The orb is drawn with a custom WebGL2 GLSL program titled <strong>AI Halo</strong> (author credit in source). The look is entirely procedural: no texture maps—only UVs, time, simplex-style noise, distance fields, and a handful of uniforms (<code>uTime</code>, <code>uSpeed</code>, <code>tAudioData</code>) supplied from JavaScript.</p>
+
+<h3>Vertex stage</h3>
+<p>The vertex shader is a straight pass-through transform: <code>gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0)</code>, and <code>vUv = uv</code>. Every pixel of the quad receives stable <code>0–1</code> UVs so the fragment shader can treat the surface as a 2D canvas in model space.</p>
+
+<h3>Fragment stage: four halo layers (<code>draw2</code>)</h3>
+<p>UVs are centered and scaled (<code>vUv * 3.0 - 1.5</code>). The same routine <code>draw2</code> runs four times with different inner-radius arguments (<code>0.6</code>, <code>0.8</code>, <code>0.9</code>, <code>0.3</code>); outputs are added so multiple soft rings interleave.</p>
+<p>In polar form (<code>atan</code> for angle, <code>length</code> for radius), a 3D noise sample <code>snoise3(vec3(uv * 1.2, time * 0.5))</code> modulates where the bright ring sits between the inner radius and the outer edge—so the rim shimmers instead of staying a perfect circle. An inverse-linear falloff (<code>light1</code>) from that moving ring creates the glow; additional <code>smoothstep</code> terms darken the center into a “hole” and taper the exterior. Hue shifts around the orb with <code>cos(angle + time * 2.0)</code>, mixing the magenta, cyan, and deep blue constants. <code>extractAlpha</code> turns faint RGB into transparent pixels by normalizing bright regions into alpha, which keeps stacked layers from muddying each other.</p>
+
+<h3>Audio-reactive rings</h3>
+<p>Four annuli are built with <code>paintCircle</code>: each uses a smooth band (<code>smoothstep</code> pair) at a base radius, but the radius is nudged per channel by <code>tAudioData</code> (e.g. <code>r</code> from <code>tAudioData.x</code>, and similarly for <code>y</code>/<code>z</code>/<code>w</code> on sibling rings) so FFT or analyser energy visibly swells the hoops. Small sine perturbations (<code>variation</code>) wobble the distance field so the rings feel hand-drawn rather than perfectly round. The pass is then multiplied by a time-rotated UV mask: red and green are zeroed, blue carries a quadrant-shaped factor <code>1.0 - v.y * v.x</code>, and alpha is scaled—so this layer reads as a directional blue highlight over the halo stack.</p>
+
+<h3>Wandering specular spots</h3>
+<p>A separate path warps UVs with <code>3.0 - cos(uTime * uSpeed) * 0.3</code> for slow breathing. Inside the unit disk, lighting is built from products of inverse distances to several points that orbit on independent <code>sin</code>/<code>cos</code> paths (different periods). Multiplying those terms yields sharp moving hotspots—metaphorically a small “constellation” sliding behind the glass—tinted with low-amplitude purple RGB and wrapped in <code>extractAlpha</code> for soft edges.</p>
+
+<p>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 200" role="img" aria-labelledby="shaderPipeTitle">
+    <title id="shaderPipeTitle">AI Halo fragment pipeline: from UV to final color</title>
+    <defs>
+      <marker id="sermoShaderPipeArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+        <path d="M0,0 L6,3 L0,6 z" fill="#222" />
+      </marker>
+    </defs>
+    <rect x="1" y="1" width="518" height="198" fill="#fafafa" stroke="#222" stroke-width="2" />
+    <text x="260" y="22" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="13" font-weight="bold">Fragment pipeline (conceptual)</text>
+
+    <rect x="16" y="40" width="72" height="44" fill="#e8f4ff" stroke="#333" stroke-width="1.2" />
+    <text x="52" y="62" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="11" font-weight="bold">vUv</text>
+    <text x="52" y="78" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="9" fill="#444">×3 − 1.5</text>
+
+    <line x1="88" y1="62" x2="108" y2="62" stroke="#222" stroke-width="1.5" marker-end="url(#sermoShaderPipeArrow)" />
+
+    <rect x="108" y="36" width="100" height="52" fill="#fff" stroke="#333" stroke-width="1.2" />
+    <text x="158" y="56" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="10" font-weight="bold">draw2 ×4</text>
+    <text x="158" y="72" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="9" fill="#444">noise ring + hole</text>
+
+    <line x1="208" y1="62" x2="228" y2="62" stroke="#222" stroke-width="1.5" marker-end="url(#sermoShaderPipeArrow)" />
+
+    <rect x="228" y="36" width="104" height="52" fill="#f0e8ff" stroke="#333" stroke-width="1.2" />
+    <text x="280" y="54" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="10" font-weight="bold">paintCircle</text>
+    <text x="280" y="68" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="9" fill="#444">+ tAudioData</text>
+    <text x="280" y="80" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="9" fill="#444">rotate &amp; tint</text>
+
+    <line x1="332" y1="62" x2="352" y2="62" stroke="#222" stroke-width="1.5" marker-end="url(#sermoShaderPipeArrow)" />
+
+    <rect x="352" y="36" width="92" height="52" fill="#fff5e6" stroke="#333" stroke-width="1.2" />
+    <text x="398" y="56" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="10" font-weight="bold">uv2 lights</text>
+    <text x="398" y="72" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="9" fill="#444">orbiting points</text>
+
+    <line x1="444" y1="62" x2="464" y2="62" stroke="#222" stroke-width="1.5" marker-end="url(#sermoShaderPipeArrow)" />
+
+    <rect x="464" y="40" width="44" height="44" fill="#e8fff0" stroke="#333" stroke-width="1.2" />
+    <text x="486" y="66" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="10" font-weight="bold">Σ</text>
+
+    <text x="260" y="118" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="11">Sum of halos, rings, and light pass → <tspan font-weight="bold">fragColor</tspan> (premultiplied-style stacking)</text>
+
+    <rect x="40" y="132" width="440" height="52" fill="#fff" stroke="#333" stroke-width="1" stroke-dasharray="4 3" />
+    <text x="260" y="154" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="10" fill="#333">Shared building blocks: <tspan font-weight="bold">snoise3</tspan> (animated rim), <tspan font-weight="bold">extractAlpha</tspan> (cut soft black),</text>
+    <text x="260" y="170" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="10" fill="#333"><tspan font-weight="bold">smoothstep</tspan> holes/fades, <tspan font-weight="bold">polar</tspan> angle for color spin</text>
+  </svg>
+</p>
+
+<p>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 280" role="img" aria-labelledby="shaderRadialTitle">
+    <title id="shaderRadialTitle">Radial layout: noisy ring, dark core, outer rings</title>
+    <rect x="1" y="1" width="278" height="278" fill="#fafafa" stroke="#222" stroke-width="2" />
+    <text x="140" y="22" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="12" font-weight="bold">Radial structure (schematic)</text>
+
+    <circle cx="140" cy="150" r="118" fill="none" stroke="#c5c5c5" stroke-width="1" stroke-dasharray="4 3" />
+    <text x="248" y="148" font-family="system-ui, Segoe UI, sans-serif" font-size="9" fill="#666">fade</text>
+
+    <circle cx="140" cy="150" r="72" fill="none" stroke="#2980b9" stroke-width="3" opacity="0.85" />
+    <path d="M 140 78 Q 165 95 188 118 Q 175 130 160 125 Q 145 115 128 108 Q 118 95 140 78" fill="none" stroke="#8e44ad" stroke-width="2.5" opacity="0.9" />
+    <text x="140" y="70" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="9" fill="#555">noise-modulated glow (draw2)</text>
+
+    <circle cx="140" cy="150" r="38" fill="#1a1f3a" stroke="#333" stroke-width="1" />
+    <text x="140" y="154" text-anchor="middle" font-family="system-ui, Segoe UI, sans-serif" font-size="9" fill="#e0e0e0">hole</text>
+
+    <circle cx="140" cy="150" r="95" fill="none" stroke="#16a085" stroke-width="1.5" opacity="0.7" />
+    <text x="32" y="200" font-family="system-ui, Segoe UI, sans-serif" font-size="9" fill="#16a085">wobbly audio rings</text>
+  </svg>
+</p>
+
 <h2>Features</h2>
 <p>WebGL2 rendering with <code>RawShaderMaterial</code> and GLSL ES 3.00 vertex and fragment shaders, plus GSAP-driven UI and camera motion tied to pointer input.</p>
 <p>FFT-based audio analysis smoothed in JavaScript to drive shader parameters without harsh flicker; background music with consent-style flow and an optional easter-egg track swap.</p>
