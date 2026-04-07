@@ -1,0 +1,17 @@
+{
+  "name": "Gautham Krishna — Portfolio",
+  "short_name": "GK Portfolio",
+  "description": "Frontend engineer portfolio: design-led web experiences.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#fefefe",
+  "theme_color": "#151515",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}
