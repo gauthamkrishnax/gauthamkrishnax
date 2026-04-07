@@ -556,7 +556,45 @@ function init(): void {
     }
   };
 
-  window.addEventListener('beforeunload', cleanup);
+  /**
+   * `beforeunload` + full dispose breaks the browser back-forward cache: the home page
+   * is restored with no canvas/WebGL. Only tear down when the page is actually discarded
+   * (`pagehide` + `persisted === false`). When `persisted === true`, skip cleanup; on
+   * `pageshow` + `persisted`, restart rAF (it was frozen while the page was cached).
+   */
+  function resumeAfterBFCache(): void {
+    cancelAnimationFrame(rafId);
+    const now = performance.now();
+    timer.update(now);
+    onResize();
+    renderer.render(scene, camera);
+    animate(now);
+  }
+
+  function onPageHide(ev: PageTransitionEvent): void {
+    if (!ev.persisted) {
+      window.removeEventListener('pagehide', onPageHide);
+      window.removeEventListener('pageshow', onPageShow);
+      cleanup();
+    }
+  }
+
+  function onPageShow(ev: PageTransitionEvent): void {
+    if (ev.persisted) {
+      resumeAfterBFCache();
+    }
+  }
+
+  window.addEventListener('pagehide', onPageHide);
+  window.addEventListener('pageshow', onPageShow);
+
+  renderer.domElement.addEventListener(
+    'webglcontextlost',
+    (e) => {
+      e.preventDefault();
+    },
+    false
+  );
 }
 
 function runInit(): void {
