@@ -162,9 +162,21 @@ function createGridPlaneGeometry(segments: number): BufferGeometry {
   return geo;
 }
 
-function createPlaneMaterial(): ShaderMaterial {
+function createPlaneMaterial(
+  overrides?: Partial<{
+    color: number;
+    opacity: number;
+    surfaceNoise: {
+      scale: number;
+      scrollSpeed: number;
+      strength: number;
+    };
+    pointerSpot: number;
+  }>
+): ShaderMaterial {
   const { grid, wave } = CONFIG;
-  const planeConfig = grid.plane ?? { enabled: true, color: 0xE8E8E8, opacity: 0.22 };
+  const basePlane = grid.plane ?? { enabled: true, color: 0xe8e8e8, opacity: 0.22 };
+  const planeConfig = { ...basePlane, ...overrides };
   const c = new Color(planeConfig.color);
   const noise = planeConfig.surfaceNoise ?? {
     scale: 4.2,
@@ -342,6 +354,74 @@ function createWaveMaterial(
   });
 }
 
+function getRendererProfile(): {
+  gridSegments: number;
+  maxPixelRatio: number;
+  useAntialias: boolean;
+  powerPreference: 'default' | 'high-performance';
+  /** Stacked grid layers (same as CONFIG.grid.stack.count unless data-saver) */
+  stackCount: number;
+} {
+  const { renderer: renConfig, grid } = CONFIG;
+  const nav = navigator as Navigator & {
+    connection?: { saveData?: boolean };
+  };
+  const stackCfg = grid.stack ?? { count: 1, step: { x: 0, y: 0, z: 0 } };
+  const maxStack = Math.max(1, Math.floor(stackCfg.count));
+
+  const saveData = Boolean(nav.connection?.saveData);
+  const coarse = window.matchMedia('(pointer: coarse)').matches;
+  const narrow = window.innerWidth <= 768;
+  const w = window.innerWidth;
+
+  const dpr = Math.min(window.devicePixelRatio, renConfig.maxPixelRatio);
+
+  /* Only data-saver gets the old aggressive “lite” look (low DPR + 2 layers). */
+  if (saveData) {
+    return {
+      gridSegments: 12,
+      maxPixelRatio: 1,
+      useAntialias: false,
+      powerPreference: 'default',
+      stackCount: Math.min(2, maxStack),
+    };
+  }
+
+  /*
+   * Real phones/tablets always match `(pointer: coarse)` — they were incorrectly
+   * lumped into that path with DPR 1 and 2 layers. Touch: sharp framebuffer + full stack;
+   * skip MSAA (expensive on tile GPUs).
+   */
+  if (coarse) {
+    return {
+      gridSegments: w <= 480 ? 14 : 16,
+      maxPixelRatio: dpr,
+      useAntialias: false,
+      powerPreference: 'default',
+      stackCount: maxStack,
+    };
+  }
+
+  /* Narrow desktop window (mouse): keep depth stack; slightly lighter mesh ok */
+  if (narrow) {
+    return {
+      gridSegments: 16,
+      maxPixelRatio: dpr,
+      useAntialias: w >= 640 && (renConfig.antialias ?? false),
+      powerPreference: renConfig.powerPreference ?? 'high-performance',
+      stackCount: maxStack,
+    };
+  }
+
+  return {
+    gridSegments: grid.segments,
+    maxPixelRatio: dpr,
+    useAntialias: renConfig.antialias ?? false,
+    powerPreference: renConfig.powerPreference ?? 'high-performance',
+    stackCount: maxStack,
+  };
+}
+
 function init(): void {
   const container = document.getElementById(CONFIG.containerId);
   if (!container) return;
@@ -350,22 +430,28 @@ function init(): void {
   }
   const containerEl: HTMLElement = container;
 
+  const { camera: camConfig, grid } = CONFIG;
+
+  const profile = getRendererProfile();
+  const { gridSegments, maxPixelRatio, useAntialias, powerPreference, stackCount } =
+    profile;
+
   const width = containerEl.clientWidth;
   const height = containerEl.clientHeight;
-  const { camera: camConfig, renderer: renConfig, grid } = CONFIG;
 
-  const nav = navigator as Navigator & {
-    connection?: { saveData?: boolean };
-  };
-  const lite =
-    Boolean(nav.connection?.saveData) ||
-    window.matchMedia('(pointer: coarse)').matches ||
-    window.innerWidth <= 768;
-  const gridSegments = lite ? 12 : grid.segments;
-  const maxPixelRatio = lite
-    ? 1
-    : Math.min(window.devicePixelRatio, renConfig.maxPixelRatio);
-  const useAntialias = lite ? false : (renConfig.antialias ?? false);
+  /** Avoid WebGL with 0×0 backing store (first paint / mobile toolbars). */
+  if (width < 2 || height < 2) {
+    const ro = new ResizeObserver(() => {
+      const w = containerEl.clientWidth;
+      const h = containerEl.clientHeight;
+      if (w >= 2 && h >= 2) {
+        ro.disconnect();
+        init();
+      }
+    });
+    ro.observe(containerEl);
+    return;
+  }
 
   const scene = new Scene();
   const camera = new PerspectiveCamera(
@@ -405,7 +491,7 @@ function init(): void {
   const renderer = new WebGLRenderer({
     alpha: true,
     antialias: useAntialias,
-    powerPreference: renConfig.powerPreference ?? 'high-performance',
+    powerPreference,
   });
   renderer.setSize(width, height);
   renderer.setPixelRatio(maxPixelRatio);
@@ -414,11 +500,32 @@ function init(): void {
 
   const accent = readAccentRgb();
 
+  const isLight =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-color-scheme: light)').matches;
+  const lineColor = isLight ? grid.lineColor : 0x989898;
+  const pointColor = isLight ? grid.pointColor : 0x2a6478;
+  const accentMix = isLight ? grid.accentMix : 0.22;
+  const planeOverrides = isLight
+    ? undefined
+    : {
+        color: 0x101018,
+        opacity: 0.44,
+        pointerSpot: 0.42,
+        surfaceNoise: {
+          scale: 4.2,
+          scrollSpeed: 0.038,
+          strength: 0.06,
+        },
+      };
+
   const lineGeo = createGridLineGeometry(gridSegments);
-  const lineMat = createWaveMaterial(grid.lineColor, true, accent);
+  const lineMat = createWaveMaterial(lineColor, true, accent);
+  (lineMat.uniforms.uAccentMix as Uniform).value = accentMix;
 
   const pointsGeo = createGridPointsGeometry(gridSegments);
-  const pointsMat = createWaveMaterial(grid.pointColor, false, accent);
+  const pointsMat = createWaveMaterial(pointColor, false, accent);
+  (pointsMat.uniforms.uAccentMix as Uniform).value = accentMix;
 
   const gridGroup = new Group();
   gridGroup.position.set(grid.position.x, grid.position.y, grid.position.z);
@@ -430,7 +537,6 @@ function init(): void {
   };
 
   const stackCfg = grid.stack ?? { count: 1, step: { x: 0, y: 0, z: 0 } };
-  const stackCount = lite ? Math.min(2, stackCfg.count) : stackCfg.count;
   const layerCount = Math.max(1, Math.floor(stackCount));
   const sx = stackCfg.step?.x ?? 0;
   const sy = stackCfg.step?.y ?? 0;
@@ -458,7 +564,7 @@ function init(): void {
 
   if (grid.plane?.enabled) {
     planeGeo = createGridPlaneGeometry(gridSegments);
-    planeMat = createPlaneMaterial();
+    planeMat = createPlaneMaterial(planeOverrides);
   }
 
   for (let i = 0; i < layerCount; i++) {
@@ -540,13 +646,25 @@ function init(): void {
   function onResize(): void {
     const w = containerEl.clientWidth;
     const h = containerEl.clientHeight;
+    if (w < 2 || h < 2) return;
+    const { maxPixelRatio: pr } = getRendererProfile();
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
+    renderer.setPixelRatio(pr);
   }
 
   const resizeObserver = new ResizeObserver(onResize);
   resizeObserver.observe(containerEl);
+
+  const vv = window.visualViewport;
+  const onViewportResize = (): void => {
+    onResize();
+  };
+  if (vv) {
+    vv.addEventListener('resize', onViewportResize, { passive: true });
+    vv.addEventListener('scroll', onViewportResize, { passive: true });
+  }
 
   const cleanup = (): void => {
     cancelAnimationFrame(rafId);
@@ -554,6 +672,10 @@ function init(): void {
     window.removeEventListener('scroll', updateCameraTargetFromScroll);
     document.body.removeEventListener('pointermove', onPointerMove);
     resizeObserver.disconnect();
+    if (vv) {
+      vv.removeEventListener('resize', onViewportResize);
+      vv.removeEventListener('scroll', onViewportResize);
+    }
     renderer.dispose();
     lineGeo.dispose();
     pointsGeo.dispose();
