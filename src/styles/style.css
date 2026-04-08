@@ -10,6 +10,13 @@
 html {
   scroll-behavior: smooth;
   font-size: var(--base-font-size); /* 14px; rem units are relative to this */
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  html {
+    color-scheme: light;
+  }
 }
 
 body {
@@ -35,28 +42,52 @@ h2:not(:first-child),h3:not(:first-child),h4:not(:first-child),h5:not(:first-chi
 }
 
 /* -------------------------------------------------------------------------
- * Links
+ * Links (not color-only: hue + persistent underline; contrast on light/dark bg)
  * ------------------------------------------------------------------------- */
 
-a:not(.card-link) {
-  position: relative;
-  text-decoration: none;
+a:not(.card-link):not(.cta-link) {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-decoration-color: var(--color-link-underline);
+  text-decoration-thickness: max(1px, 0.08em);
+  text-underline-offset: 0.2em;
+  transition: color var(--duration-fast) var(--ease-in-out),
+    text-decoration-color var(--duration-fast) var(--ease-in-out);
+}
+
+a:not(.card-link):not(.cta-link):hover {
+  color: var(--color-link-hover);
+  text-decoration-color: var(--color-link-hover);
+}
+
+a:not(.card-link):not(.cta-link):focus-visible {
+  outline: 2px solid var(--color-link);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+/* Header & footer: plain text styling for nav / social links */
+.header a:not(.card-link):not(.cta-link),
+.footer a:not(.card-link):not(.cta-link) {
   color: inherit;
+  text-decoration: none;
+  text-decoration-color: transparent;
+  transition: opacity var(--duration-fast) var(--ease-in-out);
 }
 
-a:not(.card-link)::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 1px;
-  bottom: 0;
-  left: 0;
-  background-color: var(--color-link-underline);
-  transition: width var(--duration-normal) var(--ease-in-out);
+.header a:not(.card-link):not(.cta-link):hover,
+.footer a:not(.card-link):not(.cta-link):hover {
+  color: inherit;
+  text-decoration: none;
+  text-decoration-color: transparent;
+  opacity: 0.85;
 }
 
-a:not(.card-link):hover::after {
-  width: 100%;
+.header a:not(.card-link):not(.cta-link):focus-visible,
+.footer a:not(.card-link):not(.cta-link):focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+  border-radius: 1px;
 }
 
 img {
@@ -73,20 +104,20 @@ a.cta-link {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  background-color: var(--color-black);
+  background-color: var(--color-button-primary-bg);
   width: fit-content;
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-sm);
-  color: var(--color-white);
+  color: var(--color-button-primary-fg);
 }
 
 a.cta-link.secondary {
-  background-color: var(--color-white);
-  color: var(--color-black);
-  border: 1px solid var(--color-black);
+  background-color: var(--color-button-secondary-bg);
+  color: var(--color-button-secondary-fg);
+  border: 1px solid var(--color-button-secondary-border);
 
   svg path {
-    fill: var(--color-black);
+    fill: var(--color-button-secondary-fg);
   }
 }
 
@@ -125,8 +156,9 @@ a.cta-link.secondary {
   align-self: stretch;
   margin-bottom: var(--footer-gap);
   overflow: hidden;
-  background: #000;
-  color: var(--color-white);
+  background: var(--footer-marquee-bg);
+  color: var(--footer-marquee-fg);
+  border: var(--footer-marquee-border);
   padding: var(--space-sm) 0;
 }
 

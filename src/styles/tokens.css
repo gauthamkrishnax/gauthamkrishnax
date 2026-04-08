@@ -11,22 +11,40 @@
   --base-font-size: 14px;
 
   /* -------------------------------------------------------------------------
-   * Color – primitive tokens
+   * Color – primitive tokens (default: dark, aligned with favicon.svg)
    * ------------------------------------------------------------------------- */
-  --color-white: #fefefe;
-  --color-black: #151515;
-  --color-gray-900: #222222;
-  --color-gray-500: #888888;
-  --color-gray-200: #d7d7d7;
+  --color-white: #f5f5f5;
+  --color-black: #000000;
+  --color-gray-900: #b8b8b8;
+  --color-gray-500: #6a6a6a;
+  --color-gray-200: #262626;
   --color-blue-500: #007bff;
 
   /* Semantic color aliases */
-  --color-background: var(--color-white);
-  --color-text: var(--color-black);
-  --color-text-secondary: var(--color-gray-900);
-  --color-border: var(--color-gray-200);
-  --color-link-underline: var(--color-gray-500);
-  --color-link: var(--color-blue-500);
+  --color-background: #000000;
+  --color-text: #ececec;
+  --color-text-secondary: #9a9a9a;
+  --color-border: #262626;
+  /* Links: ≥4.5:1 on #000 (WCAG AA body); underline visible on same bg */
+  --color-link: #6bb6ff;
+  --color-link-hover: #9dceff;
+  --color-link-underline: #4d9fdf;
+
+  /* Primary / secondary CTAs (avoid invisible black-on-black in dark mode) */
+  --color-button-primary-bg: #007bff;
+  --color-button-primary-fg: #ffffff;
+  --color-button-secondary-bg: #0c0c0c;
+  --color-button-secondary-fg: var(--color-text);
+  --color-button-secondary-border: #3a3a3a;
+
+  /* Works cards: hover matches light-mode treatment on any color scheme */
+  --color-card-hover-bg: #151515;
+  --color-card-hover-fg: #fefefe;
+
+  /* Footer marquee band */
+  --footer-marquee-bg: #000000;
+  --footer-marquee-fg: #ffffff;
+  --footer-marquee-border: 1px solid #ffffff;
 
   /* -------------------------------------------------------------------------
    * Spacing scale (rem; use for margin, padding, gap)
@@ -118,4 +136,33 @@
   --z-content: 5;
   --z-canvas: 2;
   --z-sticky: 10;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-white: #fefefe;
+    --color-black: #151515;
+    --color-gray-900: #222222;
+    --color-gray-500: #888888;
+    --color-gray-200: #d7d7d7;
+
+    --color-background: var(--color-white);
+    --color-text: var(--color-black);
+    --color-text-secondary: var(--color-gray-900);
+    --color-border: var(--color-gray-200);
+    /* Links: ≥4.5:1 on #fefefe (WCAG AA body) */
+    --color-link: #005a9c;
+    --color-link-hover: #004578;
+    --color-link-underline: #004578;
+
+    --color-button-primary-bg: var(--color-black);
+    --color-button-primary-fg: var(--color-white);
+    --color-button-secondary-bg: var(--color-white);
+    --color-button-secondary-fg: var(--color-black);
+    --color-button-secondary-border: var(--color-black);
+
+    --footer-marquee-bg: #000000;
+    --footer-marquee-fg: var(--color-white);
+    --footer-marquee-border: 1px solid transparent;
+  }
 }
