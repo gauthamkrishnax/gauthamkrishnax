@@ -355,29 +355,70 @@ function createWaveMaterial(
 }
 
 function getRendererProfile(): {
-  lite: boolean;
   gridSegments: number;
   maxPixelRatio: number;
   useAntialias: boolean;
   powerPreference: 'default' | 'high-performance';
+  /** Stacked grid layers (same as CONFIG.grid.stack.count unless data-saver) */
+  stackCount: number;
 } {
   const { renderer: renConfig, grid } = CONFIG;
   const nav = navigator as Navigator & {
     connection?: { saveData?: boolean };
   };
-  const lite =
-    Boolean(nav.connection?.saveData) ||
-    window.matchMedia('(pointer: coarse)').matches ||
-    window.innerWidth <= 768;
+  const stackCfg = grid.stack ?? { count: 1, step: { x: 0, y: 0, z: 0 } };
+  const maxStack = Math.max(1, Math.floor(stackCfg.count));
+
+  const saveData = Boolean(nav.connection?.saveData);
+  const coarse = window.matchMedia('(pointer: coarse)').matches;
+  const narrow = window.innerWidth <= 768;
+  const w = window.innerWidth;
+
+  const dpr = Math.min(window.devicePixelRatio, renConfig.maxPixelRatio);
+
+  /* Only data-saver gets the old aggressive “lite” look (low DPR + 2 layers). */
+  if (saveData) {
+    return {
+      gridSegments: 12,
+      maxPixelRatio: 1,
+      useAntialias: false,
+      powerPreference: 'default',
+      stackCount: Math.min(2, maxStack),
+    };
+  }
+
+  /*
+   * Real phones/tablets always match `(pointer: coarse)` — they were incorrectly
+   * lumped into that path with DPR 1 and 2 layers. Touch: sharp framebuffer + full stack;
+   * skip MSAA (expensive on tile GPUs).
+   */
+  if (coarse) {
+    return {
+      gridSegments: w <= 480 ? 14 : 16,
+      maxPixelRatio: dpr,
+      useAntialias: false,
+      powerPreference: 'default',
+      stackCount: maxStack,
+    };
+  }
+
+  /* Narrow desktop window (mouse): keep depth stack; slightly lighter mesh ok */
+  if (narrow) {
+    return {
+      gridSegments: 16,
+      maxPixelRatio: dpr,
+      useAntialias: w >= 640 && (renConfig.antialias ?? false),
+      powerPreference: renConfig.powerPreference ?? 'high-performance',
+      stackCount: maxStack,
+    };
+  }
+
   return {
-    lite,
-    gridSegments: lite ? 12 : grid.segments,
-    maxPixelRatio: lite
-      ? 1
-      : Math.min(window.devicePixelRatio, renConfig.maxPixelRatio),
-    useAntialias: lite ? false : (renConfig.antialias ?? false),
-    /* “high-performance” can pick a failing GPU context on some phones/tablets */
-    powerPreference: lite ? 'default' : (renConfig.powerPreference ?? 'high-performance'),
+    gridSegments: grid.segments,
+    maxPixelRatio: dpr,
+    useAntialias: renConfig.antialias ?? false,
+    powerPreference: renConfig.powerPreference ?? 'high-performance',
+    stackCount: maxStack,
   };
 }
 
@@ -392,7 +433,8 @@ function init(): void {
   const { camera: camConfig, grid } = CONFIG;
 
   const profile = getRendererProfile();
-  const { lite, gridSegments, maxPixelRatio, useAntialias, powerPreference } = profile;
+  const { gridSegments, maxPixelRatio, useAntialias, powerPreference, stackCount } =
+    profile;
 
   const width = containerEl.clientWidth;
   const height = containerEl.clientHeight;
@@ -495,7 +537,6 @@ function init(): void {
   };
 
   const stackCfg = grid.stack ?? { count: 1, step: { x: 0, y: 0, z: 0 } };
-  const stackCount = lite ? Math.min(2, stackCfg.count) : stackCfg.count;
   const layerCount = Math.max(1, Math.floor(stackCount));
   const sx = stackCfg.step?.x ?? 0;
   const sy = stackCfg.step?.y ?? 0;
