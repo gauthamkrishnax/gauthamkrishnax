@@ -1,0 +1,8 @@
+:root {
+    --background-color: #FFFEFA;
+    --text-color-primary: #000000;
+    --text-color-secondary: #555555;
+
+    --font-primary: 'Sk-Modernist', sans-serif;
+    --font-secondary: 'Sk-Modernist Mono', sans-serif;
+}
