@@ -670,21 +670,34 @@ function Three() {
     const lerpCam = cfg.camera.scroll.lerpSpeed;
 
     let raf = 0;
+    let resizeRaf = 0;
     const start = performance.now();
 
-    const resize = () => {
+    const applyResize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, cfg.renderer.maxPixelRatio);
       const pr = saveData ? 1 : coarse ? dpr : narrow ? dpr : maxPr;
-      const w = Math.max(2, Math.floor(wrap.clientWidth * pr));
-      const h = Math.max(2, Math.floor(wrap.clientHeight * pr));
+      const cw = wrap.clientWidth;
+      const ch = wrap.clientHeight;
+      if (cw < 1 || ch < 1) return;
+      const w = Math.max(2, Math.floor(cw * pr));
+      const h = Math.max(2, Math.floor(ch * pr));
+      if (canvas.width === w && canvas.height === h) return;
       canvas.width = w;
       canvas.height = h;
       gl.viewport(0, 0, w, h);
     };
 
+    const resize = () => {
+      if (resizeRaf) return;
+      resizeRaf = requestAnimationFrame(() => {
+        resizeRaf = 0;
+        applyResize();
+      });
+    };
+
+    applyResize();
     const ro = new ResizeObserver(resize);
     ro.observe(wrap);
-    resize();
 
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -812,6 +825,7 @@ function Three() {
 
     return () => {
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(resizeRaf);
       ro.disconnect();
       document.body.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('scroll', onScroll);
@@ -839,10 +853,8 @@ function Three() {
     <div
       ref={wrapRef}
       style={{
-        position: 'relative',
-        width: '100%',
-        height: '100%',
-        minHeight: '100%',
+        position: 'absolute',
+        inset: 0,
         overflow: 'hidden',
       }}
       data-webgl={webglReady === 'ok' ? 'active' : webglReady === 'fail' ? 'unavailable' : 'pending'}
@@ -850,8 +862,12 @@ function Three() {
       <canvas
         ref={canvasRef}
         style={{
+          position: 'absolute',
+          inset: 0,
           width: '100%',
           height: '100%',
+          maxWidth: 'none',
+          maxHeight: 'none',
           display: 'block',
           opacity: webglReady === 'ok' ? 1 : webglReady === 'pending' ? 1 : 0,
           transition: 'opacity 0.35s ease',

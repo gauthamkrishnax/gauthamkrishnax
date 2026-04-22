@@ -1,7 +1,10 @@
 :root {
     --background-color: #FFFEFA;
+    --background-color-secondary: #FFFFFF;
     --text-color-primary: #000000;
     --text-color-secondary: #555555;
+    --accent-gray: #E8E8E8;
+    --link-color: #00456b;
 
     --font-primary: 'Sk-Modernist', sans-serif;
     --font-secondary: 'Sk-Modernist Mono', sans-serif;

@@ -1,0 +1,18 @@
+footer {
+    font-family: var(--font-secondary);
+    border-top: 1px solid var(--accent-gray);
+    padding: 80px 0 120px;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+}
+
+.copyright {
+    font-size: 12px;
+    color: var(--text-color-secondary);
+    text-align: center;
+    margin-top: 40px;
+}

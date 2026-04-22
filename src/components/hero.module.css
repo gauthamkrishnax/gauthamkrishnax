@@ -1,0 +1,50 @@
+.hero {
+    display: flex;
+    /* Viewport height lives on the section so both columns share one box. */
+    min-height: 100svh;
+    /* Flex items default to min-height:auto, which uses replaced content
+       (canvas bitmap) as a floor — that grows on resize. Reset the canvas column. */
+    min-width: 0;
+}
+
+.canvas {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    background-color: var(--background-color);
+}
+
+.content {
+    width: 66%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 100px 120px 80px 120px;
+}
+
+.content h1 {
+    font-weight: 400;
+    font-size: 96px;
+    line-height: 1.1;
+    letter-spacing: 1%;
+    margin-bottom: 40px;
+}
+
+.contentTop > p {
+    color: var(--text-color-secondary);
+    letter-spacing: 5%;
+    font-size: 16px;
+    line-height: 1.5;
+    margin-left: 5px;
+}
+
+.contentBottom {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-between;
+    max-width: 716px;
+    margin-top: 120px;
+}

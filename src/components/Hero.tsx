@@ -1,16 +1,17 @@
 import DATA from '../data';
 import Three from './Three';
+import styles from './hero.module.css';
 
 function Hero() {
     return (
-        <section className="hero" id="hero">
-            <div className="hero-content">
+        <section className={styles.hero} id="hero">
+            <div className={styles.content}>
                 <div><span className="text-secondary uppercase">{DATA.HEADER}</span></div>
-                <div className="hero-content-top">
+                <div className={styles.contentTop}>
                     <h1>{DATA.TITLE}</h1>
                     <p>{DATA.SUBTITLE}</p>
                 </div>
-                <div className="hero-content-bottom">
+                <div className={styles.contentBottom}>
                     <div>
                         <p className="text-secondary">About | My Works</p>
                     </div>
@@ -22,7 +23,7 @@ function Hero() {
                     </div>
                 </div>
             </div>
-            <div className="hero-canvas">
+            <div className={styles.canvas}>
                 <Three />
             </div>
         </section>

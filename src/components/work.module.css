@@ -1,0 +1,37 @@
+.content {
+    min-height: 100svh;
+    padding: 120px;
+
+    h2 {
+        font-size: 15px;
+        letter-spacing: 5%;
+        
+        font-weight: 400;
+        margin-bottom: 40px;
+    }
+
+    @media (max-width: 1400px) {
+        padding: 100px;
+    }
+
+    @media (max-width: 768px) {
+        padding: 80px;
+    }
+}
+
+
+.projects {
+    margin-top: 120px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(280px, 1fr));
+    gap: 60px;
+    place-items: center;
+
+    @media (max-width: 1400px) {
+        grid-template-columns: repeat(2, minmax(280px, 1fr));
+    }
+
+    @media (max-width: 768px) {
+        grid-template-columns: repeat(1, minmax(280px, 1fr));
+    }
+}
