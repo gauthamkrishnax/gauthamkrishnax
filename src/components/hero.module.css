@@ -5,6 +5,10 @@
     /* Flex items default to min-height:auto, which uses replaced content
        (canvas bitmap) as a floor — that grows on resize. Reset the canvas column. */
     min-width: 0;
+
+    @media (max-width: 1400px) {
+        flex-direction: column-reverse;
+    }
 }
 
 .canvas {
@@ -22,6 +26,15 @@
     flex-direction: column;
     justify-content: space-between;
     padding: 100px 120px 80px 120px;
+
+    @media (max-width: 1400px) {
+        width: 100%;
+        padding: 100px 80px 100px 80px;
+    }
+
+    @media (max-width: 768px) {
+        padding: 80px 40px 60px 40px;
+    }
 }
 
 .content h1 {
@@ -30,6 +43,14 @@
     line-height: 1.1;
     letter-spacing: 1%;
     margin-bottom: 40px;
+
+    @media (max-width: 1400px) {
+        font-size: 80px;
+    }
+
+    @media (max-width: 768px) {
+        font-size: 48px;
+    }
 }
 
 .contentTop > p {
