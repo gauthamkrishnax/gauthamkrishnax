@@ -1,55 +1,18 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import {
+  WEB_SCENE_CONFIG,
+  applyResponsiveSceneState,
+  type WebSceneConfig,
+} from '../config/webSceneConfig';
+import { SceneConfigTuner } from './SceneConfigTuner.tsx';
+
+/** Re-export defaults for copying from the tuner UI into `src/config/webSceneConfig.ts`. */
+export { WEB_SCENE_CONFIG } from '../config/webSceneConfig';
 
 /**
  * Port of the reference Three.js scene — vanilla WebGL2 only (no three.js).
  * Stack: semi-transparent plane + line grid + points per layer; wave + idle + pointer; scroll camera.
  */
-export const WEB_SCENE_CONFIG = {
-  grid: {
-    segments: 20,
-    opacity: 1,
-    lineColor: 0xbababa,
-    pointColor: 0xdadada,
-    pointSize: 10,
-    position: { x: 0.2, y: -0.6, z: -0.9 },
-    rotationRad: { x: (Math.PI * 25) / 180, y: (-Math.PI * 60) / 180, z: 0 },
-    idleMotion: {
-      amp: { x: 0.024, y: 0.028, z: 0.016 },
-      speed: { x: 0.2, y: 0.17, z: 0.23 },
-    },
-    plane: {
-      enabled: true,
-      color: 0xfafafa,
-      opacity: 0.38,
-      surfaceNoise: { scale: 4.2, scrollSpeed: 0.038, strength: 0.07 },
-      pointerSpot: 0.36,
-    },
-    accentMix: 0,
-    pointerParallax: { x: 0.11, y: 0.13 },
-    pointerFollowRate: 16,
-    pointerRotFollowRate: 9,
-    fresnelPower: 2.35,
-    stack: { count: 8, step: { x: -0.1, y: 0.2, z: -0.3 } },
-  },
-  wave: { amplitude: 0.1, speed: 0.9 },
-  camera: {
-    fov: 50,
-    near: 0.01,
-    far: 10,
-    position: { x: 0.5, y: 0.4, z: 1.4 },
-    lookAt: { x: 0, y: 0, z: 0 },
-    scroll: {
-      thresholdPixels: 400,
-      positionWhenScrolled: { x: 0.5, y: 1, z: 0.8 },
-      lerpSpeed: 0.08,
-    },
-  },
-  renderer: { maxPixelRatio: 2.2, antialias: true, powerPreference: 'high-performance' as const },
-  /** CSS var for optional accent (lines/points); hex only in stylesheet. */
-  accentColorVar: '--color-blue-500',
-  reducedMotionTimeScale: 0.15,
-};
-
 type Vec3 = readonly [number, number, number];
 
 function hexToRgb01(hex: number): [number, number, number] {
@@ -473,37 +436,42 @@ function createProgram(gl: WebGL2RenderingContext, vsSrc: string, fsSrc: string)
   return p;
 }
 
+function sceneTunerEnabled() {
+  if (import.meta.env.DEV) return true;
+  if (typeof window === 'undefined') return false;
+  return new URLSearchParams(window.location.search).has('sceneTuner');
+}
+
 function Three() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const cfgRef = useRef<WebSceneConfig>(structuredClone(WEB_SCENE_CONFIG));
   const [webglReady, setWebglReady] = useState<'pending' | 'ok' | 'fail'>('pending');
+  const [showSceneTuner, setShowSceneTuner] = useState(() => sceneTunerEnabled());
 
   useEffect(() => {
     const wrap = wrapRef.current;
     const canvas = canvasRef.current;
     if (!wrap || !canvas) return;
 
-    const cfg = WEB_SCENE_CONFIG;
+    const cfg = cfgRef.current;
 
     const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
     const saveData = Boolean(nav.connection?.saveData);
     const coarse = window.matchMedia('(pointer: coarse)').matches;
-    const narrow = window.innerWidth <= 768;
+    const narrow768 = window.innerWidth <= 768;
     const w0 = window.innerWidth;
-    const maxStack = Math.max(1, Math.floor(cfg.grid.stack.count));
     let segments = cfg.grid.segments;
-    let stackCount = maxStack;
     let maxPr = Math.min(window.devicePixelRatio || 1, cfg.renderer.maxPixelRatio);
     let useAa = cfg.renderer.antialias;
     if (saveData) {
       segments = 12;
-      stackCount = Math.min(2, maxStack);
       maxPr = 1;
       useAa = false;
     } else if (coarse) {
       segments = w0 <= 480 ? 14 : 16;
       useAa = false;
-    } else if (narrow) {
+    } else if (narrow768) {
       segments = 16;
       useAa = w0 >= 640 && cfg.renderer.antialias;
     }
@@ -579,20 +547,24 @@ function Three() {
 
     const accent = readAccentRgb(cfg.accentColorVar);
     const isLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-    const lineRgb = hexToRgb01(isLight ? cfg.grid.lineColor : 0x989898);
-    const pointRgb = hexToRgb01(isLight ? cfg.grid.pointColor : 0x2a6478);
-    const accentMix = isLight ? cfg.grid.accentMix : 0.22;
-    const planeRgb = hexToRgb01(isLight ? cfg.grid.plane.color : 0x101018);
-    const planeOpacity = isLight ? cfg.grid.plane.opacity : 0.44;
-    const planeSpot = isLight ? cfg.grid.plane.pointerSpot : 0.42;
-    const noise = isLight
-      ? cfg.grid.plane.surfaceNoise
-      : { scale: 4.2, scrollSpeed: 0.038, strength: 0.06 };
 
-    const camA = cfg.camera.position;
-    const camB = cfg.camera.scroll.positionWhenScrolled;
-    const targetCam = { x: camA.x, y: camA.y, z: camA.z };
-    const look = cfg.camera.lookAt;
+    const camA = { x: 0, y: 0, z: 0 };
+    const camB = { x: 0, y: 0, z: 0 };
+    const look = { x: 0, y: 0, z: 0 };
+    const baseRot = { x: 0, y: 0, z: 0 };
+    const targetCam = { x: 0, y: 0, z: 0 };
+
+    const syncCameraFromConfig = () => {
+      applyResponsiveSceneState(cfgRef.current, window.innerWidth, { camA, camB, look, baseRot });
+      const c = cfgRef.current;
+      const y = window.scrollY;
+      const t = Math.min(1, Math.max(0, y / c.camera.scroll.thresholdPixels));
+      targetCam.x = camA.x + t * (camB.x - camA.x);
+      targetCam.y = camA.y + t * (camB.y - camA.y);
+      targetCam.z = camA.z + t * (camB.z - camA.z);
+    };
+
+    syncCameraFromConfig();
 
     const pointerTarget = { x: 0.5, y: 0.5 };
     const pointerSmooth = { x: 0.5, y: 0.5 };
@@ -608,16 +580,11 @@ function Three() {
     };
 
     const onScroll = () => {
-      const y = window.scrollY;
-      const t = Math.min(1, Math.max(0, y / cfg.camera.scroll.thresholdPixels));
-      targetCam.x = camA.x + t * (camB.x - camA.x);
-      targetCam.y = camA.y + t * (camB.y - camA.y);
-      targetCam.z = camA.z + t * (camB.z - camA.z);
+      syncCameraFromConfig();
     };
 
     document.body.addEventListener('pointermove', onPointerMove, { passive: true });
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
 
     const locPlane = {
       mvp: gl.getUniformLocation(progPlane, 'u_mvp'),
@@ -661,13 +628,8 @@ function Three() {
 
     const eye = { x: camA.x, y: camA.y, z: camA.z };
     const gridPos = cfg.grid.position;
-    const baseRot = cfg.grid.rotationRad;
     const idle = cfg.grid.idleMotion;
     const stackStep = cfg.grid.stack.step;
-    const ptrAmp = cfg.grid.pointerParallax;
-    const ptrFollow = cfg.grid.pointerFollowRate;
-    const ptrRotFollow = cfg.grid.pointerRotFollowRate;
-    const lerpCam = cfg.camera.scroll.lerpSpeed;
 
     let raf = 0;
     let resizeRaf = 0;
@@ -675,7 +637,7 @@ function Three() {
 
     const applyResize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, cfg.renderer.maxPixelRatio);
-      const pr = saveData ? 1 : coarse ? dpr : narrow ? dpr : maxPr;
+      const pr = saveData ? 1 : coarse ? dpr : narrow768 ? dpr : maxPr;
       const cw = wrap.clientWidth;
       const ch = wrap.clientHeight;
       if (cw < 1 || ch < 1) return;
@@ -687,17 +649,23 @@ function Three() {
       gl.viewport(0, 0, w, h);
     };
 
+    const applyLayout = () => {
+      applyResize();
+      syncCameraFromConfig();
+    };
+
     const resize = () => {
       if (resizeRaf) return;
       resizeRaf = requestAnimationFrame(() => {
         resizeRaf = 0;
-        applyResize();
+        applyLayout();
       });
     };
 
-    applyResize();
+    applyLayout();
     const ro = new ResizeObserver(resize);
     ro.observe(wrap);
+    window.addEventListener('resize', resize, { passive: true });
 
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -710,6 +678,21 @@ function Three() {
     };
 
     const draw = (now?: number) => {
+      syncCameraFromConfig();
+      const cfg = cfgRef.current;
+      const ptrFollow = cfg.grid.pointerFollowRate;
+      const ptrRotFollow = cfg.grid.pointerRotFollowRate;
+      const ptrAmp = cfg.grid.pointerParallax;
+      const lerpCam = cfg.camera.scroll.lerpSpeed;
+
+      const lineRgb = hexToRgb01(isLight ? cfg.grid.lineColor : 0x989898);
+      const pointRgb = hexToRgb01(isLight ? cfg.grid.pointColor : 0x2a6478);
+      const accentMix = isLight ? cfg.grid.accentMix : 0.22;
+      const planeRgb = hexToRgb01(isLight ? cfg.grid.plane.color : 0x101018);
+      const planeOpacity = isLight ? cfg.grid.plane.opacity : 0.44;
+      const planeSpot = isLight ? cfg.grid.plane.pointerSpot : 0.42;
+      const noise = cfg.grid.plane.surfaceNoise;
+
       const n = now ?? performance.now();
       const dt = Math.min((n - prevT) / 1000, 0.05);
       prevT = n;
@@ -772,7 +755,10 @@ function Three() {
         gl.uniform1f(locPlane.speed!, cfg.wave.speed);
       };
 
-      for (let i = 0; i < stackCount; i++) {
+      let nStack = Math.max(1, Math.floor(cfg.grid.stack.count));
+      if (saveData) nStack = Math.min(2, nStack);
+
+      for (let i = 0; i < nStack; i++) {
         const ox = i * stack[0];
         const oy = i * stack[1];
         const oz = i * stack[2];
@@ -827,6 +813,7 @@ function Three() {
       cancelAnimationFrame(raf);
       cancelAnimationFrame(resizeRaf);
       ro.disconnect();
+      window.removeEventListener('resize', resize);
       document.body.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('scroll', onScroll);
       gl.deleteVertexArray(vaoLine);
@@ -849,32 +836,58 @@ function Three() {
     background: 'linear-gradient(135deg, #1a1a22, #0d0d12)',
   };
 
+  const tunerAllowed = sceneTunerEnabled();
+
   return (
-    <div
-      ref={wrapRef}
-      style={{
-        position: 'absolute',
-        inset: 0,
-        overflow: 'hidden',
-      }}
-      data-webgl={webglReady === 'ok' ? 'active' : webglReady === 'fail' ? 'unavailable' : 'pending'}
-    >
-      <canvas
-        ref={canvasRef}
+    <>
+      <div
+        ref={wrapRef}
         style={{
           position: 'absolute',
           inset: 0,
-          width: '100%',
-          height: '100%',
-          maxWidth: 'none',
-          maxHeight: 'none',
-          display: 'block',
-          opacity: webglReady === 'ok' ? 1 : webglReady === 'pending' ? 1 : 0,
-          transition: 'opacity 0.35s ease',
+          overflow: 'hidden',
         }}
-      />
-      <div style={fallbackStyle} aria-hidden={webglReady !== 'fail'} />
-    </div>
+        data-webgl={webglReady === 'ok' ? 'active' : webglReady === 'fail' ? 'unavailable' : 'pending'}
+      >
+        <canvas
+          ref={canvasRef}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            maxWidth: 'none',
+            maxHeight: 'none',
+            display: 'block',
+            opacity: webglReady === 'ok' ? 1 : webglReady === 'pending' ? 1 : 0,
+            transition: 'opacity 0.35s ease',
+          }}
+        />
+        <div style={fallbackStyle} aria-hidden={webglReady !== 'fail'} />
+      </div>
+      {tunerAllowed && showSceneTuner && <SceneConfigTuner cfgRef={cfgRef} onClose={() => setShowSceneTuner(false)} />}
+      {tunerAllowed && !showSceneTuner && (
+        <button
+          type="button"
+          onClick={() => setShowSceneTuner(true)}
+          style={{
+            position: 'fixed',
+            bottom: 12,
+            right: 12,
+            zIndex: 10001,
+            padding: '8px 12px',
+            fontSize: 12,
+            cursor: 'pointer',
+            borderRadius: 6,
+            border: '1px solid rgba(255,255,255,0.25)',
+            background: 'rgba(0,0,0,0.65)',
+            color: '#eee',
+          }}
+        >
+          Scene tune
+        </button>
+      )}
+    </>
   );
 }
 
