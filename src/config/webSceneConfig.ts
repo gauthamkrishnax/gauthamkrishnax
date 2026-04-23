@@ -2,68 +2,129 @@
  * Default WebGL hero scene — tuned via `SceneConfigTuner` (dev), then values copied here.
  */
 export const WEB_SCENE_CONFIG = {
-  grid: {
-    segments: 20,
-    opacity: 1,
-    lineColor: 0xbababa,
-    pointColor: 0xdadada,
-    pointSize: 10,
-    position: { x: 0.2, y: -0.6, z: -0.9 },
-    rotationRad: { x: (Math.PI * 25) / 180, y: (-Math.PI * 60) / 180, z: 0 },
-    idleMotion: {
-      amp: { x: 0.024, y: 0.028, z: 0.016 },
-      speed: { x: 0.2, y: 0.17, z: 0.23 },
+  "grid": {
+    "segments": 20,
+    "opacity": 1,
+    "lineColor": 12237498,
+    "pointColor": 14342874,
+    "pointSize": 10,
+    "position": {
+      "x": 0.2,
+      "y": -0.6,
+      "z": -0.9
     },
-    plane: {
-      enabled: true,
-      color: 0xfafafa,
-      opacity: 0.38,
-      surfaceNoise: { scale: 4.2, scrollSpeed: 0.038, strength: 0.07 },
-      pointerSpot: 0.36,
+    "rotationRad": {
+      "x": 0.4363323129985824,
+      "y": -1.0471975511965976,
+      "z": 0
     },
-    accentMix: 0,
-    pointerParallax: { x: 0.11, y: 0.13 },
-    pointerFollowRate: 16,
-    pointerRotFollowRate: 9,
-    fresnelPower: 2.35,
-    stack: { count: 8, step: { x: -0.1, y: 0.2, z: -0.3 } },
-  },
-  wave: { amplitude: 0.1, speed: 0.9 },
-  camera: {
-    fov: 50,
-    near: 0.01,
-    far: 10,
-    position: { x: 0.5, y: 0.4, z: 1.4 },
-    lookAt: { x: 0, y: 0, z: 0 },
-    scroll: {
-      thresholdPixels: 400,
-      positionWhenScrolled: { x: 0.5, y: 1, z: 0.8 },
-      lerpSpeed: 0.08,
-    },
-  },
-  responsive: {
-    maxWidthPx: 1400,
-    narrow: {
-      camera: {
-        position: { x: -0.95, y: -0.85, z: -2.4 },
-        lookAt: { x: 2.35, y: -1.6, z: -2.2 },
-        scroll: {
-          positionWhenScrolled: { x: 0, y: 0, z: -2.4 },
-        },
+    "idleMotion": {
+      "amp": {
+        "x": 0.024,
+        "y": 0.028,
+        "z": 0.016
       },
-      grid: {
-        rotationRad: {
-          x: -0.4974188368183839,
-          y: -0.15707963267948966,
-          z: -0.6544984694978736,
-        },
-      },
+      "speed": {
+        "x": 0.2,
+        "y": 0.17,
+        "z": 0.23
+      }
     },
+    "plane": {
+      "enabled": true,
+      "color": 16448250,
+      "opacity": 0.38,
+      "surfaceNoise": {
+        "scale": 4.2,
+        "scrollSpeed": 0.038,
+        "strength": 0.07
+      },
+      "pointerSpot": 0.36
+    },
+    "accentMix": 0,
+    "pointerParallax": {
+      "x": 0.11,
+      "y": 0.13
+    },
+    "pointerFollowRate": 16,
+    "pointerRotFollowRate": 9,
+    "fresnelPower": 2.35,
+    "stack": {
+      "count": 8,
+      "step": {
+        "x": -0.1,
+        "y": 0.2,
+        "z": -0.3
+      }
+    }
   },
-  renderer: { maxPixelRatio: 2.2, antialias: true, powerPreference: 'high-performance' as const },
-  accentColorVar: '--color-blue-500',
-  reducedMotionTimeScale: 0.15,
-};
+  "wave": {
+    "amplitude": 0.1,
+    "speed": 0.9
+  },
+  "camera": {
+    "fov": 50,
+    "near": 0.01,
+    "far": 10,
+    "position": {
+      "x": 0.5,
+      "y": 0.4,
+      "z": 1.4
+    },
+    "lookAt": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "scroll": {
+      "thresholdPixels": 400,
+      "positionWhenScrolled": {
+        "x": 0.5,
+        "y": 3,
+        "z": 0.8
+      },
+      "lerpSpeed": 0.08
+    }
+  },
+  "responsive": {
+    "maxWidthPx": 1400,
+    "narrow": {
+      "camera": {
+        "position": {
+          "x": -1.05,
+          "y": -1,
+          "z": -2.4
+        },
+        "lookAt": {
+          "x": 2.35,
+          "y": -1.6,
+          "z": -2.2
+        },
+        "scroll": {
+          "positionWhenScrolled": {
+            "x": -0.9,
+            "y": 0.1,
+            "z": -2.4
+          }
+        }
+      },
+      "grid": {
+        "rotationRad": {
+          "x": -0.4974188368183839,
+          "y": -0.15707963267948966,
+          "z": -0.6544984694978736
+        }
+      }
+    }
+  },
+  "renderer": {
+    "maxPixelRatio": 2.2,
+    "antialias": true,
+    "powerPreference": "high-performance"
+  },
+  "accentColorVar": "--color-blue-500",
+  "reducedMotionTimeScale": 0.15
+}
 
 export type WebSceneConfig = typeof WEB_SCENE_CONFIG;
 

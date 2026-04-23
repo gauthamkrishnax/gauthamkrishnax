@@ -13,7 +13,7 @@ function Hero() {
                 </div>
                 <div className={styles.contentBottom}>
                     <div>
-                        <p className="text-secondary">About | My Works</p>
+                        <p className="text-secondary"><a href="#about">About</a> | <a href="#works">My Works</a></p>
                     </div>
                     <div>
                         <p className="text-secondary">{DATA.COMPANY}</p>

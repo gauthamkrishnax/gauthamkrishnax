@@ -437,8 +437,6 @@ function createProgram(gl: WebGL2RenderingContext, vsSrc: string, fsSrc: string)
 }
 
 function sceneTunerEnabled() {
-  if (import.meta.env.DEV) return true;
-  if (typeof window === 'undefined') return false;
   return new URLSearchParams(window.location.search).has('sceneTuner');
 }
 
