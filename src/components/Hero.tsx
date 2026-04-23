@@ -1,3 +1,4 @@
+import { ClientOnly } from 'vike-react/ClientOnly';
 import DATA from '../data';
 import Three from './Three';
 import styles from './hero.module.css';
@@ -24,7 +25,9 @@ function Hero() {
                 </div>
             </div>
             <div className={styles.canvas}>
-                <Three />
+                <ClientOnly fallback={<div>Loading...</div>}>
+                    <Three />
+                </ClientOnly>
             </div>
         </section>
     )

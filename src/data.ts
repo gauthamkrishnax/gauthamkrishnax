@@ -1,3 +1,12 @@
+import amraThumbnail from './assets/images/amra/thumbnail.jpg';
+import blobThumbnail from './assets/images/blob/thumbnail.jpg';
+import fairdealThumbnail from './assets/images/fairdeal/thumbnail.jpg';
+import taraThumbnail from './assets/images/tara/thumbnail.jpg';
+import exlThumbnail from './assets/images/exl/thumbnail.jpg';
+import sermobotThumbnail from './assets/images/sermobot/thumbnail.jpg';
+
+
+
 export type Project = {
     id: string;
     firstName: string;
@@ -53,7 +62,7 @@ export const projectData: Project[] = [
         "lastName": "bot",
         "tag": "Design & Development",
         "badges": ["GLSL Shaders", "WebGL", "3D"],
-        "thumbnail": "/src/assets/images/sermobot/thumbnail.jpg",
+        "thumbnail": sermobotThumbnail,
         "cardSize": "small",
         "displayHeading": "Sermobot",
         "description": "AI powered chatbot for the web",
@@ -67,7 +76,7 @@ export const projectData: Project[] = [
         "lastName": "League",
         "tag": "Development",
         "badges": ["AEM", "Edge Delivery Services", "CMS"],
-        "thumbnail": "/src/assets/images/exl/thumbnail.jpg",
+        "thumbnail": exlThumbnail,
         "cardSize": "medium",
         "displayHeading": "Adobe Experience League",
         "description": "Adobe learning hub on Edge Delivery Services (AEM)",
@@ -86,7 +95,7 @@ export const projectData: Project[] = [
         "publish": true,
         "displayHeading": "Blob Shader",
         "tag": "Design & Development",
-        "thumbnail": "/src/assets/images/blob/thumbnail.jpg",
+        "thumbnail": blobThumbnail,
         "cardSize": "small",
     },
     {
@@ -94,7 +103,7 @@ export const projectData: Project[] = [
         "firstName": "Amra",
         "lastName": "App",
         "tag": "Design & Development",
-        "thumbnail": "/src/assets/images/amra/thumbnail.jpg",
+        "thumbnail": amraThumbnail,
         "cardSize": "large",
         "cardInverted": "inverted"
     },
@@ -103,7 +112,7 @@ export const projectData: Project[] = [
         "firstName": "Fairdeal",
         "lastName": "Home",
         "tag": "Design & Development",
-        "thumbnail": "/src/assets/images/fairdeal/thumbnail.jpg",
+        "thumbnail": fairdealThumbnail,
         "cardSize": "small",
         "cardInverted": "inverted"
     },
@@ -112,7 +121,7 @@ export const projectData: Project[] = [
         "firstName": "Tara",
         "lastName": "App",
         "tag": "Design",
-        "thumbnail": "/src/assets/images/tara/thumbnail.jpg",
+        "thumbnail": taraThumbnail,
         "cardSize": "large",
         "cardInverted": "inverted"
     }

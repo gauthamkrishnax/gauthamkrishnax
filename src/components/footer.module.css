@@ -1,20 +1,20 @@
 footer {
     font-family: var(--font-secondary);
-    border-top: 1px solid var(--accent-gray);
-    padding: 80px 0 120px;
-    margin-top: 100px;
+    border-top: var(--border-width) solid var(--accent-gray);
+    padding: var(--space-3xl) 0 var(--space-5xl);
+    margin-top: var(--space-4xl);
 }
 
 .content {
     display: flex;
     justify-content: center;
-    gap: 60px;
+    gap: var(--space-2xl);
     flex-wrap: wrap;
 }
 
 .copyright {
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--text-color-secondary);
     text-align: center;
-    margin-top: 40px;
+    margin-top: var(--space-xl);
 }

@@ -870,14 +870,14 @@ function Three() {
           onClick={() => setShowSceneTuner(true)}
           style={{
             position: 'fixed',
-            bottom: 12,
-            right: 12,
+            bottom: 'var(--space-sm)',
+            right: 'var(--space-sm)',
             zIndex: 10001,
-            padding: '8px 12px',
-            fontSize: 12,
+            padding: 'var(--space-xs) var(--space-sm)',
+            fontSize: 'var(--text-xs)',
             cursor: 'pointer',
-            borderRadius: 6,
-            border: '1px solid rgba(255,255,255,0.25)',
+            borderRadius: 'var(--radius-sm)',
+            border: 'var(--border-width) solid rgba(255,255,255,0.25)',
             background: 'rgba(0,0,0,0.65)',
             color: '#eee',
           }}

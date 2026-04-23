@@ -5,7 +5,7 @@
 
 .cardImage {
     width: 95%;
-    border-radius: 30px;
+    border-radius: var(--radius-card);
     overflow: hidden;
     transition: width 0.3s ease-in;
 }
@@ -39,41 +39,41 @@
 
 
 .cardContent {
-    margin-top: 20px;
+    margin-top: var(--space-lg);
 
     span {
         color: var(--text-color-secondary);
-        font-size: 12px;
+        font-size: var(--text-xs);
         letter-spacing: 5%;
         text-transform: uppercase;
-        margin-bottom: 10px;
+        margin-bottom: var(--space-sm);
     }
 
     h3 {
         color: var(--text-color-primary);
-        font-size: 40px;
+        font-size: var(--text-xl);
         font-weight: 400;
-        margin-bottom: 10px;
+        margin-bottom: var(--space-sm);
         line-height: 1.2;
     }
 
     p {
         color: var(--text-color-primary);
-        font-size: 16px;
+        font-size: var(--text-base);
         line-height: 1.5;
-        margin-bottom: 10px;
+        margin-bottom: var(--space-sm);
     }
 }
 
 .cardBadges {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
 
     span {
         color: var(--text-color-primary);
         background-color: var(--accent-gray);
-        padding: 5px 10px;
+        padding: var(--space-2xs) var(--space-sm);
     }
 }

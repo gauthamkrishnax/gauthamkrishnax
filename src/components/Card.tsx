@@ -4,7 +4,7 @@ import styles from './card.module.css';
 function Card({ project }: { project: Project }) {
     return (
         <div className={`${styles.card} ${styles[project.cardSize]}`}>
-            <a className="no-hover" href={project.url} target='_blank'>
+            <a className="no-hover" href={`/${project.id}`} >
                 <div className={styles.cardImage}>
                     <img src={project.thumbnail} alt={project.firstName + ' ' + project.lastName} />
                 </div>
