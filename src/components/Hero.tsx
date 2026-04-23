@@ -25,7 +25,7 @@ function Hero() {
                 </div>
             </div>
             <div className={styles.canvas}>
-                <ClientOnly fallback={<div>Loading...</div>}>
+                <ClientOnly fallback={<div></div>}>
                     <Three />
                 </ClientOnly>
             </div>

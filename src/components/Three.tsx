@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties } from 'react';
 import {
   WEB_SCENE_CONFIG,
   applyResponsiveSceneState,
   type WebSceneConfig,
 } from '../config/webSceneConfig';
-import { SceneConfigTuner } from './SceneConfigTuner.tsx';
+
+const SceneConfigTunerLazy = lazy(() =>
+  import('./SceneConfigTuner.tsx').then((mod) => ({ default: mod.SceneConfigTuner })),
+);
 
 /** Re-export defaults for copying from the tuner UI into `src/config/webSceneConfig.ts`. */
 export { WEB_SCENE_CONFIG } from '../config/webSceneConfig';
@@ -498,6 +501,7 @@ function Three() {
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const motionScale = reducedMotion ? cfg.reducedMotionTimeScale : 1;
+    const introDurationSec = reducedMotion ? 0 : 1.15;
 
     const lineGeo = buildLineGrid(segments);
     const pointGeo = buildPointGrid(segments);
@@ -696,6 +700,14 @@ function Three() {
       prevT = n;
       const t = ((n - start) / 1000) * motionScale;
 
+      let introFade = 1;
+      let introPointScale = 1;
+      if (introDurationSec > 0) {
+        const u = Math.min(1, (n - start) / 1000 / introDurationSec);
+        introFade = 1 - (1 - u) ** 3;
+        introPointScale = 0.35 + 0.65 * introFade;
+      }
+
       const uvK = expSmooth(dt, ptrFollow);
       pointerSmooth.x += (pointerTarget.x - pointerSmooth.x) * uvK;
       pointerSmooth.y += (pointerTarget.y - pointerSmooth.y) * uvK;
@@ -768,7 +780,7 @@ function Three() {
           gl.bindVertexArray(vaoPlane);
           setPlaneWave(mvp, layerModel);
           gl.uniform3f(locPlane.color!, planeRgb[0], planeRgb[1], planeRgb[2]);
-          gl.uniform1f(locPlane.opacity!, planeOpacity);
+          gl.uniform1f(locPlane.opacity!, planeOpacity * introFade);
           gl.uniform1f(locPlane.fresnelPower!, cfg.grid.fresnelPower);
           gl.uniform1f(locPlane.noiseScale!, noise.scale);
           gl.uniform1f(locPlane.noiseScroll!, noise.scrollSpeed);
@@ -783,17 +795,17 @@ function Three() {
         setLinePointWave(locLine, progLine, mvp);
         gl.uniform3f(locLine.color!, lineRgb[0], lineRgb[1], lineRgb[2]);
         gl.uniform3f(locLine.accent!, accent[0], accent[1], accent[2]);
-        gl.uniform1f(locLine.opacity!, cfg.grid.opacity);
+        gl.uniform1f(locLine.opacity!, cfg.grid.opacity * introFade);
         gl.uniform1f(locLine.accentMix!, accentMix);
         gl.bindVertexArray(vaoLine);
         gl.drawArrays(gl.LINES, 0, lineVerts);
 
         gl.depthMask(false);
         setLinePointWave(locPoint, progPoint, mvp);
-        gl.uniform1f(locPoint.pointSize!, cfg.grid.pointSize);
+        gl.uniform1f(locPoint.pointSize!, cfg.grid.pointSize * introPointScale);
         gl.uniform3f(locPoint.color!, pointRgb[0], pointRgb[1], pointRgb[2]);
         gl.uniform3f(locPoint.accent!, accent[0], accent[1], accent[2]);
-        gl.uniform1f(locPoint.opacity!, cfg.grid.opacity);
+        gl.uniform1f(locPoint.opacity!, cfg.grid.opacity * introFade);
         gl.uniform1f(locPoint.accentMix!, accentMix);
         gl.bindVertexArray(vaoPoint);
         gl.drawArrays(gl.POINTS, 0, pointVerts);
@@ -863,7 +875,11 @@ function Three() {
         />
         <div style={fallbackStyle} aria-hidden={webglReady !== 'fail'} />
       </div>
-      {tunerAllowed && showSceneTuner && <SceneConfigTuner cfgRef={cfgRef} onClose={() => setShowSceneTuner(false)} />}
+      {tunerAllowed && showSceneTuner && (
+        <Suspense fallback={null}>
+          <SceneConfigTunerLazy cfgRef={cfgRef} onClose={() => setShowSceneTuner(false)} />
+        </Suspense>
+      )}
       {tunerAllowed && !showSceneTuner && (
         <button
           type="button"
