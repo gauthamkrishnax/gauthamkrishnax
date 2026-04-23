@@ -1,3 +1,178 @@
-# My Project
+import ss from '../../../assets/images/sermobot/ss.png';
 
-This page is written in markdown.
+## Overview
+
+SermoBot is an interactive web experience built around a luminous “orb” persona: a Three.js 3D scene with a custom GLSL shader, post-processing (bloom and vignette), and optional ambient audio that reacts to the visuals.
+
+<img
+  src={ss}
+  width={960}
+  alt="SermoBot interface: dark canvas with a glowing cyan-and-magenta orb and a pill-shaped chat input at the bottom"
+  style={{ maxWidth: '100%', height: 'auto' }}
+/>
+
+Visitors can chat with the orb in the browser. Messages are sent to Pollinations’ OpenAI-compatible chat API; replies are shown on the page and read aloud with the Web Speech API, while shader uniforms speed up briefly during the request for feedback.
+
+The app is bundled with Vite, deployed as static assets (for example on Netlify), and uses environment variables for the API key so secrets stay out of the repository.
+
+The UI keeps chrome to a minimum: one focal presence (the orb) and one line of input, so the experience reads as a dialogue with a character rather than a conventional app shell.
+
+## Design philosophy
+
+As both **designer and developer**, the goal was to align look, motion, and behavior: the orb is not decoration—it embodies the system prompt (“wise, slightly mysterious luminous orb”). High-contrast neon on deep navy supports legibility and mood; bloom and slow drift add atmosphere without competing with the message area.
+
+**Mystical minimalism:** no sidebars, chat bubbles, or dense controls. Removing visual noise directs attention to the entity and the single input, which makes the product feel intimate and focused.
+
+**Design–engineering synergy:** the wireframe torus, procedural halo, and audio-reactive shader are authored in GLSL and Three.js; typography, layout, and micro-interactions live in HTML/CSS and GSAP. The same person shaped the narrative tone, the color story, and the implementation tradeoffs (e.g. post-processing vs performance).
+
+## Architecture
+
+Everything runs in the browser. There is no custom backend: the static site talks directly to Pollinations over HTTPS. The diagram below summarizes how UI, graphics, audio, and chat connect.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 440" role="img" aria-labelledby="archTitle">
+  <title id="archTitle">SermoBot high-level architecture</title>
+  <rect x="1" y="1" width="558" height="438" fill="#fafafa" stroke="#222" strokeWidth="2" />
+  <text x="280" y="28" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="15" fontWeight="bold">User’s browser</text>
+
+  <rect x="40" y="48" width="480" height="72" fill="#fff" stroke="#333" strokeWidth="1.5" />
+  <text x="280" y="78" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="13">Static app (Vite build): HTML, CSS, <tspan fontWeight="bold">main.js</tspan></text>
+  <text x="280" y="100" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="12" fill="#444">Entry: scene setup, UI events, animation loop</text>
+
+  <line x1="280" y1="120" x2="280" y2="138" stroke="#222" strokeWidth="2" />
+
+  <rect x="40" y="138" width="148" height="88" fill="#e8f4ff" stroke="#333" strokeWidth="1.5" />
+  <text x="114" y="168" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="12" fontWeight="bold">Three.js</text>
+  <text x="114" y="190" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11">WebGL2 + GLSL</text>
+  <text x="114" y="208" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11">Composer passes</text>
+
+  <rect x="206" y="138" width="148" height="88" fill="#fff5e6" stroke="#333" strokeWidth="1.5" />
+  <text x="280" y="168" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="12" fontWeight="bold">GSAP</text>
+  <text x="280" y="190" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11">UI + camera</text>
+  <text x="280" y="208" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11">motion</text>
+
+  <rect x="372" y="138" width="148" height="88" fill="#f0e8ff" stroke="#333" strokeWidth="1.5" />
+  <text x="446" y="168" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="12" fontWeight="bold">Web Audio</text>
+  <text x="446" y="190" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11">Analyser →</text>
+  <text x="446" y="208" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11">shader uniforms</text>
+
+  <line x1="114" y1="226" x2="114" y2="252" stroke="#222" strokeWidth="1.5" />
+  <line x1="280" y1="226" x2="280" y2="252" stroke="#222" strokeWidth="1.5" />
+  <line x1="446" y1="226" x2="446" y2="252" stroke="#222" strokeWidth="1.5" />
+
+  <rect x="120" y="252" width="320" height="56" fill="#e8fff0" stroke="#333" strokeWidth="1.5" />
+  <text x="280" y="278" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="12" fontWeight="bold">fetch (HTTPS)</text>
+  <text x="280" y="296" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11">OpenAI-compatible chat JSON</text>
+
+  <line x1="280" y1="308" x2="280" y2="330" stroke="#222" strokeWidth="2" />
+
+  <rect x="120" y="330" width="320" height="88" fill="#fff" stroke="#333" strokeWidth="1.5" strokeDasharray="6 4" />
+  <text x="280" y="360" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="12" fontWeight="bold">Pollinations</text>
+  <text x="280" y="382" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11">gen.pollinations.ai / v1/chat/completions</text>
+  <text x="280" y="402" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fill="#555">API key from build-time env (Vite)</text>
+</svg>
+
+## AI Halo shader
+
+The orb is drawn with a custom WebGL2 GLSL program titled **AI Halo** (author credit in source). The look is entirely procedural: no texture maps—only UVs, time, simplex-style noise, distance fields, and a handful of uniforms (`uTime`, `uSpeed`, `tAudioData`) supplied from JavaScript.
+
+### Vertex stage
+
+The vertex shader is a straight pass-through transform: `gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0)`, and `vUv = uv`. Every pixel of the quad receives stable `0–1` UVs so the fragment shader can treat the surface as a 2D canvas in model space.
+
+### Fragment stage: four halo layers (`draw2`)
+
+UVs are centered and scaled (`vUv * 3.0 - 1.5`). The same routine `draw2` runs four times with different inner-radius arguments (`0.6`, `0.8`, `0.9`, `0.3`); outputs are added so multiple soft rings interleave.
+
+In polar form (`atan` for angle, `length` for radius), a 3D noise sample `snoise3(vec3(uv * 1.2, time * 0.5))` modulates where the bright ring sits between the inner radius and the outer edge—so the rim shimmers instead of staying a perfect circle. An inverse-linear falloff (`light1`) from that moving ring creates the glow; additional `smoothstep` terms darken the center into a “hole” and taper the exterior. Hue shifts around the orb with `cos(angle + time * 2.0)`, mixing the magenta, cyan, and deep blue constants. `extractAlpha` turns faint RGB into transparent pixels by normalizing bright regions into alpha, which keeps stacked layers from muddying each other.
+
+### Audio-reactive rings
+
+Four annuli are built with `paintCircle`: each uses a smooth band (`smoothstep` pair) at a base radius, but the radius is nudged per channel by `tAudioData` (e.g. `r` from `tAudioData.x`, and similarly for `y`/`z`/`w` on sibling rings) so FFT or analyser energy visibly swells the hoops. Small sine perturbations (`variation`) wobble the distance field so the rings feel hand-drawn rather than perfectly round. The pass is then multiplied by a time-rotated UV mask: red and green are zeroed, blue carries a quadrant-shaped factor `1.0 - v.y * v.x`, and alpha is scaled—so this layer reads as a directional blue highlight over the halo stack.
+
+### Wandering specular spots
+
+A separate path warps UVs with `3.0 - cos(uTime * uSpeed) * 0.3` for slow breathing. Inside the unit disk, lighting is built from products of inverse distances to several points that orbit on independent `sin`/`cos` paths (different periods). Multiplying those terms yields sharp moving hotspots—metaphorically a small “constellation” sliding behind the glass—tinted with low-amplitude purple RGB and wrapped in `extractAlpha` for soft edges.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 200" role="img" aria-labelledby="shaderPipeTitle">
+  <title id="shaderPipeTitle">AI Halo fragment pipeline: from UV to final color</title>
+  <defs>
+    <marker id="sermoShaderPipeArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#222" />
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="518" height="198" fill="#fafafa" stroke="#222" strokeWidth="2" />
+  <text x="260" y="22" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="13" fontWeight="bold">Fragment pipeline (conceptual)</text>
+
+  <rect x="16" y="40" width="72" height="44" fill="#e8f4ff" stroke="#333" strokeWidth="1.2" />
+  <text x="52" y="62" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">vUv</text>
+  <text x="52" y="78" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fill="#444">×3 − 1.5</text>
+
+  <line x1="88" y1="62" x2="108" y2="62" stroke="#222" strokeWidth="1.5" markerEnd="url(#sermoShaderPipeArrow)" />
+
+  <rect x="108" y="36" width="100" height="52" fill="#fff" stroke="#333" strokeWidth="1.2" />
+  <text x="158" y="56" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fontWeight="bold">draw2 ×4</text>
+  <text x="158" y="72" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fill="#444">noise ring + hole</text>
+
+  <line x1="208" y1="62" x2="228" y2="62" stroke="#222" strokeWidth="1.5" markerEnd="url(#sermoShaderPipeArrow)" />
+
+  <rect x="228" y="36" width="104" height="52" fill="#f0e8ff" stroke="#333" strokeWidth="1.2" />
+  <text x="280" y="54" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fontWeight="bold">paintCircle</text>
+  <text x="280" y="68" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fill="#444">+ tAudioData</text>
+  <text x="280" y="80" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fill="#444">rotate &amp; tint</text>
+
+  <line x1="332" y1="62" x2="352" y2="62" stroke="#222" strokeWidth="1.5" markerEnd="url(#sermoShaderPipeArrow)" />
+
+  <rect x="352" y="36" width="92" height="52" fill="#fff5e6" stroke="#333" strokeWidth="1.2" />
+  <text x="398" y="56" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fontWeight="bold">uv2 lights</text>
+  <text x="398" y="72" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fill="#444">orbiting points</text>
+
+  <line x1="444" y1="62" x2="464" y2="62" stroke="#222" strokeWidth="1.5" markerEnd="url(#sermoShaderPipeArrow)" />
+
+  <rect x="464" y="40" width="44" height="44" fill="#e8fff0" stroke="#333" strokeWidth="1.2" />
+  <text x="486" y="66" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fontWeight="bold">Σ</text>
+
+  <text x="260" y="118" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11">Sum of halos, rings, and light pass → <tspan fontWeight="bold">fragColor</tspan> (premultiplied-style stacking)</text>
+
+  <rect x="40" y="132" width="440" height="52" fill="#fff" stroke="#333" strokeWidth="1" strokeDasharray="4 3" />
+  <text x="260" y="154" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fill="#333">Shared building blocks: <tspan fontWeight="bold">snoise3</tspan> (animated rim), <tspan fontWeight="bold">extractAlpha</tspan> (cut soft black),</text>
+  <text x="260" y="170" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fill="#333"><tspan fontWeight="bold">smoothstep</tspan> holes/fades, <tspan fontWeight="bold">polar</tspan> angle for color spin</text>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 280" role="img" aria-labelledby="shaderRadialTitle">
+  <title id="shaderRadialTitle">Radial layout: noisy ring, dark core, outer rings</title>
+  <rect x="1" y="1" width="278" height="278" fill="#fafafa" stroke="#222" strokeWidth="2" />
+  <text x="140" y="22" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="12" fontWeight="bold">Radial structure (schematic)</text>
+
+  <circle cx="140" cy="150" r="118" fill="none" stroke="#c5c5c5" strokeWidth="1" strokeDasharray="4 3" />
+  <text x="248" y="148" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fill="#666">fade</text>
+
+  <circle cx="140" cy="150" r="72" fill="none" stroke="#2980b9" strokeWidth="3" opacity="0.85" />
+  <path d="M 140 78 Q 165 95 188 118 Q 175 130 160 125 Q 145 115 128 108 Q 118 95 140 78" fill="none" stroke="#8e44ad" strokeWidth="2.5" opacity="0.9" />
+  <text x="140" y="70" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fill="#555">noise-modulated glow (draw2)</text>
+
+  <circle cx="140" cy="150" r="38" fill="#1a1f3a" stroke="#333" strokeWidth="1" />
+  <text x="140" y="154" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fill="#e0e0e0">hole</text>
+
+  <circle cx="140" cy="150" r="95" fill="none" stroke="#16a085" strokeWidth="1.5" opacity="0.7" />
+  <text x="32" y="200" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fill="#16a085">wobbly audio rings</text>
+</svg>
+
+## Features
+
+WebGL2 rendering with `RawShaderMaterial` and GLSL ES 3.00 vertex and fragment shaders, plus GSAP-driven UI and camera motion tied to pointer input.
+
+FFT-based audio analysis smoothed in JavaScript to drive shader parameters without harsh flicker; background music with consent-style flow and an optional easter-egg track swap.
+
+Resilient chat integration: normalized API message content (string or structured parts), capped conversation window, retries with shorter context, and a higher completion token budget for reasoning-style models behind the `openai` route.
+
+## Links
+
+[Live SermoBot site](https://sermo.gauthamkrishna.in/) — deployed experience.
+
+[Pollinations](https://pollinations.ai/) powers the chat via the OpenAI-compatible endpoint at `gen.pollinations.ai`; API keys are created at [enter.pollinations.ai](https://enter.pollinations.ai/).
+
+Core libraries: [three.js](https://threejs.org/) for WebGL, [Vite](https://vitejs.dev/) for the dev server and production build, and [GSAP](https://gsap.com/) for animation.
+
+## Setup (for developers)
+
+Clone the repository, run `npm install`, copy `.env.example` to `.env`, and set `VITE_POLLINATIONS_API_KEY` to your key. Use `npm run dev` for local development and `npm run build` for production output in `dist/`.

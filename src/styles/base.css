@@ -38,6 +38,16 @@ body {
     font-family: var(--font-primary);
 }
 
+h2 {
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-xs);
+}
+
+h3 {
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-xs);
+}
+
 p, span {
     letter-spacing: 5%;
 }
@@ -82,4 +92,17 @@ a:not(.no-hover):hover::before {
 
 .uppercase {
     text-transform: uppercase;
+}
+
+.project-content {
+  max-width: 1200px;
+
+  h2:first-child {
+    margin-top: 0;
+  }
+
+  img, svg {
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-xl);
+  }
 }
