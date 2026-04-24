@@ -25,7 +25,6 @@ export default function ParallaxLayer({
   useLayoutEffect(() => {
     if (!batch) return;
     const entry: ParallaxBatchEntry = {
-      measureRef,
       layerRef,
       strength,
     };
