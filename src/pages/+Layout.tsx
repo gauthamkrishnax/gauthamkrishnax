@@ -13,7 +13,15 @@ import ThemeToggle from '../components/ThemeToggle'
 function Layout({ children }: { children: React.ReactNode }) {
     return (
         <React.StrictMode>
-            <ReactLenis root options={{ stopInertiaOnNavigate: true }}>
+            <ReactLenis
+                root
+                options={{
+                    stopInertiaOnNavigate: true,
+                    /** Higher = scroll catches up faster (default 0.1 feels sluggish on busy pages). */
+                    lerp: 0.18,
+                    wheelMultiplier: 1.05,
+                }}
+            >
                 <ParallaxBatchProvider>
                     <RouteScrollReset />
                     {children}
