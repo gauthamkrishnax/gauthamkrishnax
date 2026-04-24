@@ -3,6 +3,13 @@
     height: 100%;
 }
 
+.card > a {
+    display: block;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+}
+
 .cardImage {
     width: 95%;
     border-radius: var(--radius-card);
