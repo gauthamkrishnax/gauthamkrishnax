@@ -21,6 +21,7 @@
 
 .projects {
     margin-top: var(--space-xl);
+    margin-bottom: var(--space-3xl);
     display: grid;
     grid-template-columns: repeat(3, minmax(var(--width-grid-card-min), 1fr));
     gap: var(--space-2xl);

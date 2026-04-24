@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useLenis } from 'lenis/react';
 import {
   WEB_SCENE_CONFIG,
   applyResponsiveSceneState,
@@ -443,12 +444,24 @@ function sceneTunerEnabled() {
   return new URLSearchParams(window.location.search).has('sceneTuner');
 }
 
+type ThemeVisual = { isLight: boolean; accent: [number, number, number] };
+
 function Three() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cfgRef = useRef<WebSceneConfig>(structuredClone(WEB_SCENE_CONFIG));
+  const scrollRef = useRef(0);
+  const viewportWidthRef = useRef(typeof window !== 'undefined' ? window.innerWidth : 1024);
+  const themeVisualRef = useRef<ThemeVisual>({
+    isLight: true,
+    accent: [0, 0.482, 1],
+  });
   const [webglReady, setWebglReady] = useState<'pending' | 'ok' | 'fail'>('pending');
   const [showSceneTuner, setShowSceneTuner] = useState(() => sceneTunerEnabled());
+
+  useLenis((lenis) => {
+    scrollRef.current = lenis.scroll;
+  }, []);
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -554,14 +567,34 @@ function Three() {
     const targetCam = { x: 0, y: 0, z: 0 };
 
     const syncCameraFromConfig = () => {
-      applyResponsiveSceneState(cfgRef.current, window.innerWidth, { camA, camB, look, baseRot });
+      applyResponsiveSceneState(cfgRef.current, viewportWidthRef.current, { camA, camB, look, baseRot });
       const c = cfgRef.current;
-      const y = window.scrollY;
+      const y = scrollRef.current;
       const t = Math.min(1, Math.max(0, y / c.camera.scroll.thresholdPixels));
       targetCam.x = camA.x + t * (camB.x - camA.x);
       targetCam.y = camA.y + t * (camB.y - camA.y);
       targetCam.z = camA.z + t * (camB.z - camA.z);
     };
+
+    const refreshThemeVisual = () => {
+      const cfg = cfgRef.current;
+      themeVisualRef.current = {
+        isLight: document.documentElement.getAttribute('data-theme') !== 'dark',
+        accent: readAccentRgb(cfg.accentColorVar),
+      };
+    };
+
+    scrollRef.current = typeof window !== 'undefined' ? window.scrollY : 0;
+    viewportWidthRef.current = typeof window !== 'undefined' ? window.innerWidth : viewportWidthRef.current;
+    refreshThemeVisual();
+
+    const themeObserver = new MutationObserver(() => {
+      refreshThemeVisual();
+    });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
 
     syncCameraFromConfig();
 
@@ -571,19 +604,14 @@ function Three() {
     let prevT = performance.now();
 
     const onPointerMove = (ev: PointerEvent) => {
-      const ww = window.innerWidth;
+      const ww = viewportWidthRef.current;
       const hh = window.innerHeight;
       if (ww < 1 || hh < 1) return;
       pointerTarget.x = Math.min(1, Math.max(0, ev.clientX / ww));
       pointerTarget.y = Math.min(1, Math.max(0, ev.clientY / hh));
     };
 
-    const onScroll = () => {
-      syncCameraFromConfig();
-    };
-
     document.body.addEventListener('pointermove', onPointerMove, { passive: true });
-    window.addEventListener('scroll', onScroll, { passive: true });
 
     const locPlane = {
       mvp: gl.getUniformLocation(progPlane, 'u_mvp'),
@@ -649,6 +677,7 @@ function Three() {
     };
 
     const applyLayout = () => {
+      viewportWidthRef.current = window.innerWidth;
       applyResize();
       syncCameraFromConfig();
     };
@@ -684,8 +713,7 @@ function Three() {
       const ptrAmp = cfg.grid.pointerParallax;
       const lerpCam = cfg.camera.scroll.lerpSpeed;
 
-      const isLight = document.documentElement.getAttribute('data-theme') !== 'dark';
-      const accent = readAccentRgb(cfg.accentColorVar);
+      const { isLight, accent } = themeVisualRef.current;
       const lineRgb = hexToRgb01(isLight ? cfg.grid.lineColor : 0x989898);
       const pointRgb = hexToRgb01(isLight ? cfg.grid.pointColor : 0x2a6478);
       const accentMix = isLight ? cfg.grid.accentMix : 0.22;
@@ -824,7 +852,7 @@ function Three() {
       ro.disconnect();
       window.removeEventListener('resize', resize);
       document.body.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('scroll', onScroll);
+      themeObserver.disconnect();
       gl.deleteVertexArray(vaoLine);
       gl.deleteVertexArray(vaoPoint);
       gl.deleteVertexArray(vaoPlane);
