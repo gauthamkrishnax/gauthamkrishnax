@@ -2,6 +2,7 @@
   margin-bottom: var(--space-lg);
   margin: var(--space-4xl) var(--space-5xl) var(--space-xl);
   letter-spacing: 0.12em;
+  font-family: var(--font-secondary);
 }
 
 .siteHeader a {
