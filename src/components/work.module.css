@@ -1,0 +1,42 @@
+.content {
+    min-height: 100svh;
+    padding: var(--space-5xl);
+
+    h2 {
+        font-size: var(--text-sm);
+        letter-spacing: 5%;
+        
+        font-weight: 400;
+    }
+
+    @media (max-width: 1400px) {
+        padding: var(--space-4xl);
+    }
+
+    @media (max-width: 768px) {
+        padding: var(--space-lg);
+    }
+}
+
+
+.projects {
+    margin-top: var(--space-xl);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(var(--width-grid-card-min), 1fr));
+    gap: var(--space-2xl);
+    place-items: center;
+
+    @media (max-width: 1400px) {
+        grid-template-columns: repeat(2, minmax(var(--width-grid-card-min), 1fr));
+    }
+
+    @media (max-width: 768px) {
+        grid-template-columns: repeat(1, minmax(var(--width-grid-card-min), 1fr));
+    }
+}
+
+.cardParallax {
+    width: 100%;
+    min-width: 0;
+    align-self: stretch;
+}

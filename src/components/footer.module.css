@@ -1,0 +1,20 @@
+footer {
+    font-family: var(--font-secondary);
+    border-top: var(--border-width) solid var(--accent-gray);
+    padding: var(--space-3xl) 0 var(--space-5xl);
+    margin-top: var(--space-4xl);
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-2xl);
+    flex-wrap: wrap;
+}
+
+.copyright {
+    font-size: var(--text-xs);
+    color: var(--text-color-secondary);
+    text-align: center;
+    margin-top: var(--space-xl);
+}
