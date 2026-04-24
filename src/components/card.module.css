@@ -53,6 +53,7 @@
         color: var(--text-color-primary);
         font-size: var(--text-xl);
         font-weight: 400;
+        margin-top: var(--space-2xs);
         margin-bottom: var(--space-sm);
         line-height: 1.2;
     }
