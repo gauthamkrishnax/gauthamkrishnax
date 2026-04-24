@@ -10,8 +10,8 @@ import {
 import { useLenis } from 'lenis/react';
 
 export type ParallaxBatchEntry = {
-  measureRef: RefObject<HTMLElement | null>;
   layerRef: RefObject<HTMLElement | null>;
+  /** Multiplier on Lenis scroll position (no layout reads per tick). */
   strength: number;
 };
 
@@ -21,13 +21,16 @@ type ParallaxBatchContextValue = {
 
 const ParallaxBatchContext = createContext<ParallaxBatchContextValue | null>(null);
 
+/** Maps document scroll to parallax px (replaces old `getBoundingClientRect().top * strength` scale). */
+const SCROLL_TO_PARALLAX = 0.22;
+
 export function useParallaxBatch(): ParallaxBatchContextValue | null {
   return useContext(ParallaxBatchContext);
 }
 
 /**
- * One Lenis scroll listener for all parallax layers: read all rects, then write all transforms.
- * Avoids read/write interleaving that forces layout each time Lenis ticks.
+ * One Lenis scroll listener for all parallax layers.
+ * Uses `lenis.scroll * strength` only (no getBoundingClientRect) so scroll stays cheap and responsive.
  */
 export function ParallaxBatchProvider({ children }: { children: ReactNode }) {
   const entriesRef = useRef<ParallaxBatchEntry[]>([]);
@@ -52,7 +55,7 @@ export function ParallaxBatchProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const flush = useCallback(() => {
+  const flush = useCallback((scroll: number) => {
     const entries = entriesRef.current;
     if (entries.length === 0) return;
 
@@ -68,10 +71,9 @@ export function ParallaxBatchProvider({ children }: { children: ReactNode }) {
 
     const updates: { el: HTMLElement; y: number }[] = [];
     for (const e of entries) {
-      const m = e.measureRef.current;
       const l = e.layerRef.current;
-      if (!m || !l) continue;
-      updates.push({ el: l, y: m.getBoundingClientRect().top * e.strength });
+      if (!l) continue;
+      updates.push({ el: l, y: scroll * e.strength * SCROLL_TO_PARALLAX });
     }
     for (const u of updates) {
       u.el.style.willChange = 'transform';
@@ -79,8 +81,8 @@ export function ParallaxBatchProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  useLenis(() => {
-    flush();
+  useLenis((lenis) => {
+    flush(lenis.scroll);
   }, [flush]);
 
   const value: ParallaxBatchContextValue = { register };
