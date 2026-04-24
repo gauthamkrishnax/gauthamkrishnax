@@ -13,7 +13,7 @@
 
 .meta {
   margin-bottom: var(--space-xl);
-  background-color: #F5F3FF;
+  background-color: var(--surface-muted);
   padding: var(--space-xl) var(--space-5xl);
 }
 
@@ -69,7 +69,7 @@
 }
 
 .backToTop {
-  font-size: var(--text-);
+  font-size: var(--text-sm);
   color: var(--text-color-secondary);
   
   margin: var(--space-xl) var(--space-5xl) var(--space-5xl);

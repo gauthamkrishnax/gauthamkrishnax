@@ -1,10 +1,15 @@
 :root {
+    color-scheme: light;
+
     --background-color: #FFFEFA;
     --background-color-secondary: #FFFFFF;
     --text-color-primary: #000000;
     --text-color-secondary: #555555;
+    --text-color: var(--text-color-primary);
     --accent-gray: #E8E8E8;
     --link-color: #00456b;
+    --surface-muted: #f5f3ff;
+    --color-blue-500: #00456b;
 
     --font-primary: 'Sk-Modernist', sans-serif;
     --font-secondary: 'Sk-Modernist Mono', sans-serif;
@@ -49,4 +54,18 @@
     --width-about-media: 300px;
     --width-about-copy: 800px;
     --width-grid-card-min: 280px;
+}
+
+html[data-theme='dark'] {
+    color-scheme: dark;
+
+    --background-color: #121110;
+    --background-color-secondary: #000000;
+    --text-color-primary: #f4f1ea;
+    --text-color-secondary: #a39e96;
+    --text-color: var(--text-color-primary);
+    --accent-gray: #2e2b28;
+    --link-color: #7ec8ea;
+    --surface-muted: #08070a;
+    --color-blue-500: #7ec8ea;
 }

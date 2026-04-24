@@ -547,9 +547,6 @@ function Three() {
 
     gl.bindVertexArray(null);
 
-    const accent = readAccentRgb(cfg.accentColorVar);
-    const isLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-
     const camA = { x: 0, y: 0, z: 0 };
     const camB = { x: 0, y: 0, z: 0 };
     const look = { x: 0, y: 0, z: 0 };
@@ -687,6 +684,8 @@ function Three() {
       const ptrAmp = cfg.grid.pointerParallax;
       const lerpCam = cfg.camera.scroll.lerpSpeed;
 
+      const isLight = document.documentElement.getAttribute('data-theme') !== 'dark';
+      const accent = readAccentRgb(cfg.accentColorVar);
       const lineRgb = hexToRgb01(isLight ? cfg.grid.lineColor : 0x989898);
       const pointRgb = hexToRgb01(isLight ? cfg.grid.pointColor : 0x2a6478);
       const accentMix = isLight ? cfg.grid.accentMix : 0.22;
