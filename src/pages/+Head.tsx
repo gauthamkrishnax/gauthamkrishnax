@@ -1,5 +1,6 @@
 import { usePageContext } from 'vike-react/usePageContext';
 import siteData from '../data';
+import { ALLOW_ROBOTS } from '../config/robotsPolicy';
 import { SITE_ORIGIN } from '../config/site';
 
 export function Head() {
@@ -16,6 +17,7 @@ export function Head() {
       <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       <meta name="author" content={siteData.HEADER} />
       <meta name="application-name" content={siteData.HEADER} />
+      {!ALLOW_ROBOTS ? <meta name="robots" content="noindex, nofollow" /> : null}
       {!isErrorPage ? (
         <>
           <link rel="canonical" href={canonical} />
