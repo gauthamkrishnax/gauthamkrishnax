@@ -1,0 +1,32 @@
+.toggle {
+  position: fixed;
+  bottom: var(--space-md);
+  right: var(--space-md);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: var(--border-width) solid var(--accent-gray);
+  border-radius: var(--radius-sm);
+  background-color: var(--background-color-secondary);
+  color: var(--text-color-primary);
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.toggle:hover {
+  border-color: var(--link-color);
+  color: var(--link-color);
+}
+
+.icon {
+  font-size: 18px;
+  line-height: 1;
+}

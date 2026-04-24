@@ -1,0 +1,72 @@
+.hero {
+    display: flex;
+    /* Viewport height lives on the section so both columns share one box. */
+    min-height: 100svh;
+    /* Flex items default to min-height:auto, which uses replaced content
+       (canvas bitmap) as a floor — that grows on resize. Reset the canvas column. */
+    min-width: 0;
+
+    @media (max-width: 1400px) {
+        flex-direction: column-reverse;
+    }
+}
+
+.canvas {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    background-color: var(--background-color);
+}
+
+.content {
+    width: 66%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--space-4xl) var(--space-5xl) var(--space-3xl) var(--space-5xl);
+
+    @media (max-width: 1400px) {
+        width: 100%;
+        padding: var(--space-4xl) var(--space-3xl) var(--space-4xl) var(--space-3xl);
+    }
+
+    @media (max-width: 768px) {
+        padding: var(--space-3xl) var(--space-xl) var(--space-2xl) var(--space-xl);
+    }
+}
+
+.content h1 {
+    font-weight: 400;
+    font-size: var(--text-4xl);
+    line-height: 1.1;
+    letter-spacing: 1%;
+    margin-bottom: var(--space-xl);
+
+    @media (max-width: 1400px) {
+        font-size: var(--text-3xl);
+    }
+
+    @media (max-width: 768px) {
+        font-size: var(--text-2xl);
+    }
+}
+
+.contentTop > p {
+    color: var(--text-color-secondary);
+    letter-spacing: 5%;
+    font-size: var(--text-base);
+    line-height: 1.5;
+    margin-left: var(--space-2xs);
+}
+
+.contentBottom {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-between;
+    max-width: var(--width-hero-bottom);
+    margin-top: var(--space-5xl);
+    gap: var(--space-lg);
+}
