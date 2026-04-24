@@ -34,3 +34,9 @@
         grid-template-columns: repeat(1, minmax(var(--width-grid-card-min), 1fr));
     }
 }
+
+.cardParallax {
+    width: 100%;
+    min-width: 0;
+    align-self: stretch;
+}

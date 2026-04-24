@@ -1,18 +1,19 @@
 import DATA from '../data';
 import image from '../assets/images/me.jpg';
+import ParallaxLayer from './ParallaxLayer';
 import styles from './about.module.css';
 
 function About() {
     return (
         <section id="about">
             <div className={styles.content}>
-                <div className={styles.contentLeft}>
+                <ParallaxLayer className={styles.contentLeft} strength={0.12}>
                     <img src={image} alt="My potrait" />
-                </div>
-                <div className={styles.contentRight}>
+                </ParallaxLayer>
+                <ParallaxLayer className={styles.contentRight} strength={-0.06}>
                     <p className="text-secondary">{DATA.ABOUT_TAG}</p>
                     <p>{DATA.ABOUT_TEXT}</p>
-                </div>
+                </ParallaxLayer>
             </div>
         </section>
     )
