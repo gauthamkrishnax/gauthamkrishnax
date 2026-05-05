@@ -7,7 +7,9 @@ function Hero() {
     return (
         <section className={styles.hero} id="hero">
             <div className={styles.content}>
-                <div><span className="text-secondary uppercase">{DATA.HEADER}</span></div>
+                <div>
+                    <span className="text-secondary uppercase">{DATA.HEADER}</span>
+                </div>
                 <div className={styles.contentTop}>
                     <h1>{DATA.TITLE}</h1>
                     <p>{DATA.SUBTITLE}</p>

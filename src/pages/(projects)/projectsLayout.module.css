@@ -1,3 +1,8 @@
+.root {
+  position: relative;
+  isolation: isolate;
+}
+
 .siteHeader {
   margin-bottom: var(--space-lg);
   margin: var(--space-4xl) var(--space-5xl) var(--space-xl);
@@ -45,12 +50,13 @@
   background-color: var(--text-color-primary);
   padding: var(--space-xs) var(--space-md);
   font-family: var(--font-secondary);
-  transition: all 0.3s ease-in-out;
+  transition: transform 0.28s ease, background-color 0.28s ease, color 0.28s ease;
 }
 
 .ctas a:hover {
   background-color: var(--accent-gray);
   color: var(--text-color-primary);
+  transform: translateY(-2px);
 }
 
 .ctas a:last-child {
