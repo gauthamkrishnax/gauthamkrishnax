@@ -8,6 +8,7 @@ import Footer from '../components/Footer'
 import RouteScrollReset from '../components/RouteScrollReset'
 import { ClientOnly } from 'vike-react/ClientOnly'
 import ThemeToggle from '../components/ThemeToggle'
+import ScrollReveal from '../components/ScrollReveal'
 
 function Layout({ children }: { children: ReactNode }) {
     return (
@@ -24,6 +25,9 @@ function Layout({ children }: { children: ReactNode }) {
             <RouteScrollReset />
             {children}
             <Footer />
+            <ClientOnly fallback={null}>
+                <ScrollReveal />
+            </ClientOnly>
             <ClientOnly fallback={null}>
                 <ThemeToggle />
             </ClientOnly>

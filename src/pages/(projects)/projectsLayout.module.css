@@ -3,6 +3,21 @@
   isolation: isolate;
 }
 
+.initialReveal {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0) scale(0.99);
+  filter: blur(5px);
+  animation: projectInitReveal 760ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms) forwards;
+}
+
+@keyframes projectInitReveal {
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
 .siteHeader {
   margin-bottom: var(--space-lg);
   margin: var(--space-4xl) var(--space-5xl) var(--space-xl);
@@ -101,5 +116,14 @@
 
   .backToTop {
     margin: var(--space-lg) var(--space-xl) var(--space-3xl);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .initialReveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    animation: none;
   }
 }

@@ -8,12 +8,17 @@ function Works() {
     return (
         <section className="works" id="works">
             <div className={styles.content}>
-                <div>
+                <div data-reveal data-reveal-delay="0">
                     <h2 className="uppercase">{DATA.WORK_HEADING}</h2>
                 </div>
                 <div className={styles.projects}>
-                    {published.map((project) => (
-                        <div key={project.id} className={styles.cardParallax}>
+                    {published.map((project, index) => (
+                        <div
+                            key={project.id}
+                            className={styles.cardParallax}
+                            data-reveal
+                            data-reveal-delay={`${80 + index * 70}`}
+                        >
                             <Card project={project} />
                         </div>
                     ))}
