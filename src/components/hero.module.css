@@ -1,5 +1,6 @@
 .hero {
     display: flex;
+    position: relative;
     /* Viewport height lives on the section so both columns share one box. */
     min-height: 100svh;
     /* Flex items default to min-height:auto, which uses replaced content
@@ -62,11 +63,46 @@
 }
 
 .contentBottom {
-    display: flex;
-    flex-wrap: wrap;
     width: 100%;
-    justify-content: space-between;
     max-width: var(--width-hero-bottom);
     margin-top: var(--space-5xl);
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
     gap: var(--space-lg);
+}
+
+.contentBottom > div {
+    white-space: nowrap;
+}
+
+.initialReveal {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0) scale(0.99);
+    filter: blur(4px);
+    animation: heroInitReveal 760ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms) forwards;
+}
+
+@keyframes heroInitReveal {
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@media (max-width: 980px) {
+    .contentBottom {
+        flex-wrap: wrap;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .initialReveal {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        animation: none;
+    }
 }
