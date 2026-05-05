@@ -1,18 +1,23 @@
+import type { CSSProperties } from 'react';
 import { ClientOnly } from 'vike-react/ClientOnly';
 import DATA from '../data';
 import Three from './Three';
 import styles from './hero.module.css';
 
+const reveal = (delay: number) => ({ '--reveal-delay': `${delay}ms` } as CSSProperties);
+
 function Hero() {
     return (
         <section className={styles.hero} id="hero">
             <div className={styles.content}>
-                <div><span className="text-secondary uppercase">{DATA.HEADER}</span></div>
-                <div className={styles.contentTop}>
+                <div data-reveal style={reveal(0)}>
+                    <span className="text-secondary uppercase">{DATA.HEADER}</span>
+                </div>
+                <div className={styles.contentTop} data-reveal style={reveal(100)}>
                     <h1>{DATA.TITLE}</h1>
                     <p>{DATA.SUBTITLE}</p>
                 </div>
-                <div className={styles.contentBottom}>
+                <div className={`${styles.contentBottom} ${styles.initialReveal}`} style={reveal(320)}>
                     <div>
                         <p className="text-secondary"><a href="#about">About</a> | <a href="#works">My Works</a></p>
                     </div>

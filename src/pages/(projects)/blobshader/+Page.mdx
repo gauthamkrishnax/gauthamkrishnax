@@ -1,0 +1,136 @@
+## Overview
+
+Blob Shader is an interactive WebGL artwork built with **Svelte**, **Three.js**, and custom **GLSL** shaders. The scene combines two layered meshes: a large gradient sphere that works like an atmospheric backdrop and a high-detail icosahedron blob that pulses with procedural noise.
+
+The project keeps the page structure intentionally lightweight (hero, process notes, and supporting notes), while the visual identity comes from shader math, camera choreography, and subtle post-processing. Pointer movement and scroll both influence the composition, so the page feels alive even without explicit UI controls.
+
+This repository is a focused shader study rather than a full app platform, which makes it a clean reference for experimental front-end graphics work.
+
+## Tech stack
+
+- **Runtime/UI:** Svelte + Vite
+- **3D engine:** Three.js (`WebGLRenderer`, custom `ShaderMaterial`)
+- **Motion system:** GSAP + ScrollTrigger + ASScroll
+- **Post-processing:** EffectComposer, custom noise pass, SMAA anti-aliasing
+- **Shaders:** Gradient field + chaos blob + screen-space grain pass
+
+## Architecture
+
+At runtime, the app initializes smooth scrolling (`ASScroll`), wires that scroller into GSAP ScrollTrigger, and boots a `WebglEngine` class that owns scene setup and frame updates.
+
+Inside `WebglEngine`, the scene graph is compact:
+
+- A **background sphere** (`SphereGeometry(8, 100, 100)`) with a gradient shader
+- A **foreground blob** (`IcosahedronGeometry(1, 65)`) with a distortion shader
+- A post-processing pipeline that applies a subtle animated grain and SMAA
+
+The render loop updates elapsed time uniforms each frame and re-renders through `EffectComposer`. Pointer movement adds smooth positional/rotational drift via GSAP, while scroll timelines rotate the blob and shift camera/plane transforms for section transitions.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 420" role="img" aria-labelledby="blobArchTitle">
+  <title id="blobArchTitle">Blob Shader architecture overview</title>
+  <defs>
+    <marker id="blobArrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L7,3.5 L0,7 z" fill="#222" />
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="558" height="418" fill="#fafafa" stroke="#222" strokeWidth="2" />
+  <text x="280" y="26" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="14" fontWeight="bold">Blob Shader runtime flow</text>
+
+  <rect x="44" y="48" width="472" height="62" fill="#fff" stroke="#333" strokeWidth="1.5" />
+  <text x="280" y="74" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="12" fontWeight="bold">Svelte app + GSAP timelines</text>
+  <text x="280" y="94" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fill="#444">ASScroll scroller proxy, hero/load animation, scroll-triggered camera/blob transforms</text>
+
+  <line x1="280" y1="110" x2="280" y2="134" stroke="#222" strokeWidth="2" markerEnd="url(#blobArrow)" />
+
+  <rect x="92" y="134" width="376" height="70" fill="#e8f4ff" stroke="#333" strokeWidth="1.5" />
+  <text x="280" y="160" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="12" fontWeight="bold">WebglEngine (Three.js scene)</text>
+  <text x="280" y="180" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fill="#444">PerspectiveCamera + ShaderMaterials + requestAnimationFrame uniform updates</text>
+
+  <line x1="280" y1="204" x2="280" y2="226" stroke="#222" strokeWidth="2" markerEnd="url(#blobArrow)" />
+
+  <rect x="40" y="226" width="152" height="86" fill="#fff5e6" stroke="#333" strokeWidth="1.5" />
+  <text x="116" y="254" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">Gradient sphere</text>
+  <text x="116" y="272" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fill="#444">snoise layers</text>
+  <text x="116" y="288" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fill="#444">color mixing in vertex</text>
+
+  <rect x="204" y="226" width="152" height="86" fill="#f0e8ff" stroke="#333" strokeWidth="1.5" />
+  <text x="280" y="254" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">Chaos blob</text>
+  <text x="280" y="272" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fill="#444">periodic pnoise</text>
+  <text x="280" y="288" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fill="#444">palette in fragment</text>
+
+  <rect x="368" y="226" width="152" height="86" fill="#e8fff0" stroke="#333" strokeWidth="1.5" />
+  <text x="444" y="254" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">Composer passes</text>
+  <text x="444" y="272" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fill="#444">noise shader pass</text>
+  <text x="444" y="288" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fill="#444">SMAA anti-aliasing</text>
+
+  <line x1="116" y1="312" x2="116" y2="338" stroke="#222" strokeWidth="1.4" />
+  <line x1="280" y1="312" x2="280" y2="338" stroke="#222" strokeWidth="1.4" />
+  <line x1="444" y1="312" x2="444" y2="338" stroke="#222" strokeWidth="1.4" />
+
+  <rect x="120" y="338" width="320" height="58" fill="#fff" stroke="#333" strokeWidth="1.5" strokeDasharray="6 4" />
+  <text x="280" y="362" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">Final output</text>
+  <text x="280" y="380" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10" fill="#444">fullscreen fixed canvas behind Svelte content layers</text>
+</svg>
+
+## Shader breakdown
+
+### 1) Chaos blob vertex shader
+
+The blob deformation happens in the vertex shader with **periodic Perlin noise (`pnoise`)** sampled from normal direction and animated by `uTime * uSpeed`. The output distortion pushes each vertex along its normal and then applies a Y-axis rotation field:
+
+- `distortion = pnoise((normal + t) * uNoiseDensity, vec3(10.0)) * uNoiseStrength`
+- `pos = position + normal * distortion`
+- `pos = rotateY(pos, sin(uv.y * uFreq + t) * uAmp)`
+
+Finally, the mesh scales over time using a mapped sine wave, giving the blob a breathing rhythm.
+
+### 2) Chaos blob fragment shader
+
+Coloring uses a cosine palette (`cosPalette`) with distortion as input. Instead of fixed RGB ramps, this creates smooth hue transitions tied directly to shape turbulence. The result is a coherent look where motion and color shift together.
+
+### 3) Gradient sphere shader
+
+The large sphere behind the blob uses simplex noise layers in the **vertex shader** to perturb depth and blend across a 5-color palette (`uColor[5]`). Since color mixing happens per vertex before interpolation, the gradient feels soft and atmospheric rather than banded.
+
+### 4) Noise post-processing pass
+
+After scene render, a screen-space shader adds tiny randomized luminance variation, then slightly darkens output (`* vec4(0.8, 0.8, 0.8, 1.0)`). This gives a film-like texture that helps the scene avoid looking overly sterile.
+
+## Interaction and motion
+
+The interaction model is intentionally simple:
+
+- **Pointer move:** gently offsets blob position and gradient sphere rotation.
+- **Initial load timeline:** drops the blob in with elastic easing and fades in hero elements.
+- **Scroll timelines:** rotate blob/camera and shift decorative circles as content sections enter.
+
+The combination makes the page feel tactile while still remaining readable as a portfolio case study.
+
+## What works well
+
+- Strong visual identity from a small number of primitives
+- Clear separation between scene engine (`webgl.js`) and page layout (Svelte components)
+- Good use of shader uniforms for time-driven motion and tunable art direction
+- Lightweight project scope that is easy to run and extend
+
+## Links
+
+[Live project](https://blobshader.gauthamkrishna.in/) — deployed Blob Shader experience.
+
+[Repository](https://github.com/gauthamkrishnax/blobshader) — source code, shader files, and runtime setup.
+
+[three.js](https://threejs.org/) — rendering framework used for scene, camera, and post-processing.
+
+[GSAP](https://gsap.com/) — motion engine for timeline- and scroll-driven transforms.
+
+## Setup (for developers)
+
+Clone the repository and run:
+
+`npm install`
+
+`npm run dev`
+
+Build for production with:
+
+`npm run build`
