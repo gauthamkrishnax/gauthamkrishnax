@@ -1,0 +1,27 @@
+.frame {
+  position: relative;
+  border-radius: 34px;
+  padding: 10px 10px 14px;
+  background: linear-gradient(145deg, #1a1a1a, #060606);
+  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.35);
+  margin-bottom: 12px;
+}
+
+.notch {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 74px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.screen {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}

@@ -1,4 +1,4 @@
-import amraThumbnail from './assets/images/amra/thumbnail.jpg';
+import amraThumbnail from './assets/images/amra/thumbnail.svg';
 import blobThumbnail from './assets/images/blob/thumbnail.jpg';
 import fairdealThumbnail from './assets/images/fairdeal/thumbnail.jpg';
 import taraThumbnail from './assets/images/tara/thumbnail.jpg';
@@ -103,26 +103,42 @@ export const projectData: Project[] = [
         "firstName": "Amra",
         "lastName": "App",
         "tag": "Design & Development",
+        "badges": ["Next.js", "Firebase", "PWA"],
+        "description": "Couple finance and relationship goals app",
+        "displayHeading": "Amra",
         "thumbnail": amraThumbnail,
         "cardSize": "large",
-        "cardInverted": "inverted"
+        "cardInverted": "inverted",
+        "url": "https://amralove.netlify.app/",
+        "github": "https://github.com/gauthamkrishnax/amra",
+        "publish": true
     },
     {
         "id": "fairdeal",
         "firstName": "Fairdeal",
-        "lastName": "Home",
+        "lastName": "Homes",
         "tag": "Design & Development",
+        "badges": ["Next.js", "Tailwind CSS", "Lead Gen"],
+        "description": "Real-estate landing page and inquiry funnel for Nikoo Garden Estate",
+        "displayHeading": "Fairdeal Homes",
         "thumbnail": fairdealThumbnail,
         "cardSize": "small",
-        "cardInverted": "inverted"
+        "cardInverted": "inverted",
+        "url": "https://vested-ten.vercel.app/nikoo",
+        "github": "https://github.com/fairdealhomeadvisors/vested",
+        "publish": true
     },
     {
         "id": "tara",
         "firstName": "Tara",
         "lastName": "App",
-        "tag": "Design",
+        "tag": "Product Design",
+        "badges": ["AAC", "Accessibility", "Mobile UI"],
+        "description": "Accessible AAC app concept for speech output and phrase building",
+        "displayHeading": "Tara",
         "thumbnail": taraThumbnail,
         "cardSize": "large",
-        "cardInverted": "inverted"
+        "cardInverted": "inverted",
+        "publish": true
     }
 ]
