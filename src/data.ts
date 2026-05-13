@@ -116,11 +116,16 @@ export const projectData: Project[] = [
     {
         "id": "fairdeal",
         "firstName": "Fairdeal",
-        "lastName": "Home",
+        "lastName": "Homes",
         "tag": "Design & Development",
+        "badges": ["Next.js", "Tailwind CSS", "Lead Gen"],
+        "description": "Real-estate landing page and inquiry funnel for Nikoo Garden Estate",
+        "displayHeading": "Fairdeal Homes",
         "thumbnail": fairdealThumbnail,
         "cardSize": "small",
-        "cardInverted": "inverted"
+        "cardInverted": "inverted",
+        "url": "https://www.nikoogardenestates.co.in/",
+        "publish": true
     },
     {
         "id": "tara",
