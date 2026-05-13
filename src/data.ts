@@ -124,7 +124,8 @@ export const projectData: Project[] = [
         "thumbnail": fairdealThumbnail,
         "cardSize": "small",
         "cardInverted": "inverted",
-        "url": "https://www.nikoogardenestates.co.in/",
+        "url": "https://vested-ten.vercel.app/nikoo",
+        "github": "https://github.com/fairdealhomeadvisors/vested",
         "publish": true
     },
     {
