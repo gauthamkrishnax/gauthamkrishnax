@@ -132,9 +132,13 @@ export const projectData: Project[] = [
         "id": "tara",
         "firstName": "Tara",
         "lastName": "App",
-        "tag": "Design",
+        "tag": "Product Design",
+        "badges": ["AAC", "Accessibility", "Mobile UI"],
+        "description": "Accessible AAC app concept for speech output and phrase building",
+        "displayHeading": "Tara",
         "thumbnail": taraThumbnail,
         "cardSize": "large",
-        "cardInverted": "inverted"
+        "cardInverted": "inverted",
+        "publish": true
     }
 ]
