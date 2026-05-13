@@ -1,0 +1,111 @@
+import splashScreen from '../../../assets/images/tara/Splash Screen.jpg';
+import homeScreen from '../../../assets/images/tara/HomeScreen.jpg';
+import quickAccessScreen from '../../../assets/images/tara/QuickAcess.jpg';
+import addPhraseScreen from '../../../assets/images/tara/QuickAcess/Add Phrase.jpg';
+import historyScreen from '../../../assets/images/tara/History.jpg';
+import categoriesScreen from '../../../assets/images/tara/Categories.jpg';
+import categoriesV1Screen from '../../../assets/images/tara/Categories v1.jpg';
+import categoriesV2Screen from '../../../assets/images/tara/Categories v2.jpg';
+import feedingScreen from '../../../assets/images/tara/Categories/Feeding.jpg';
+import ProjectPhoneMock from '../../../components/ProjectPhoneMock';
+
+## Tara
+
+Tara is a design-only AAC concept. AAC, or Augmentative and Alternative Communication, refers to communication systems that help people communicate when they cannot rely on natural speech. Tara focuses on phrase building, quick speech output, recovery from accidental taps, and a calm interface that works for repeated daily use.
+
+<div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 24 }}>
+  <span style={{ border: '1px solid rgba(127,127,127,0.45)', borderRadius: 999, padding: '6px 12px' }}>Role: Product Design</span>
+  <span style={{ border: '1px solid rgba(127,127,127,0.45)', borderRadius: 999, padding: '6px 12px' }}>Domain: AAC</span>
+  <span style={{ border: '1px solid rgba(127,127,127,0.45)', borderRadius: 999, padding: '6px 12px' }}>Focus: Accessibility-first mobile UI</span>
+</div>
+
+## Showcase layout
+
+### 1) Core communication flow
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24, marginBottom: 34 }}>
+  <div>
+    <ProjectPhoneMock src={splashScreen} alt="Tara splash screen with calm blue branding" />
+    <p style={{ textAlign: 'center', marginTop: 20 }}><strong>Splash</strong><br />A quiet entry point with a soft blue palette and clear brand mark.</p>
+  </div>
+  <div>
+    <ProjectPhoneMock src={homeScreen} alt="Tara home screen with sentence builder, large symbol buttons, Speak button, Clear, and Undo" />
+    <p style={{ textAlign: 'center', marginTop: 20 }}><strong>Home</strong><br />Phrase builder, large communication buttons, and speech output in one stable layout.</p>
+  </div>
+  <div>
+    <ProjectPhoneMock src={quickAccessScreen} alt="Tara quick access screen with reusable phrases and yes no help buttons" />
+    <p style={{ textAlign: 'center', marginTop: 20 }}><strong>Quick access</strong><br />High-frequency phrases stay close, reducing effort for urgent communication.</p>
+  </div>
+  <div>
+    <ProjectPhoneMock src={historyScreen} alt="Tara history screen listing recently used phrases" />
+    <p style={{ textAlign: 'center', marginTop: 20 }}><strong>History</strong><br />Recent phrases can be reused without rebuilding a sentence from scratch.</p>
+  </div>
+</div>
+
+### 2) Categories and customization
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24, marginBottom: 24 }}>
+  <div>
+    <ProjectPhoneMock src={categoriesScreen} alt="Tara categories screen with feeding, leisure, place, education, time, work, and other communication groups" />
+    <p style={{ textAlign: 'center', marginTop: 20 }}><strong>Categories</strong><br />Color groups structure the vocabulary without turning color into decoration.</p>
+  </div>
+  <div style={{ display: 'grid', gap: 24 }}>
+    <div>
+      <ProjectPhoneMock src={feedingScreen} alt="Tara feeding category screen with food and drink related communication tiles" />
+      <p style={{ textAlign: 'center', marginTop: 20 }}><strong>Feeding category</strong><br />Nested vocabulary keeps specific needs available after one clear decision.</p>
+    </div>
+    <div>
+      <ProjectPhoneMock src={addPhraseScreen} alt="Tara add phrase screen for creating a reusable quick access phrase" />
+      <p style={{ textAlign: 'center', marginTop: 20 }}><strong>Add phrase</strong><br />Personalization supports individual vocabulary instead of forcing a fixed phrase set.</p>
+    </div>
+  </div>
+</div>
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24, marginBottom: 34 }}>
+  <div>
+    <ProjectPhoneMock src={categoriesV1Screen} alt="Tara category layout exploration version one" />
+    <p style={{ textAlign: 'center', marginTop: 20 }}><strong>Category exploration 1</strong><br />Layout study for grouping vocabulary into easy scanning zones.</p>
+  </div>
+  <div>
+    <ProjectPhoneMock src={categoriesV2Screen} alt="Tara category layout exploration version two" />
+    <p style={{ textAlign: 'center', marginTop: 20 }}><strong>Category exploration 2</strong><br />Alternate spacing and hierarchy exploration for the same category model.</p>
+  </div>
+</div>
+
+## Design system
+
+Tara uses **Atkinson Hyperlegible Free** because it is designed for accessibility, has clear character differentiation, performs well at large button sizes, and gives the product a neutral but warm voice.
+
+The color system is intentionally restrained:
+
+- **Blue** supports communication, clarity, and trust.
+- **Teal** adds warmth without overstimulation.
+- The palette stays adult-appropriate and works across age groups.
+- Softer blues and teals reduce anxiety compared with red or orange-heavy systems.
+
+Color is used as structure. Category colors help people understand groups and location, while core actions keep consistent placement and contrast.
+
+## Interaction principles
+
+Large, forgiving touch targets are central to the concept. The interface avoids dense controls, keeps bottom navigation predictable, and repeats important actions in stable positions so users can build muscle memory.
+
+Error tolerance is treated as a primary feature:
+
+- Undo is always visible near the sentence builder.
+- Clear is separate and visually softer than speech output.
+- Destructive actions require recovery paths.
+- Accidental tap protection matters, especially for people with motor impairments.
+
+## Accessibility notes
+
+Symbols are paired with text labels to avoid relying on icon interpretation alone. Symbols need testing with actual users and caregivers because a visual that seems obvious to a designer can be ambiguous in practice.
+
+The hierarchy is intentionally simple: sentence builder at the top, vocabulary or phrase content in the middle, speech output as the primary action, and navigation at the bottom. The goal is to make the app feel dependable rather than busy.
+
+## Design decisions
+
+- Persistent sentence bar makes the current message visible while browsing categories.
+- Quick access supports recurring needs like "Please wait", "Can you repeat that?", "Yes", "No", and "Help".
+- History reduces repeated effort for phrases the user has already spoken.
+- Category overlays keep the user in context instead of sending them through deep page changes.
+- The Speak button is visually dominant and placed below the vocabulary area to confirm intent before audible output.
