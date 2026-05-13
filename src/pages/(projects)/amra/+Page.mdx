@@ -1,0 +1,157 @@
+import signInScreen from '../../../assets/images/amra/Sign In.jpg';
+import signInAltScreen from '../../../assets/images/amra/Sign In-1.jpg';
+import connectScreen from '../../../assets/images/amra/Connect.jpg';
+import setGoalsScreen from '../../../assets/images/amra/Set Goals.jpg';
+import setRewardsScreen from '../../../assets/images/amra/Set Rewards.jpg';
+import homeScreen from '../../../assets/images/amra/Home.jpg';
+import expensesScreen from '../../../assets/images/amra/Expenses.jpg';
+import addExpenseScreen from '../../../assets/images/amra/Add Expense.jpg';
+import rewardsScreen from '../../../assets/images/amra/Rewards.jpg';
+import goalCheckScreen from '../../../assets/images/amra/Goal Check.jpg';
+import settingsScreen from '../../../assets/images/amra/Settings.jpg';
+import confirmModalScreen from '../../../assets/images/amra/Confirm.jpg';
+import ProjectPhoneMock from '../../../components/ProjectPhoneMock';
+
+## Amra
+
+Relationship-first finance for couples: shared expenses, daily goal check-ins, and a reward loop in one lightweight PWA.
+
+<div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 24}}>
+  <span style={{ border: '1px solid rgba(127,127,127,0.45)', borderRadius: 999, padding: '6px 12px' }}>Role: Product Design + Frontend</span>
+  <span style={{ border: '1px solid rgba(127,127,127,0.45)', borderRadius: 999, padding: '6px 12px' }}>Stack: Next.js, Firebase, Firestore</span>
+  <span style={{ border: '1px solid rgba(127,127,127,0.45)', borderRadius: 999, padding: '6px 12px' }}>Platform: Mobile-first PWA</span>
+</div>
+
+## Showcase layout
+
+### 1) Setup flow
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 24, marginBottom: 34 }}>
+  <div>
+    <ProjectPhoneMock src={signInScreen} alt="Amra sign-in screen with illustration and Google sign-in button" />
+    <p style={{textAlign: 'center', marginTop: 20}}><strong>Sign in</strong><br />Simple entry point to reduce onboarding friction.</p>
+  </div>
+  <div>
+    <ProjectPhoneMock src={signInAltScreen} alt="Alternate sign-in exploration from Figma export" />
+    <p style={{textAlign: 'center', marginTop: 20}}><strong>Sign-in variant</strong><br />Visual exploration for the entry screen.</p>
+  </div>
+  <div>
+    <ProjectPhoneMock src={connectScreen} alt="Connect screen showing personal code and partner code input" />
+    <p style={{textAlign: 'center', marginTop: 20}}><strong>Partner connect</strong><br />Code-based pairing keeps setup quick and clear.</p>
+  </div>
+  <div>
+    <ProjectPhoneMock src={setGoalsScreen} alt="Set goals screen with three goal inputs in dark themed card layout" />
+    <p style={{textAlign: 'center', marginTop: 20}}><strong>Set goals</strong><br />Defines measurable daily actions.</p>
+  </div>
+  <div>
+    <ProjectPhoneMock src={setRewardsScreen} alt="Set rewards screen with point tiers and three reward inputs" />
+    <p style={{textAlign: 'center', marginTop: 20}}><strong>Set rewards</strong><br />Creates motivation with fixed point tiers.</p>
+  </div>
+</div>
+
+### 2) Core product screens
+
+<div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 24, marginBottom: 24 }}>
+  <div>
+    <ProjectPhoneMock src={homeScreen} alt="Home dashboard showing points, monthly spend, and quick navigation" />
+    <p style={{textAlign: 'center', marginTop: 20}}><strong>Home dashboard</strong><br />Points, monthly spend, and direct links to the key actions.</p>
+  </div>
+  <div style={{ display: 'grid', gap: 24 }}>
+    <div>
+      <ProjectPhoneMock src={expensesScreen} alt="Expenses screen with monthly spend card, settlement info, and expense list" />
+      <p style={{textAlign: 'center', marginTop: 20}}><strong>Expenses list</strong><br />Tracks transactions and who owes whom.</p>
+    </div>
+    <div>
+      <ProjectPhoneMock src={addExpenseScreen} alt="Add expense form with category picker, title, amount, and paid-by selector" />
+      <p style={{textAlign: 'center', marginTop: 20}}><strong>Add expense</strong><br />Fast category-based logging from mobile.</p>
+    </div>
+  </div>
+</div>
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24, marginBottom: 34 }}>
+  <div>
+    <ProjectPhoneMock src={rewardsScreen} alt="Rewards screen listing redeemable rewards with point costs and redeem actions" />
+    <p style={{textAlign: 'center', marginTop: 20}}><strong>Rewards</strong><br />Redeem incentives based on earned points.</p>
+  </div>
+  <div>
+    <ProjectPhoneMock src={goalCheckScreen} alt="Goal check screen to mark partner goal completion and award points" />
+    <p style={{textAlign: 'center', marginTop: 20}}><strong>Goal check</strong><br />Daily accountability loop between partners.</p>
+  </div>
+  <div>
+    <ProjectPhoneMock src={settingsScreen} alt="Settings screen with options to update goals, rewards, and nickname" />
+    <p style={{textAlign: 'center', marginTop: 20}}><strong>Settings</strong><br />Quick edits to goals, rewards, and profile details.</p>
+  </div>
+  <div>
+    <ProjectPhoneMock src={confirmModalScreen} alt="Reward redemption confirmation modal in Amra" />
+    <p style={{textAlign: 'center', marginTop: 20}}><strong>Confirmation state</strong><br />Safe redemption flow with explicit confirmation.</p>
+  </div>
+</div>
+
+## Architecture and data flow
+
+Amra is structured around route groups and focused Firestore service modules:
+
+- `app/(setupflow)` handles sign-in, partner connection, and initial goals/rewards setup
+- `app/(main)` handles home, expenses, rewards, goal check, and settings
+- `app/_lib/firestore` centralizes read/write logic for users, couples, expenses, and goals/rewards
+- `app/_lib/auth` wraps Firebase auth client/server flows
+
+### Firebase model
+
+- **Auth:** Google sign-in identifies each user
+- **Users:** nickname and connection code state
+- **Couples:** partner linking and shared context
+- **Expenses:** transaction items with category, amount, payer, timestamp
+- **Goals/Rewards:** partner-configured goals and fixed point-tier rewards
+
+### Request path examples
+
+- **Add expense:** UI form -> `addExpense()` -> Firestore write -> recomputed monthly totals in `getCoupleDetails()`
+- **Goal check submit:** checkbox selections -> `addPointsToPartner()` -> partner points update -> rewards eligibility changes
+- **Redeem reward:** UI confirmation -> `redeemReward()` -> points deduction + success feedback
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 320" role="img" aria-labelledby="amraArchTitle">
+  <title id="amraArchTitle">Amra data flow architecture</title>
+  <defs>
+    <marker id="amraArrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L7,3.5 L0,7 z" fill="#666" />
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="558" height="318" fill="none" stroke="#777" strokeWidth="1.5" />
+  <text x="280" y="26" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="14" fontWeight="bold">Amra architecture</text>
+
+  <rect x="30" y="56" width="160" height="70" fill="none" stroke="#888" strokeWidth="1.2" rx="10" />
+  <text x="110" y="84" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">Next.js routes</text>
+  <text x="110" y="102" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10">(setupflow + main)</text>
+
+  <rect x="210" y="56" width="160" height="70" fill="none" stroke="#888" strokeWidth="1.2" rx="10" />
+  <text x="290" y="84" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">Firestore service layer</text>
+  <text x="290" y="102" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10">users, couple, expense, goals</text>
+
+  <rect x="390" y="56" width="140" height="70" fill="none" stroke="#888" strokeWidth="1.2" rx="10" />
+  <text x="460" y="84" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">Firebase Auth</text>
+  <text x="460" y="102" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10">identity + session</text>
+
+  <line x1="190" y1="91" x2="210" y2="91" stroke="#666" strokeWidth="1.5" markerEnd="url(#amraArrow)" />
+  <line x1="370" y1="91" x2="390" y2="91" stroke="#666" strokeWidth="1.5" markerEnd="url(#amraArrow)" />
+
+  <rect x="100" y="178" width="360" height="98" fill="none" stroke="#888" strokeWidth="1.2" rx="10" />
+  <text x="280" y="206" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">Cloud Firestore collections</text>
+  <text x="280" y="226" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10">users, couples, expenses, goalsAndRewards</text>
+  <text x="280" y="245" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10">read/write for spend totals, points, and redemptions</text>
+
+  <line x1="290" y1="126" x2="290" y2="176" stroke="#666" strokeWidth="1.5" markerEnd="url(#amraArrow)" />
+</svg>
+
+## Design notes
+
+- Warm, playful UI language makes finance conversations less stressful
+- Card-based hierarchy keeps core numbers visible without dense dashboards
+- Setup flow front-loads relationship context (partner, goals, rewards)
+- Habit and money loops stay connected through points and redemptions
+
+## Links
+
+[Live demo](https://amralove.netlify.app/)
+
+[Project repository](https://github.com/gauthamkrishnax/amra)

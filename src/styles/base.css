@@ -101,9 +101,35 @@ a:not(.no-hover):hover::before {
     margin-top: 0;
   }
 
-  img, svg {
+  h2 {
+    margin-top: var(--space-3xl);
+    margin-bottom: var(--space-sm);
+  }
+
+  h3 {
     margin-top: var(--space-2xl);
-    margin-bottom: var(--space-xl);
+    margin-bottom: var(--space-sm);
+  }
+
+  h2 + p,
+  h3 + p {
+    margin-top: var(--space-sm);
+  }
+
+  h2 + div,
+  h3 + div {
+    margin-top: var(--space-lg);
+  }
+
+  img,
+  svg {
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  p + img,
+  p + svg {
+    margin-top: var(--space-xl);
   }
 }
 

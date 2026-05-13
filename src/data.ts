@@ -1,4 +1,4 @@
-import amraThumbnail from './assets/images/amra/thumbnail.jpg';
+import amraThumbnail from './assets/images/amra/thumbnail.svg';
 import blobThumbnail from './assets/images/blob/thumbnail.jpg';
 import fairdealThumbnail from './assets/images/fairdeal/thumbnail.jpg';
 import taraThumbnail from './assets/images/tara/thumbnail.jpg';
@@ -103,9 +103,15 @@ export const projectData: Project[] = [
         "firstName": "Amra",
         "lastName": "App",
         "tag": "Design & Development",
+        "badges": ["Next.js", "Firebase", "PWA"],
+        "description": "Couple finance and relationship goals app",
+        "displayHeading": "Amra",
         "thumbnail": amraThumbnail,
         "cardSize": "large",
-        "cardInverted": "inverted"
+        "cardInverted": "inverted",
+        "url": "https://amralove.netlify.app/",
+        "github": "https://github.com/gauthamkrishnax/amra",
+        "publish": true
     },
     {
         "id": "fairdeal",
