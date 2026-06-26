@@ -15,6 +15,8 @@ html {
 body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 img,
@@ -46,10 +48,6 @@ h2 {
 h3 {
   margin-top: var(--space-xl);
   margin-bottom: var(--space-xs);
-}
-
-p, span {
-    letter-spacing: 5%;
 }
 
 a {
@@ -106,6 +104,32 @@ a:not(.no-hover):focus-visible::before {
 
 .uppercase {
     text-transform: uppercase;
+    /* Uppercase labels read better with positive tracking (CSS letter-spacing
+       takes a length, never a %, which is why the old `5%` was silently dropped). */
+    letter-spacing: 0.06em;
+}
+
+/* Keyboard/screen-reader skip link — hidden until focused. */
+.skip-link {
+    position: fixed;
+    top: var(--space-md);
+    left: var(--space-md);
+    z-index: 100;
+    padding: var(--space-xs) var(--space-md);
+    background-color: var(--text-color-primary);
+    color: var(--background-color);
+    border-radius: var(--radius-sm);
+    transform: translateY(-200%);
+    transition: transform 0.2s ease;
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
+/* The skip-link target is focused programmatically, not interactive — no ring. */
+#main-content:focus {
+    outline: none;
 }
 
 .project-content {
@@ -146,6 +170,28 @@ a:not(.no-hover):focus-visible::before {
   p + img,
   p + svg {
     margin-top: var(--space-xl);
+  }
+
+  /* Comfortable reading measure for prose; media (images, diagrams, grids) stays full width. */
+  p,
+  ul,
+  ol {
+    max-width: 72ch;
+  }
+
+  /* Vertical rhythm between consecutive text blocks (the global `* { margin: 0 }` reset
+     zeroes default paragraph/list spacing, so flowing copy would otherwise collide). */
+  p + p,
+  p + ul,
+  ul + p,
+  p + ol,
+  ol + p,
+  ul + ul {
+    margin-top: var(--space-md);
+  }
+
+  li + li {
+    margin-top: var(--space-2xs);
   }
 }
 

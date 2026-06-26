@@ -74,7 +74,7 @@
     span {
         color: var(--text-color-secondary);
         font-size: var(--text-xs);
-        letter-spacing: 5%;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
         margin-bottom: var(--space-sm);
     }
