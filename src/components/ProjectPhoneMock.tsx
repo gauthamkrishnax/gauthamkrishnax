@@ -9,7 +9,7 @@ export default function ProjectPhoneMock({ src, alt }: ProjectPhoneMockProps) {
   return (
     <div className={styles.frame}>
       <div className={styles.notch} />
-      <img className={styles.screen} src={src} alt={alt} />
+      <img className={styles.screen} src={src} alt={alt} loading="lazy" decoding="async" />
     </div>
   );
 }

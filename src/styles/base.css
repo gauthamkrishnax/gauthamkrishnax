@@ -78,6 +78,20 @@ a:not(.no-hover):hover::before {
   transform: scaleX(1);
 }
 
+/* Keyboard focus: a consistent branded ring for every interactive element,
+   plus the underline reveal for text links so focus mirrors hover. */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 3px;
+  border-radius: var(--radius-xs);
+}
+
+a:not(.no-hover):focus-visible::before {
+  transform-origin: left;
+  transform: scaleX(1);
+}
+
 
 
 
@@ -96,6 +110,8 @@ a:not(.no-hover):hover::before {
 
 .project-content {
   max-width: 1200px;
+  font-size: 18px;
+  line-height: 1.65;
 
   h2:first-child {
     margin-top: 0;

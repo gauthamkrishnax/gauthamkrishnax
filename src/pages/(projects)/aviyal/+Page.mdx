@@ -1,0 +1,189 @@
+import homeScreen from '../../../assets/images/aviyal/Home.jpg';
+import ProjectPhoneMock from '../../../components/ProjectPhoneMock';
+
+## Aviyal
+
+*Aviyal* is a South Indian dish of many different vegetables brought together into one thing. The app does the same: scattered transactions from different banks and cards, combined into one honest picture of where your money actually goes. It reads your transaction SMS automatically, uses AI to turn that mess into trustworthy data, and keeps you conscious of your spending with a calm daily pulse — no logging, no nagging, no guilt.
+
+<div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 24 }}>
+  <span style={{ border: '1px solid rgba(127,127,127,0.45)', borderRadius: 999, padding: '6px 12px' }}>Role: Design & Development</span>
+  <span style={{ border: '1px solid rgba(127,127,127,0.45)', borderRadius: 999, padding: '6px 12px' }}>Stack: Expo, React Native, Supabase</span>
+  <span style={{ border: '1px solid rgba(127,127,127,0.45)', borderRadius: 999, padding: '6px 12px' }}>AI: OpenAI (parsing + insight)</span>
+</div>
+
+## The problem
+
+Most people's spending is an accident of "what I bought when I had money." The tools meant to fix that all fail the same way: bank apps are reactive dashboards you only open when you remember, manual trackers ask you to log everything until you quit, and savings apps turn into anxiety machines you eventually mute.
+
+Aviyal lives in the missing middle — **automatic enough** that you never quit, **calm enough** that you never mute it, and **honest enough** that you trust it.
+
+## The dashboard
+
+The home screen is a calm, single-glance picture of the month. The AI-written **Magic Insight** sits at the top, followed by the verified balance, the investment portfolio, a spend ring per category, and the month's totals.
+
+<div style={{ display: 'grid', gridTemplateColumns: 'minmax(220px, 0.9fr) 1.1fr', gap: 32, alignItems: 'center', marginTop: 24, marginBottom: 16 }}>
+  <ProjectPhoneMock src={homeScreen} alt="Aviyal home dashboard: the Magic Insight card, account balance with credit-card outstanding, investment portfolio, six per-category spend rings, and the month's spend and income with a daily bar chart" />
+  <div>
+    <ul style={{ lineHeight: 1.6, paddingLeft: 18 }}>
+      <li><strong>Magic Insight</strong> — the AI's nightly read on your money, in plain language: "3 of today's 4 transactions were for food. You only have ₹3,000 left this month to spend for food."</li>
+      <li><strong>Account balance</strong> — a real, verified figure, with the credit-card outstanding broken out separately.</li>
+      <li><strong>Investment portfolio</strong> — value, P&amp;L, and active SIPs, pulled from Zerodha Kite.</li>
+      <li><strong>Spend analysis</strong> — a ring per category showing how much of each budget is used. EMIs &amp; Investment is already at 102%, flagged calmly rather than in alarm red.</li>
+      <li><strong>The month so far</strong> — total spend against income, with a daily bar chart and a "last synced" stamp so you always know the data is current.</li>
+    </ul>
+  </div>
+</div>
+
+## How it works
+
+The server can't read your SMS, so the hard part is getting trustworthy data off the phone with zero manual logging — and then turning a day of messy bank texts into numbers and a sentence worth reading. A custom native Expo module, `sms-extractor`, reads recent bank SMS from the device inbox, filtered to known bank senders. Those messages flow through Supabase Edge Functions where **two language models do the work rules can't**: one parses and categorises, the other writes the daily insight.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 620" role="img" aria-labelledby="aviyalPipeTitle" fill="currentColor" style={{ color: 'var(--text-color)' }}>
+  <title id="aviyalPipeTitle">Aviyal AI pipeline — from bank SMS to the daily Magic Insight</title>
+  <defs>
+    <marker id="aviyalPipeArrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L7,3.5 L0,7 z" fill="#666" />
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="618" height="618" fill="none" stroke="#777" strokeWidth="1.5" rx="8" />
+  <text x="310" y="32" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="14" fontWeight="bold">From bank SMS to the daily Magic Insight</text>
+
+  <rect x="40" y="62" width="240" height="54" fill="none" stroke="#888" strokeWidth="1.2" rx="10" />
+  <text x="160" y="86" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">Bank SMS</text>
+  <text x="160" y="104" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10">on your phone</text>
+
+  <rect x="340" y="62" width="240" height="54" fill="none" stroke="#888" strokeWidth="1.2" rx="10" />
+  <text x="460" y="86" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">sms-extractor</text>
+  <text x="460" y="104" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10">custom native module</text>
+
+  <line x1="280" y1="89" x2="340" y2="89" stroke="#666" strokeWidth="1.5" markerEnd="url(#aviyalPipeArrow)" />
+  <line x1="460" y1="116" x2="460" y2="150" stroke="#666" strokeWidth="1.5" markerEnd="url(#aviyalPipeArrow)" />
+
+  <rect x="110" y="150" width="400" height="54" fill="none" stroke="#888" strokeWidth="1.2" rx="10" />
+  <text x="310" y="174" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">sync-sms → raw_sms</text>
+  <text x="310" y="192" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10">stored verbatim · deduped on device + message id</text>
+
+  <line x1="310" y1="204" x2="310" y2="236" stroke="#666" strokeWidth="1.5" markerEnd="url(#aviyalPipeArrow)" />
+
+  <rect x="110" y="236" width="400" height="64" fill="none" stroke="#74F58E" strokeWidth="1.8" rx="10" />
+  <text x="310" y="262" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">parse-sms · gpt-4o-mini</text>
+  <text x="310" y="282" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10">extract · categorise · flag what's uncertain</text>
+
+  <line x1="310" y1="300" x2="310" y2="332" stroke="#666" strokeWidth="1.5" markerEnd="url(#aviyalPipeArrow)" />
+
+  <rect x="110" y="332" width="400" height="54" fill="none" stroke="#888" strokeWidth="1.2" rx="10" />
+  <text x="310" y="356" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">transactions</text>
+  <text x="310" y="374" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10">verified · categorised · flagged ones go to a review pile</text>
+
+  <line x1="310" y1="386" x2="310" y2="418" stroke="#666" strokeWidth="1.5" markerEnd="url(#aviyalPipeArrow)" />
+
+  <rect x="110" y="418" width="400" height="64" fill="none" stroke="#74F58E" strokeWidth="1.8" rx="10" />
+  <text x="310" y="444" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">daily-insight · gpt-5</text>
+  <text x="310" y="464" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10">aggregates (never raw transactions) → narrative + detail</text>
+
+  <line x1="250" y1="482" x2="175" y2="518" stroke="#666" strokeWidth="1.5" markerEnd="url(#aviyalPipeArrow)" />
+  <line x1="370" y1="482" x2="445" y2="518" stroke="#666" strokeWidth="1.5" markerEnd="url(#aviyalPipeArrow)" />
+
+  <rect x="40" y="518" width="240" height="58" fill="none" stroke="#888" strokeWidth="1.2" rx="10" />
+  <text x="160" y="544" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">Dashboard</text>
+  <text x="160" y="562" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10">Magic Insight · spend rings</text>
+
+  <rect x="340" y="518" width="240" height="58" fill="none" stroke="#888" strokeWidth="1.2" rx="10" />
+  <text x="460" y="544" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="11" fontWeight="bold">Daily push</text>
+  <text x="460" y="562" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="10">the calm pulse</text>
+
+  <text x="310" y="602" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fill="#888">Two models, two jobs — a small one for accurate extraction, a stronger one for the words.</text>
+</svg>
+
+## AI workflows
+
+Aviyal uses language models for the two jobs that rules alone do badly: **reading messy bank SMS** and **writing something worth reading**. Each job gets a different model, picked for the work — and the choice of model is itself a design decision.
+
+### 1. Parsing &amp; categorisation — `gpt-4o-mini`
+
+Bank SMS are inconsistent, noisy, and full of near-misses: mandate notices, statement reminders, "EMI is due" alerts, loan offers, marketing. Every night the `parse-sms` function hands a whole day's raw messages to `gpt-4o-mini` with a **strict JSON schema** and gets back structured results:
+
+- **Separates real money movement from noise** — debits and credits versus informational messages, which are recorded as "ignored" with a reason rather than silently dropped.
+- **Extracts the details** — amount, direction, merchant, reference number, the institution (derived only from the sender id, never from a bank name written inside the body), the transaction time with the correct `+05:30` offset, and the post-transaction available balance.
+- **Assigns exactly one category** from a fixed set — income, EMIs, investment, food, people, shopping, entertainment, other — each defined for the model so "Swiggy" lands in food and a Zerodha transfer lands in investment.
+- **Flags what it isn't sure about.** When a category is uncertain or a charge looks like a duplicate, the model sets a flag and that transaction goes to a review pile instead of skewing the numbers. This is the Truth principle in code: honest about confidence beats confidently wrong.
+
+A small model here is deliberate. Structured extraction doesn't need a frontier model, and a job that runs every single night should cost almost nothing to run.
+
+### 2. The Magic Insight — `gpt-5`
+
+Writing the daily pulse is the opposite problem — it needs judgement and a voice — so it gets the stronger model. After parsing, `parse-sms` fire-and-forgets the `daily-insight` function, which runs on fresh data and produces the card at the top of the dashboard.
+
+Crucially, **the model never sees raw transactions.** It receives a compact, pre-aggregated metrics blob:
+
+- today's per-category spend, with the single merchant that dominated each category
+- last-7-day spend per category, capped at the start of the billing cycle so a new month isn't polluted by the old one
+- budgets with cycle-to-date spend and, for discretionary categories, a **projected end-of-cycle total** at the current pace — so it can warn *before* a budget is blown, not after
+- billing-cycle day context, the savings goal, and the Zerodha Kite portfolio
+- the last two insights, so it never repeats the same observation two days running
+
+The prompt tells it how to **find the angle** — pick the most actionable observation in priority order: a category projected over budget first, then a notable weekly trend, then an unusually concentrated single-day spend, then tight-versus-comfortable headroom, then savings-goal progress. It returns two fields with a strict schema — a roughly 40-word `narrative` for the card and a longer `detail` — and the narrative goes out as the day's single push notification.
+
+The voice is enforced in the prompt, and the voice *is* the product: calm and plain like a thoughtful friend, never shaming, specific to the rupee and the merchant, and honest when unsure. "Swiggy made up ₹890 of your ₹1,200 food spend" — never "⚠️ overspending alert."
+
+## The daily rhythm
+
+The server can't read SMS, so it can't pull the data — it nudges the phone to push, on a schedule run by Postgres `pg_cron` with `pg_net` (all times IST):
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 210" role="img" aria-labelledby="aviyalCronTitle" fill="currentColor" style={{ color: 'var(--text-color)' }}>
+  <title id="aviyalCronTitle">Aviyal daily cron schedule in IST</title>
+  <rect x="1" y="1" width="618" height="208" fill="none" stroke="#777" strokeWidth="1.5" rx="8" />
+  <text x="310" y="30" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="14" fontWeight="bold">The daily rhythm (IST)</text>
+
+  <line x1="55" y1="108" x2="565" y2="108" stroke="#888" strokeWidth="1.5" />
+
+  <circle cx="100" cy="108" r="5" fill="#888" />
+  <text x="100" y="80" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="12" fontWeight="bold">11:00</text>
+  <text x="100" y="136" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fontWeight="bold">trigger-sync</text>
+  <text x="100" y="151" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9">silent push → phone syncs</text>
+
+  <circle cx="245" cy="108" r="5" fill="#888" />
+  <text x="245" y="80" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="12" fontWeight="bold">20:00</text>
+  <text x="245" y="136" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fontWeight="bold">trigger-sync</text>
+  <text x="245" y="151" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9">second silent push</text>
+
+  <circle cx="385" cy="108" r="5" fill="#888" />
+  <text x="385" y="80" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="12" fontWeight="bold">21:00</text>
+  <text x="385" y="136" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fontWeight="bold">check-sync</text>
+  <text x="385" y="151" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9">nudge if the phone went quiet</text>
+
+  <circle cx="515" cy="108" r="6" fill="#74F58E" />
+  <text x="515" y="80" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="12" fontWeight="bold" fill="#3aa55a">22:30</text>
+  <text x="515" y="136" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fontWeight="bold">parse-sms → daily-insight</text>
+  <text x="515" y="151" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9">AI parses the day, writes the insight</text>
+
+  <text x="310" y="190" textAnchor="middle" fontFamily="system-ui, Segoe UI, sans-serif" fontSize="9" fill="#888">Two pushes keep the data current; one nightly parse turns it into truth and a sentence.</text>
+</svg>
+
+- **11:00 &amp; 20:00 — `trigger-sync`.** Sends a silent FCM data push. The app's background task wakes, reads the day's bank SMS, and POSTs them to `/sync-sms` — always, even with zero new messages, so the server records a heartbeat and can tell a quiet day apart from a phone that never checked in.
+- **21:00 — `check-sync`.** If the phone hasn't reported today, a gentle nudge goes out — so a broken sync never passes silently before the night's parse.
+- **22:30 — `parse-sms`.** Parses the day's `raw_sms` into transactions with the parsing model, reconciles each institution's balance, then fire-and-forgets `daily-insight` to write the Magic Insight on freshly-parsed numbers.
+
+## Design principles
+
+Aviyal should feel like a calm, reliable companion you check like the weather — informed, never anxious. If a screen makes you feel judged, watched, or stressed, it's wrong, no matter how accurate it is. Five principles guide every decision:
+
+- **Calm beats clever.** Muted, steady visuals over alarming reds and urgent badges. "Nothing needs your attention" is a good state, shown proudly.
+- **Automatic beats manual.** Default to showing, not asking. Every required tap is a place someone quits, so taps are treated as expensive.
+- **Truth beats polish.** Accurate numbers on a plain layout beat a beautiful screen with guessed data. The app — and the AI — is honest about its own uncertainty.
+- **Specific beats generic.** "Cancel this subscription → ₹649/month" beats "reduce spending." Every insight points at one concrete, doable action.
+- **Questions beat declarations.** "This renews tomorrow — still using it?" beats "You waste money on subscriptions." The app informs; you decide.
+
+No gamification, no streaks, no comparison, no upsell — anything that distracts from real awareness or quietly erodes trust is deliberately left out.
+
+## Engineering notes
+
+- **Expo + React Native** with `expo-router`, Reanimated, and `react-native-svg` for the spend rings, bar chart, and pulse swiper.
+- **Custom native module (`sms-extractor`)** with Swift and Android implementations, packaged as a local Expo module — the piece that makes "automatic" possible.
+- **Supabase** for auth, Postgres storage (`raw_sms`, `transactions`, `accounts`, `insights`), and a suite of Deno **Edge Functions** for syncing, parsing, insights, and the Zerodha Kite portfolio integration.
+- **OpenAI** drives both AI jobs — `gpt-4o-mini` for structured SMS extraction and `gpt-5` for the Magic Insight — each called with a strict JSON schema for reliable, typed output.
+- **`pg_cron` + `pg_net`** run the daily schedule server-side; **`expo-task-manager`** and **`expo-notifications`** handle the background sync wake and the daily push.
+
+## Status
+
+Aviyal is a personal tool, built bottom-up. The scariest unknowns — a working custom SMS-reading module and good-enough SMS coverage — are validated, and the product is built in honest phases: Truth (a trustworthy transaction list), then Insight (the auto-categorised dashboard and Magic Insight you see above), then Awareness (the daily notification habit). Each phase ships something usable on its own, and the bar for "done" is strict: the numbers in the app match the bank statement to the rupee.

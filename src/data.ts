@@ -1,4 +1,5 @@
 import amraThumbnail from './assets/images/amra/thumbnail.svg';
+import aviyalThumbnail from './assets/images/aviyal/thumbnail.svg';
 import blobThumbnail from './assets/images/blob/thumbnail.jpg';
 import fairdealThumbnail from './assets/images/fairdeal/thumbnail.jpg';
 import taraThumbnail from './assets/images/tara/thumbnail.jpg';
@@ -57,6 +58,18 @@ export default {
 
 export const projectData: Project[] = [
     {
+        "id": "aviyal",
+        "firstName": "Aviyal",
+        "lastName": "App",
+        "tag": "Design & Development",
+        "badges": ["Expo", "Supabase", "OpenAI"],
+        "description": "AI reads your bank SMS and shows where your money actually goes — calm, automatic spending awareness",
+        "displayHeading": "Aviyal",
+        "thumbnail": aviyalThumbnail,
+        "cardSize": "medium",
+        "publish": true
+    },
+    {
         "id": "sermobot",
         "firstName": "Sermo",
         "lastName": "bot",
@@ -107,7 +120,7 @@ export const projectData: Project[] = [
         "description": "Couple finance and relationship goals app",
         "displayHeading": "Amra",
         "thumbnail": amraThumbnail,
-        "cardSize": "large",
+        "cardSize": "medium",
         "cardInverted": "inverted",
         "url": "https://amralove.netlify.app/",
         "github": "https://github.com/gauthamkrishnax/amra",

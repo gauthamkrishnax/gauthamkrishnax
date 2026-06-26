@@ -846,9 +846,30 @@ function Three() {
     raf = requestAnimationFrame(draw);
     prevT = performance.now();
 
+    // Pause the render loop when the hero scrolls out of view — no point running
+    // WebGL while the visitor is reading About or Works. (Hidden background tabs
+    // are already paused by the browser's requestAnimationFrame throttling.)
+    const visObserver = new IntersectionObserver(
+      (entries) => {
+        const visible = entries[0]?.isIntersecting ?? true;
+        if (visible) {
+          if (!raf) {
+            prevT = performance.now();
+            raf = requestAnimationFrame(draw);
+          }
+        } else if (raf) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+        }
+      },
+      { threshold: 0 },
+    );
+    visObserver.observe(wrap);
+
     return () => {
       cancelAnimationFrame(raf);
       cancelAnimationFrame(resizeRaf);
+      visObserver.disconnect();
       ro.disconnect();
       window.removeEventListener('resize', resize);
       document.body.removeEventListener('pointermove', onPointerMove);

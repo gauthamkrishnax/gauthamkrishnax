@@ -126,3 +126,9 @@
     transform: rotate(0deg);
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .wiggle {
+    animation: none;
+  }
+}
