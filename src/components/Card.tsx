@@ -6,7 +6,7 @@ function Card({ project }: { project: Project }) {
         <div className={`${styles.card} ${styles[project.cardSize]}`}>
             <a className="no-hover" href={`/${project.id}`} >
                 <div className={styles.cardImage}>
-                    <img src={project.thumbnail} alt={project.firstName + ' ' + project.lastName} />
+                    <img src={project.thumbnail} alt={project.firstName + ' ' + project.lastName} loading="lazy" decoding="async" />
                 </div>
                 <div className={styles.cardContent}>
                     <span className={styles.cardTag}>{project.tag}</span>

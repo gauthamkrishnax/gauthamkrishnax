@@ -7,7 +7,7 @@ function About() {
         <section id="about">
             <div className={styles.content}>
                 <div className={styles.contentLeft} data-reveal data-reveal-delay="40">
-                    <img src={image} alt="My potrait" />
+                    <img src={image} alt={`Portrait of ${DATA.HEADER}`} loading="lazy" decoding="async" />
                 </div>
                 <div className={styles.contentRight} data-reveal data-reveal-delay="140">
                     <p className="text-secondary">{DATA.ABOUT_TAG}</p>

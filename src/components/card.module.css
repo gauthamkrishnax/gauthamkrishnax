@@ -8,7 +8,7 @@
     height: 100%;
     color: inherit;
     text-decoration: none;
-    transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--dur-base) var(--ease);
 }
 
 .cardImage {
@@ -16,18 +16,27 @@
     width: 95%;
     border-radius: var(--radius-card);
     overflow: hidden;
+    border: 1px solid var(--ring);
+    box-shadow: var(--shadow-sm);
     transition:
-        width 320ms cubic-bezier(0.22, 1, 0.36, 1),
-        box-shadow 320ms ease;
+        width var(--dur-base) var(--ease),
+        box-shadow var(--dur-base) var(--ease),
+        border-color var(--dur-base) var(--ease);
 }
 
+/* A thin accent rule draws across the foot of the image on hover — the same
+   underline gesture used on links, so the whole site shares one tactile language. */
 .cardImage::after {
     content: '';
     position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, color-mix(in srgb, var(--link-color) 30%, transparent), transparent 45%);
-    opacity: 0;
-    transition: opacity 320ms ease;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--link-color);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-base) var(--ease);
     pointer-events: none;
 }
 
@@ -35,7 +44,7 @@
     width: 100%;
     height: auto;
     object-fit: cover;
-    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--dur-slow) var(--ease);
 }
 
 .card > a:hover {
@@ -43,7 +52,7 @@
 }
 
 .card > a:hover img {
-    transform: scale(1.07);
+    transform: scale(1.06);
 }
 
 .card.small img {
@@ -52,11 +61,12 @@
 
 .card > a:hover .cardImage {
     width: 100%;
-    box-shadow: 0 24px 48px color-mix(in srgb, var(--link-color) 22%, transparent);
+    border-color: var(--ring-strong);
+    box-shadow: var(--shadow-lg);
 }
 
 .card > a:hover .cardImage::after {
-    opacity: 0.22;
+    transform: scaleX(1);
 }
 
 .card.medium img {
@@ -74,7 +84,7 @@
     span {
         color: var(--text-color-secondary);
         font-size: var(--text-xs);
-        letter-spacing: 5%;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
         margin-bottom: var(--space-sm);
     }

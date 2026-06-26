@@ -22,8 +22,11 @@ function Layout({ children }: { children: ReactNode }) {
                 smoothTouch: false,
             }}
         >
+            <a className="skip-link no-hover" href="#main-content">Skip to content</a>
             <RouteScrollReset />
-            {children}
+            <div id="main-content" tabIndex={-1}>
+                {children}
+            </div>
             <Footer />
             <ClientOnly fallback={null}>
                 <ScrollReveal />
